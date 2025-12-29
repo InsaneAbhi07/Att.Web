@@ -1,0 +1,114 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Attendance Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="~/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/assets/plugins/tabler-icons/tabler-icons.min.css" />
+    <link rel="stylesheet" href="~/assets/css/style.css" />
+
+    <style>
+        body {
+            background: Azure;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            border-radius: 14px;
+        }
+
+        .login-icon {
+            width: 70px;
+            height: 70px;
+            background: DarkOrange;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: -45px auto 15px;
+            font-size: 32px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="card login-card shadow-lg">
+        <div class="card-body p-4">
+
+            <!-- ATTENDANCE ICON -->
+            <div class="login-icon">
+                <i class="ti ti-clock-hour-4"></i>
+            </div>
+
+            <h4 class="text-center mb-1">Attendance Management System</h4>
+            <p class="text-center text-muted mb-4">
+                Admin / Employee Login
+            </p>
+
+            <!-- LOGIN FORM -->
+            <form method="post" asp-action="Login" asp-controller="Account">
+
+                <div class="mb-3">
+                    <label class="form-label">Username / Employee Code</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="ti ti-user"></i>
+                        </span>
+                        <!-- 🔴 FIX HERE (loginId ➜ username) -->
+                        <input type="text"
+                               name="username"
+                               class="form-control"
+                               placeholder="Enter ID"
+                               required />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="ti ti-lock"></i>
+                        </span>
+                        <input type="password"
+                               name="password"
+                               class="form-control"
+                               placeholder="Enter password"
+                               required />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2">
+                    <i class="ti ti-login me-1"></i> Login
+                </button>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger text-center mt-3 mb-0">
+                        @ViewBag.Error
+                    </div>
+                }
+            </form>
+
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="~/assets/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+﻿@model List<DesignationVM>
+@{
+    ViewData["Title"] = "Master Designation";
+}
+
+<!-- PAGE HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="page-title">Master Designation</h4>
+
+    <button class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#designationModal"
+            onclick="clearForm()">
+        <i class="ti ti-plus"></i> Add Designation
+    </button>
+</div>
+
+<!-- LIST -->
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Designation Name</th>
+                    <th>Status</th>
+                    <th width="120">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@Model[i].Designation</td>
+                        <td>
+                            <span class="badge bg-success">Active</span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-warning"
+                                    onclick="editDesignation('@Model[i].Id',
+                                                             '@Model[i].Designation')">
+                                <i class="ti ti-edit"></i>
+                            </button>
+
+                            <form asp-action="DeleteDesignation" method="post" style="display:inline">
+                                <input type="hidden" name="id" value="@Model[i].Id" />
+                                <button class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Delete this record?')">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal fade" id="designationModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="AddDesignation" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Designation</h5>
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" id="Id"
+                           name="Id" />
+
+                    <label class="form-label">Designation Name</label>
+                    <input type="text"
+                           class="form-control"
+                           name="Designation"
+                           id="Designation"
+                           required />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function clearForm() {
+            document.getElementById("Id").value = "";
+            document.getElementById("Designation").value = "";
+        }
+
+        function editDesignation(id, name) {
+            document.getElementById("Id").value = id;
+            document.getElementById("Designation").value = name;
+            new bootstrap.Modal(
+                document.getElementById('designationModal')
+            ).show();
+        }
+    </script>
+}
