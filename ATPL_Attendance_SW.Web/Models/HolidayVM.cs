@@ -7,6 +7,6 @@
 
         public string Date { get; set; }
         public string Description { get; set; }
-        public string Active { get; set; }
+        public bool Active { get; set; }
     }
 }

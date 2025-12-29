@@ -3,6 +3,96 @@
     ViewData["Title"] = "Master Employee";
 }
 
+<!-- PAGE HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="page-title">Master Employee</h4>
+
+    <button class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#empModal"
+            onclick="clearForm()">
+        <i class="ti ti-plus"></i> Add Employee
+    </button>
+</div>
+
+<!-- LIST -->
+<div class="card">
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Emp Id</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Phone</th>
+                    <th>Salary</th>
+                    <th>Emp. Image</th>
+                    <th>Status</th>
+                    <th width="120">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td>@e.Emp_Id</td>
+                        <td>@e.Name</td>
+                        <td>@e.Department</td>
+                        <td>@e.Designation</td>
+                        <td>@e.PhoneNo</td>
+                        <td>@e.Salary</td>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(e.Emp_Img)
+                                ? Url.Content("~/assets/img/user-placeholder.png")
+                                : Url.Content("~/uploads/employee/" + e.Emp_Img))"
+                                 class="rounded-circle"
+                                 style="width:35px;height:35px;object-fit:cover;" />
+                        </td>
+
+                        <td>
+                            <span class="badge @(e.Status == "Active" ? "bg-success" : "bg-secondary")">
+                                @e.Status
+                            </span>
+                        </td>
+                        <td>
+
+                            <button class="btn btn-sm btn-warning"
+                                    onclick="editEmployee(
+                                    '@e.Emp_Id',
+                                    '@Html.Raw(e.Name)',
+                                    '@e.DepartmentId',
+                                    '@e.DesignationId',
+                                    '@Html.Raw(e.EmailId)',
+                                    '@Html.Raw(e.PhoneNo)',
+                                    '@Html.Raw(e.JoiningDate)',
+                                    '@Html.Raw(e.Address)',
+                                    '@e.Salary',
+                                    '@e.Status',
+                                    '@Html.Raw(e.Shift)',
+                                    '@Html.Raw(e.Emp_Img)'
+                                    )">
+                                <i class="ti ti-edit"></i>
+                            </button>   
+
+                            <form asp-action="DeleteEmployee"
+                                  method="post"
+                                  style="display:inline">
+                                <input type="hidden" name="empId" value="@e.Emp_Id" />
+                                <button class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Delete this employee?')">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
 <div class="modal fade" id="empModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
@@ -13,7 +103,7 @@
             </div>
 
             @* <form asp-action="SaveEmployee" method="post"> *@
-            <form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
+                <form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
                 <div class="col-md-4 mb-3">
                     <input type="hidden" name="Emp_Id" id="Emp_Id" />
                 </div>
@@ -131,7 +221,7 @@
 @section Scripts {
     <script>
                function clearForm() {
-            document.getElementById("Emp_Id").value = "";
+            document.getElementById("Emp_Id").value = ""; 
             Name.value = "";
             DepartmentId.selectedIndex = 0;
             DesignationId.selectedIndex = 0;

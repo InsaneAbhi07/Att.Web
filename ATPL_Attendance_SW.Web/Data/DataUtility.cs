@@ -26,6 +26,24 @@ public class DataUtility
         return dt;
     }
 
+    public DataTable GetDataTableByQuery(string query, SqlParameter[] prms)
+    {
+        using SqlConnection con = new SqlConnection(_con);
+        using SqlCommand cmd = new SqlCommand(query, con);
+
+        cmd.CommandType = CommandType.Text;
+
+        if (prms != null && prms.Length > 0)
+        {
+            cmd.Parameters.AddRange(prms);
+        }
+
+        using SqlDataAdapter da = new SqlDataAdapter(cmd);
+        DataTable dt = new DataTable();
+        da.Fill(dt);
+        return dt;
+    }
+
     public int Execute(string spName, SqlParameter[] prms)
     {
         using SqlConnection con = new SqlConnection(_con);
