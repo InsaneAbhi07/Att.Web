@@ -1,12 +1,15 @@
 using System.Data;
 using System.Diagnostics;
 using ATPL_Attendance_SW.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 
 namespace ATPL_Attendance_SW.Web.Controllers
 {
+    [Authorize(AuthenticationSchemes = "AttendanceCookie")]
+
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -22,6 +25,28 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         public IActionResult Index()
         {
+
+            ViewBag.DepartmentList = GetDepartmentDDL();
+            ViewBag.DesignationList = GetDesignationDDL();
+
+            ViewBag.TotalHolidays = du.ExecuteScalar("SELECT COUNT(*) FROM Tbl_MasterHolidays where Active='1'");
+
+            DataTable dt = du.GetDataTable("Sp_Get_UpcomingBirthdays",new SqlParameter[] { });
+            List<EmployeeVM> birthdayList = new List<EmployeeVM>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                birthdayList.Add(new EmployeeVM
+                {
+                    Emp_Id = Convert.ToInt32(row["Emp_Id"]),
+                    Name = row["Name"].ToString(),
+                    DOB = row["Dob"].ToString(),
+                    PhoneNo= row["PhoneNo"].ToString()
+                });
+            }
+
+            ViewBag.BirthdayList = birthdayList;
+
             return View();
         }
 
@@ -245,6 +270,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         public IActionResult AddEmployee()
         {
+            ViewBag.DepartmentList = GetDepartmentDDL();
+            ViewBag.DesignationList = GetDesignationDDL();
             return View();
         }
         public IActionResult EmployeeList()
@@ -255,26 +282,33 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             foreach (DataRow row in dt.Rows)
             {
+
                 list.Add(new EmployeeVM
                 {
                     Emp_Id = Convert.ToInt32(row["Emp_Id"]),
-                    Name = row["Name"].ToString(),
+                    Name = row["Name"]?.ToString(),
 
-                    DepartmentId = Convert.ToInt32(row["DepartmentId"]),  
-                    DesignationId = Convert.ToInt32(row["DesignationId"]),
+                    DepartmentId = row["DepartmentId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DepartmentId"]),
+                    DesignationId = row["DesignationId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DesignationId"]),
 
-                    Department = row["Department"].ToString(),
-                    Designation = row["Designation"].ToString(),
+                    EmailId = row["EmailId"] == DBNull.Value ? "" : row["EmailId"].ToString(),
+                    PhoneNo = row["PhoneNo"] == DBNull.Value ? "" : row["PhoneNo"].ToString(),
 
-                    EmailId = row["EmailId"].ToString(),
-                    PhoneNo = row["PhoneNo"].ToString(),
-                    JoiningDate = row["JoiningDate"].ToString(),
-                    Address = row["Address"].ToString(),
-                    Salary = Convert.ToDecimal(row["Salary"]),
-                    Status = row["Status"].ToString(),
-                    Shift = row["Shift"].ToString(),
-                    Emp_Img = row["Emp_Img"].ToString()
+                    JoiningDate = row["JoiningDate"] == DBNull.Value ? "" : row["JoiningDate"].ToString(),
+                    Address = row["Address"] == DBNull.Value ? "" : row["Address"].ToString(),
+
+                    Emp_Img = row["Emp_Img"] == DBNull.Value ? "" : row["Emp_Img"].ToString(),
+                    Designation = row["Designation"] == DBNull.Value ? "" : row["Designation"].ToString(),
+                    Department = row["Department"] == DBNull.Value ? "" : row["Department"].ToString(),
+
+                    Salary = row["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Salary"]),
+                    Status = row["Status"] == DBNull.Value ? "Inactive" : row["Status"].ToString(),
+                    Shift = row["Shift"] == DBNull.Value ? "" : row["Shift"].ToString(),
+
+                    UserName = row["UserName"] == DBNull.Value ? "" : row["UserName"].ToString(),
+                    Role = row["Role"] == DBNull.Value ? "" : row["Role"].ToString()
                 });
+
 
             }
 
@@ -288,7 +322,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
         [HttpPost]
         public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage)
         {
-            string imageName = model.Emp_Img; // old image (edit case)
+            string imageName = model.Emp_Img ?? "";   // old image safe
 
             if (EmpImage != null && EmpImage.Length > 0)
             {
@@ -303,26 +337,39 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 imageName = Guid.NewGuid().ToString() + Path.GetExtension(EmpImage.FileName);
                 string filePath = Path.Combine(uploadPath, imageName);
 
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    EmpImage.CopyTo(stream);
-                }
+                using var stream = new FileStream(filePath, FileMode.Create);
+                EmpImage.CopyTo(stream);
             }
 
             SqlParameter[] prms =
             {
         new SqlParameter("@Emp_Id", model.Emp_Id),
-        new SqlParameter("@Name", model.Name),
-        new SqlParameter("@DepartmentId", model.DepartmentId),
-        new SqlParameter("@DesignationId", model.DesignationId),
-        new SqlParameter("@EmailId", model.EmailId),
-        new SqlParameter("@PhoneNo", model.PhoneNo),
-        new SqlParameter("@JoiningDate", model.JoiningDate),
-        new SqlParameter("@Address", model.Address),
+
+        new SqlParameter("@Name", model.Name ?? ""),
+        new SqlParameter("@Dob", string.IsNullOrEmpty(model.DOB) ? (object)DBNull.Value : model.DOB),
+
+        new SqlParameter("@DepartmentId", model.DepartmentId == 0 ? (object)DBNull.Value : model.DepartmentId),
+        new SqlParameter("@DesignationId", model.DesignationId == 0 ? (object)DBNull.Value : model.DesignationId),
+
+        new SqlParameter("@EmailId", model.EmailId ?? ""),
+        new SqlParameter("@PhoneNo", model.PhoneNo ?? ""),
+
+        new SqlParameter("@JoiningDate",
+            string.IsNullOrEmpty(model.JoiningDate) ? (object)DBNull.Value : model.JoiningDate),
+
+        new SqlParameter("@Address", model.Address ?? ""),
         new SqlParameter("@Emp_Img", imageName),
-        new SqlParameter("@Salary", model.Salary),
-        new SqlParameter("@Status", model.Status),
-        new SqlParameter("@Shift", model.Shift),
+
+        new SqlParameter("@Salary",
+            model.Salary == 0 ? (object)DBNull.Value : model.Salary),
+
+        new SqlParameter("@Status", model.Status ?? ""),
+        new SqlParameter("@Shift", model.Shift ?? ""),
+
+        new SqlParameter("@UserName", model.UserName ?? ""),
+        new SqlParameter("@Password", model.Password ?? ""),
+        new SqlParameter("@Role", model.Role ?? ""),
+
         new SqlParameter("@msg", SqlDbType.NVarChar, 100)
         {
             Direction = ParameterDirection.Output
@@ -330,8 +377,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
     };
 
             du.Execute("Sp_Insert_MasterEmployee", prms);
-            TempData["Msg"] = prms[10].Value.ToString();
 
+            TempData["Msg"] = prms[^1].Value?.ToString();
             return RedirectToAction("EmployeeList");
         }
 
@@ -348,6 +395,205 @@ namespace ATPL_Attendance_SW.Web.Controllers
             TempData["Msg"] = "Employee Deleted";
 
             return RedirectToAction("EmployeeList");
+        }
+
+
+        private List<SelectListItem> GetCompanyDDL()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_CompanyInformation", null);
+            List<SelectListItem> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["CCode"].ToString()
+                });
+            }
+            return list;
+        }
+
+        public IActionResult CompanyInfoList()
+        {
+            ViewBag.CCodeList = GetCompanyDDL();
+
+            DataTable dt = du.GetDataTable("Sp_Get_CompanyList", null);
+            List<CompanyVM> list = new();
+
+            foreach (DataRow r in dt.Rows)
+            {
+                list.Add(new CompanyVM
+                {
+                    Id = Convert.ToInt64(r["Id"]),
+                    CCode = r["CCode"].ToString(),
+                    CompanyName = r["CompanyName"].ToString(),
+                    Abbr = r["Abbr"].ToString(),
+                    Address = r["Address"].ToString(),
+                    Address2 = r["Address2"].ToString(),
+                    City = r["City"].ToString(),
+                    State = r["State"].ToString(),
+                    Pincode = r["Pincode"].ToString(),
+                    Country = r["Country"].ToString(),
+                    Telepohne = r["Telepohne"].ToString(),
+                    ContactNo = r["ContactNo"].ToString(),
+                    Email = r["Email"].ToString(),
+                    Website = r["Website"].ToString(),
+                    GSTIN = r["GSTIN"].ToString(),
+                    BankName = r["BankName"].ToString(),
+                    AccountNo = r["AccountNo"].ToString(),
+                    IFSCCode = r["IFSCCode"].ToString()
+
+
+                });
+            }
+
+            return View(list);
+        }
+
+
+        [HttpPost]
+        public IActionResult SaveCompany(CompanyVM model)
+        {
+            SqlParameter[] prms =
+      {
+            new SqlParameter("@Id", model.Id),
+            new SqlParameter("@CCode", model.CCode ?? ""),
+            new SqlParameter("@CompanyName", model.CompanyName),
+            new SqlParameter("@Abbr", model.Abbr),
+            new SqlParameter("@Address", model.Address),
+            new SqlParameter("@Address2", model.Address2),
+            new SqlParameter("@City", model.City),
+            new SqlParameter("@State", model.State),
+            new SqlParameter("@Pincode", model.Pincode),
+            new SqlParameter("@Country", model.Country),
+            new SqlParameter("@Telepohne", model.Telepohne),
+            new SqlParameter("@ContactNo", model.ContactNo),
+            new SqlParameter("@Email", model.Email),
+            new SqlParameter("@Website", model.Website),
+            new SqlParameter("@GSTIN", model.GSTIN),
+            new SqlParameter("@BankName", model.BankName),
+            new SqlParameter("@AccountNo", model.AccountNo),
+            new SqlParameter("@IFSCCode", model.IFSCCode),
+            new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+            { Direction = ParameterDirection.Output }
+        };
+
+            du.Execute("Sp_Insert_CompanyInformation", prms);
+            TempData["Msg"] = prms[^1].Value.ToString();
+
+            return RedirectToAction("CompanyInfoList");
+        }
+
+        [HttpGet]
+        public JsonResult GetCompanyByCode(string ccode)
+        {
+            if (string.IsNullOrEmpty(ccode)) 
+                return Json(null);
+
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@CCode", ccode)
+    };
+
+            DataTable dt = du.GetDataTable("Sp_Get_CompanyByCode", prms);
+
+            if (dt.Rows.Count == 0)
+                return Json(null);
+
+            var r = dt.Rows[0];
+
+            var data = new
+            {
+                Id = r["Id"].ToString(),
+                CompanyName = r["CompanyName"].ToString(),
+                Abbr = r["Abbr"].ToString(),
+                Address = r["Address"].ToString(),
+                Address2 = r["Address2"].ToString(),
+                City = r["City"].ToString(),
+                State = r["State"].ToString(),
+                Pincode = r["Pincode"].ToString(),
+                Country = r["Country"].ToString(),
+                Telepohne = r["Telepohne"].ToString(),
+                ContactNo = r["ContactNo"].ToString(),
+                Email = r["Email"].ToString(),
+                Website = r["Website"].ToString(),
+                GSTIN = r["GSTIN"].ToString(),
+                BankName = r["BankName"].ToString(),
+                AccountNo = r["AccountNo"].ToString(),
+                IFSCCode = r["IFSCCode"].ToString()
+            };
+
+            return Json(data);
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteCompany(long id)
+        {
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@Id", id)
+        };
+
+            du.Execute("Sp_Delete_MasterCompany", prms);
+            TempData["Msg"] = "Record Deleted Successfully";
+
+            return RedirectToAction("CompanyList");
+        }
+
+
+
+        public IActionResult ActiveEmployeeDashboard()
+        {
+            ViewBag.DesignationList = GetDesignationDDL();
+
+            var list = GetEmployeeList(null, null);
+            return View(list);
+        }
+
+
+        [HttpGet]
+        public IActionResult FilterEmployeeList(long? designationId, string status)
+        {
+            var list = GetEmployeeList(designationId, status);
+            return PartialView("_EmployeeDashboardRows", list ?? new List<EmployeeVM>());
+        }
+
+
+        private List<EmployeeVM> GetEmployeeList(long? desigId, string status)
+        {
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@DesignationId", (object?)desigId ?? DBNull.Value),
+        new SqlParameter("@Status", string.IsNullOrEmpty(status) ? DBNull.Value : status)
+    };
+
+            DataTable dt = du.GetDataTable("Sp_Get_DashboardEmployeeList", prms);
+
+            List<EmployeeVM> list = new();
+
+            if (dt == null || dt.Rows.Count == 0)
+                return list;
+
+            foreach (DataRow r in dt.Rows)
+            {
+                list.Add(new EmployeeVM
+                {
+                    Emp_Id = Convert.ToInt32(r["Emp_Id"]),
+                    Name = r["Name"]?.ToString(),
+                    EmailId = r["EmailId"]?.ToString(),
+                    PhoneNo = r["PhoneNo"]?.ToString(),
+                    Designation = r["Designation"]?.ToString(),
+                    Department= r["Department"]?.ToString(),
+                    JoiningDate = r["JoiningDate"]?.ToString(),
+                    Status = r["Status"]?.ToString(),
+                    Emp_Img = r["Emp_Img"]?.ToString(),
+                    Address = r["Address"]?.ToString()
+                });
+            }
+
+            return list;
         }
 
 

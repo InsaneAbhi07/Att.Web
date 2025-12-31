@@ -163,15 +163,7 @@
 			<div class="header">
 				<div class="main-header">
 
-					<div class="header-left">
-						<a href="index.html" class="logo">
-							<img src="~/assets/img/att.svg" alt="Logo">
-						</a>
-						<a href="index.html" class="dark-logo">
-							<img src="~/assets/img/att.svg" alt="Logo">
-						</a>
-					</div>
-
+				 
 					<a id="mobile_btn" class="mobile_btn" href="#sidebar">
 						<span class="bar-icon">
 							<span></span>
@@ -253,9 +245,18 @@
 												</a>
 											</div>
 											<div class="card-footer">
-												<a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="login.html">
+												<form asp-controller="Account"
+													  asp-action="Logout"
+													  method="post"
+													  style="display:inline">
+
+													<button type="submit" class="dropdown-item">
+														<i class="ti ti-login me-2"></i> Logout
+													</button>
+												</form>
+												@* <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="login.html">
 													<i class="ti ti-login me-2"></i>Logout
-												</a>
+												</a> *@
 											</div>
 										</div>
 									</div>
@@ -357,7 +358,7 @@
 							<li>
 								<a href="/Home/Index">
 									<i class="ti ti-smart-home"></i>
-									<span>Dashboard</span>
+									<span>DASHBOARD</span>
 								</a>
 							</li>
 
@@ -365,17 +366,17 @@
 							<li class="submenu">
 								<a href="javascript:void(0);">
 									<i class="ti ti-file-time"></i>
-									<span>Masters</span>
+									<span>MASTES</span>
 									<span class="menu-arrow"></span>
 								</a>
 								<ul>
-									<li><a href="attendance-employee.html">Master Company</a></li>
+									<li><a asp-controller="Home" asp-action="CompanyInfoList"> Master Company</a></li>
 									<li><a asp-controller="Home" asp-action="EmployeeList"> Master Employee</a></li>
 									<li><a asp-controller="Home" asp-action="HolidayList"> Master Holiday</a></li>
 									<li><a asp-controller="Home" asp-action="DepartmentList"> Master Department</a></li>
 									<li><a asp-controller="Home" asp-action="DesignationList"> Master Designation</a></li>
-									<li><a href="schedule-timing.html">Master Session</a></li>
-									<li><a href="overtime.html">Overtime</a></li>
+									@* <li><a href="schedule-timing.html">Master Session</a></li> *@
+									@* <li><a href="overtime.html">Overtime</a></li> *@
 								</ul>
 							</li>
 
@@ -383,7 +384,7 @@
 							<li class="submenu">
 								<a href="javascript:void(0);">
 									<i class="ti ti-file-time"></i>
-									<span>Attendance</span>
+									<span>ATTENDANCE</span>
 									<span class="menu-arrow"></span>
 								</a>
 								<ul>
@@ -405,11 +406,42 @@
 								</ul>
 							</li>
 
+							<!-- PAyroll--></>
+							<li class="submenu">
+								<a href="javascript:void(0);">
+									<i class="ti ti-file-time"></i>
+									<span>PAYROLL</span>
+									<span class="menu-arrow"></span>
+								</a>
+								<ul>
+									<li><a href="attendance-employee.html">Attendance Payroll Mapping</a></li>
+									<li> <a href="timesheets.html"> Wage Calculation Preview </a> </li>
+									<li> <a href="schedule-timing.html"> Payroll Export </a> </li>
+									<li> <a href="leaves.html"> Payroll Lock </a> </li>
+								</ul>
+							</li>
+
+
+							<!--ID CARD GEN-->
+							<li class="submenu">
+								<a href="javascript:void(0);">
+									<i class="ti ti-file-time"></i>
+									<span>ID CARDS</span>
+									<span class="menu-arrow"></span>
+								</a>
+								<ul>
+									<li><a href="attendance-employee.html">Generate Id Cards</a></li>
+									<li> <a href="timesheets.html"> Id Cards List </a> </li>
+								</ul>
+							</li>
+
+
+
 							<!-- REPORTS -->
 							<li class="submenu">
 								<a href="javascript:void(0);">
 									<i class="ti ti-file-time"></i>
-									<span>Reports</span>
+									<span>REPORTS</span>
 									<span class="menu-arrow"></span>
 								</a>
 								<ul>
@@ -426,7 +458,7 @@
 							<li>
 								<a href="#">
 									<i class="ti ti-calendar-event"></i>
-									<span>Daily Back-Up</span>
+									<span>DAILY BACK- UP</span>
 								</a>
 							</li>
 
@@ -434,7 +466,7 @@
 							<li class="submenu">
 								<a href="javascript:void(0);">
 									<i class="ti ti-calendar-event"></i>
-									<span>Utility</span>
+									<span>UTILITY</span>
 									<span class="menu-arrow"></span>
 								</a>
 								<ul>
@@ -445,12 +477,26 @@
 
 							<!-- LOGOUT -->
 							<li>
-								<form asp-controller="Account" asp-action="Logout" method="post">
+								@* <form asp-controller="Account" asp-action="Logout" method="post">
 									<button type="submit" class="dropdown-item d-inline-flex align-items-center p-0 py-2">
 										<i class="ti ti-logout me-2"></i>
 										Logout
 									</button>
+								</form> *@
+
+								<form asp-controller="Account"
+									  asp-action="Logout"
+									  method="post"
+									  style="display:inline">
+
+									<button type="submit" class="dropdown-item">
+										<i class="ti ti-login me-2"></i> Logout
+									</button>
 								</form>
+
+
+
+
 							</li>
 
 						</ul>
@@ -478,7 +524,7 @@
 		<footer class="footer border-top text-muted">
 			<div class="container-fluid d-flex justify-content-between">
 				<span>2014 - 2025 © ATPL.</span>
-				<span>Designed & Developed By <span class="text-primary">Dreams</span></span>
+				<span>Designed & Developed By <span class="text-primary">BeLikeAbhi</span></span>
 			</div>
 		</footer>
 	</div>

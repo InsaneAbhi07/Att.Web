@@ -16,16 +16,24 @@ namespace ATPL_Attendance_SW.Web.Controllers
             du = new DataUtility(config);
         }
 
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
+
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpGet]
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Login()
         {
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
+
             return View();
         }
+
+        [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
 
         public async Task<IActionResult> Login(string username, string password)
         {
@@ -42,7 +50,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, dt.Rows[0]["UserName"].ToString()),
-            new Claim(ClaimTypes.Role, dt.Rows[0]["Role"].ToString())
+            new Claim(ClaimTypes.Role, dt.Rows[0]["Role"].ToString()),
+            new Claim(ClaimTypes.Role, dt.Rows[0]["Emp_Img"].ToString())
         };
 
                 var identity = new ClaimsIdentity(

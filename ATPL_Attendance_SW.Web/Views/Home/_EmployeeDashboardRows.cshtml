@@ -1,0 +1,55 @@
+﻿@model List<EmployeeVM>
+
+@if (Model == null || !Model.Any())
+{
+    <tr>
+        <td colspan="8" class="text-center text-muted py-4">
+            No employees found
+        </td>
+    </tr>
+}
+else
+{
+    foreach (var e in Model)
+    {
+        <tr>
+            <td>@e.Emp_Id</td>
+
+            <td>
+                <div class="d-flex align-items-center">
+                    <img src="@(string.IsNullOrEmpty(e.Emp_Img)
+                                                 ? Url.Content("~/assets/img/user-placeholder.png")
+                                                 : Url.Content("~/uploads/employee/" + e.Emp_Img))"
+                 class="rounded-circle me-2"
+                 style="width:35px;height:35px;object-fit:cover;" />
+
+                    <div>
+                        <div class="fw-semibold">@e.Name</div>
+                        <div class="text-muted fs-12">@e.Designation</div>
+                    </div>
+                </div>
+            </td>
+
+            <td>@e.EmailId</td>
+            <td>@e.PhoneNo</td>
+            <td>@e.Department</td>
+            <td>@e.JoiningDate</td>
+            <td>@e.Address</td>
+
+           @*  <td>
+                <span class="badge status-badge @(e.Status == "Active" ? "active" : "inactive")">
+                    <i class="ti ti-point-filled me-1"></i>@e.Status
+                </span>
+            </td>
+
+            <td>
+                <a href="javascript:void(0)" class="action-btn edit me-1">
+                    <i class="ti ti-edit"></i>
+                </a>
+                <a href="javascript:void(0)" class="action-btn delete">
+                    <i class="ti ti-trash"></i>
+                </a>
+            </td> *@
+        </tr>
+    }
+}

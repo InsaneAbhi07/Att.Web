@@ -36,13 +36,28 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
+System.Text.Encoding.RegisterProvider(
+    System.Text.CodePagesEncodingProvider.Instance);
+
+
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+    context.Response.Headers["Pragma"] = "no-cache";
+    context.Response.Headers["Expires"] = "0";
+    await next();
+});
+
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthentication();   // 👈 MUST be before Authorization
 app.UseAuthorization();
+
 
 
 // =====================

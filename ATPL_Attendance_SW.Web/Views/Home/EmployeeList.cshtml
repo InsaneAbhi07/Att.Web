@@ -3,6 +3,9 @@
     ViewData["Title"] = "Master Employee";
 }
 
+<head>
+	<link href="~/assets/css/style.css" rel="stylesheet" />
+</head>
 <!-- PAGE HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="page-title">Master Employee</h4>
@@ -61,6 +64,7 @@
                                     onclick="editEmployee(
                                     '@e.Emp_Id',
                                     '@Html.Raw(e.Name)',
+                                    '@Html.Raw(e.DOB)',
                                     '@e.DepartmentId',
                                     '@e.DesignationId',
                                     '@Html.Raw(e.EmailId)',
@@ -70,7 +74,10 @@
                                     '@e.Salary',
                                     '@e.Status',
                                     '@Html.Raw(e.Shift)',
-                                    '@Html.Raw(e.Emp_Img)'
+                                    '@Html.Raw(e.Emp_Img)',
+                                    '@Html.Raw(e.UserName)',
+                                    '@Html.Raw(e.Password)',
+                                    '@Html.Raw(e.Role)'
                                     )">
                                 <i class="ti ti-edit"></i>
                             </button>   
@@ -94,7 +101,7 @@
 
 <!-- ADD / EDIT MODAL -->
 <div class="modal fade" id="empModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
 
             <div class="modal-header">
@@ -110,9 +117,21 @@
                 <div class="modal-body">
 
                     <div class="row">
-                        <div class="col-md-12 mb-3">
+                        <div class="col-md-9">
                             <label class="form-label">Employee Full Name</label>
-                            <input type="text" class="form-control" name="Name" id="Name" required />
+                            <input type="text"
+                                   class="form-control"
+                                   name="Name"
+                                   id="Name"
+                                   required />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date"
+                                   class="form-control"
+                                   name="Dob"
+                                   id="Dob" />
                         </div>
                     </div>
 
@@ -133,7 +152,7 @@
 
 
                     <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Department</label>
                             <select class="form-select" name="DepartmentId" id="DepartmentId">
                                 @foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
@@ -143,7 +162,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Designation</label>
                             <select class="form-select" name="DesignationId" id="DesignationId">
                                 @foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
@@ -152,22 +171,20 @@
                                 }
                             </select>
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Email</label>
                             <input type="email" class="form-control" name="EmailId" id="EmailId" />
                         </div>
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Phone</label>
                             <input type="text" class="form-control" name="PhoneNo" id="PhoneNo" />
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Joining Date</label>
                             <input type="text"
                                    class="form-control datetimepicker"
@@ -175,16 +192,39 @@
                                    id="JoiningDate" />
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Salary</label>
                             <input type="number" class="form-control" name="Salary" id="Salary" />
                         </div>
 
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-3 mb-3">
                             <label class="form-label">Shift</label>
                             <input type="text" class="form-control" name="Shift" id="Shift" />
                         </div>
                     </div>
+
+                    <!---USERID--->
+
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label>User Name</label>
+                            <input type="text" class="form-control" name="UserName" id="UserName" />
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>Password</label>
+                            <input type="password" class="form-control" name="Password" id="Password" />
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>User Role</label>
+                            <select class="form-select" name="Role" id="Role">
+                                <option value="Admin">Admin</option>
+                                <option value="User">User</option>
+                            </select>
+                        </div>
+                    </div>
+
 
                     <div class="mb-3">
                         <label class="form-label">Address</label>
@@ -228,22 +268,27 @@
             EmailId.value = "";
             PhoneNo.value = "";
             JoiningDate.value = "";
+            Dob.value = "";
             Address.value = "";
             Salary.value = "";
             Status.value = "Active";
             Shift.value = "";
             Emp_Img.value = "";
+            Role.value = "";
+            UserName.value = "";
+            Password.value = "";
             imgPreview.src = "/assets/img/user-placeholder.png";
 
         }
 
 
 
-                function editEmployee(empId, name, deptId, desigId, email, phone, joinDate, address, salary, status, shift, img) {
+                function editEmployee(empId, name,dob, deptId, desigId, email, phone, joinDate, address, salary, status, shift, img,username,password,role) {
 
             document.getElementById("Emp_Id").value = empId;
 
             Name.value = name;
+            Dob.value = dob;
             DepartmentId.value = deptId;
             DesignationId.value = desigId;
             EmailId.value = email;
@@ -253,11 +298,16 @@
             Salary.value = salary;
             Status.value = status;
             Shift.value = shift;
+            
 
             Emp_Img.value = img;
             imgPreview.src = img
                 ? '/uploads/employee/' + img
                 : '/assets/img/user-placeholder.png';
+            
+            UserName.value = username;
+            Password.value = password;
+            Role.value = role;
 
             new bootstrap.Modal(document.getElementById('empModal')).show();
         }

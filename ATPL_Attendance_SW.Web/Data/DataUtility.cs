@@ -60,4 +60,17 @@ public class DataUtility
         con.Open();
         return cmd.ExecuteNonQuery();
     }
+
+    public object ExecuteScalar(string query)
+    {
+        using (SqlConnection con = new SqlConnection(_con))
+        {
+            using (SqlCommand cmd = new SqlCommand(query, con))
+            {
+                con.Open();
+                return cmd.ExecuteScalar();
+            }
+        }
+    }
+ 
 }

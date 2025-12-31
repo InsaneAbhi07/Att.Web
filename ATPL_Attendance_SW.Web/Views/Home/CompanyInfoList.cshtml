@@ -1,0 +1,224 @@
+﻿@model List<CompanyVM>
+@{
+    ViewData["Title"] = "Master Company";
+}
+
+<div class="d-flex justify-content-between mb-3">
+    <h4>Master Company</h4>
+    <button class="btn btn-primary" data-bs-toggle="modal"
+            data-bs-target="#companyModal" onclick="clearForm()">
+        <i class="ti ti-plus"></i> Edit Company
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-body table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Company</th>
+                    <th>Abbreviation</th>
+                    <th>City</th>
+                    <th>Contact</th>
+                    <th>Website</th>
+                    <th>GSTIN</th>
+                    </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model)
+                {
+                    <tr>
+                        <td>@c.CCode</td>
+                        <td>@c.CompanyName</td>
+                        <td>@c.Abbr</td>
+                        <td>@c.City</td>
+                        <td>@c.ContactNo</td>
+                        <td>@c.Website</td>
+                        <td>@c.GSTIN</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal fade" id="companyModal">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <form asp-action="SaveCompany" method="post">
+                <div class="modal-header">
+                    <h5>Edit Company details</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <input type="hidden" name="Id" id="Id" />
+
+                    <div class="row">
+                        
+                        <div class="col-md-3 mb-3">
+                            <label>Company Code</label>
+                            <select id="CCode" name="CCode" class="form-select" onchange="loadCompanyByCode(this.value)">
+                                <option value="">-- Select Company Code --</option>
+                                @foreach (var d in (List<SelectListItem>)ViewBag.CCodeList)
+                                {
+                                    <option value="@d.Text">@d.Text</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Company Name</label>
+                            <input class="form-control" name="CompanyName" id="CompanyName" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Abbr</label>
+                            <input class="form-control" name="Abbr" id="Abbr" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Address</label>
+                        <textarea class="form-control" name="Address" id="Address"></textarea>
+                    </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label>Address 2</label>
+                        <textarea class="form-control" name="Address2" id="Address2"></textarea>
+                    </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label>City</label>
+                            <input class="form-control" name="City" id="City" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>State</label>
+                            <input class="form-control" name="State" id="State" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Pincode</label>
+                            <input class="form-control" name="Pincode" id="Pincode" />
+                        </div>
+
+                        <div class="col-md-3 mb-3">
+                            <label>Country</label>
+                            <input class="form-control" name="Country" id="Country" />
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label>Telephone</label>
+                            <input class="form-control" name="Telepohne" id="Telepohne" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Contact No</label>
+                            <input class="form-control" name="ContactNo" id="ContactNo" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Email</label>
+                            <input class="form-control" name="Email" id="Email" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Website</label>
+                            <input class="form-control" name="Website" id="Website" />
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label>GSTIN</label>
+                            <input class="form-control" name="GSTIN" id="GSTIN" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Bank Name</label>
+                            <input class="form-control" name="BankName" id="BankName" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Account No</label>
+                            <input class="form-control" name="AccountNo" id="AccountNo" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>IFSC Code</label>
+                            <input class="form-control" name="IFSCCode" id="IFSCCode" />
+                        </div>
+                    </div>
+
+                    
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function clearForm(){
+            document.querySelectorAll("#companyModal input, #companyModal textarea")
+                .forEach(x => x.value = "");
+            Id.value = 0;
+        }
+
+        function editCompany(c){
+            for (const k in c){
+                if (document.getElementById(k))
+                    document.getElementById(k).value = c[k];
+            }
+            new bootstrap.Modal(document.getElementById('companyModal')).show();
+        }
+    </script>
+
+    <script>
+        function loadCompanyByCode(ccode) {
+
+            if (!ccode) {
+                clearForm();
+                return;
+            }
+
+            fetch('/Home/GetCompanyByCode?ccode=' + ccode)
+                .then(res => res.json())
+                .then(data => {
+                    if (!data) return;
+
+                    Id.value = data.id;
+                    CompanyName.value = data.companyName;
+                    Abbr.value = data.abbr;
+                    Address.value = data.address;
+                    Address2.value = data.address2;
+                    City.value = data.city;
+                    State.value = data.state;
+                    Pincode.value = data.pincode;
+                    Country.value = data.country;
+                    Telepohne.value = data.telepohne;
+                    ContactNo.value = data.contactNo;
+                    Email.value = data.email;
+                    Website.value = data.website;
+                    GSTIN.value = data.gSTIN;
+                    BankName.value = data.bankName;
+                    AccountNo.value = data.accountNo;
+                    IFSCCode.value = data.iFSCCode;
+                });
+        }
+    </script>
+
+    <script>
+        function clearForm() {
+            document.querySelectorAll(
+                '#companyModal input, #companyModal textarea'
+            ).forEach(x => x.value = "");
+            Id.value = 0;
+        }
+    </script>
+
+
+
+}

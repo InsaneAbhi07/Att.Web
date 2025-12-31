@@ -1,0 +1,13 @@
+﻿<select id="designationFilter" class="dropdown-item">
+    <option value="">All Designations</option>
+    @foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
+    {
+        <option value="@d.Value">@d.Text</option>
+    }
+</select>
+
+<select id="statusFilter" class="dropdown-item">
+    <option value="">All</option>
+    <option value="Active">Active</option>
+    <option value="Inactive">Inactive</option>
+</select>
