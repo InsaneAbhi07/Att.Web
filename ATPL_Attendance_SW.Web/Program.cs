@@ -55,14 +55,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-app.UseAuthentication();   // 👈 MUST be before Authorization
+app.UseAuthentication();  
 app.UseAuthorization();
 
 
 
-// =====================
-// ROUTING
-// =====================
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Account}/{action=Login}/{id?}");

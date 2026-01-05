@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36511.14 d17.14
+VisualStudioVersion = 17.14.36511.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATPL_Attendance_SW.Web", "ATPL_Attendance_SW.Web\ATPL_Attendance_SW.Web.csproj", "{2AA97BD7-FA32-4426-921A-DB47D7074D0E}"
 EndProject
