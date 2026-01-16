@@ -2,7 +2,9 @@
 @{
     ViewData["Title"] = "Master Designation";
 }
-
+<head>
+	<link href="~/assets/css/popup.css" rel="stylesheet" />
+</head>
 <!-- PAGE HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="page-title">Master Designation</h4>
@@ -23,7 +25,6 @@
                 <tr>
                     <th>#</th>
                     <th>Designation Name</th>
-                    <th>Status</th>
                     <th width="120">Action</th>
                 </tr>
             </thead>
@@ -33,9 +34,6 @@
                     <tr>
                         <td>@(i + 1)</td>
                         <td>@Model[i].Designation</td>
-                        <td>
-                            <span class="badge bg-success">Active</span>
-                        </td>
                         <td>
                             <button class="btn btn-sm btn-warning"
                                     onclick="editDesignation('@Model[i].Id',
@@ -96,8 +94,24 @@
     </div>
 </div>
 
+@if (TempData["Msg"] != null)
+{
+    <div class="popup-overlay" id="centerPopup">
+        <div class="popup-box">
+            <h4>Success</h4>
+            <p>@TempData["Msg"]</p>
+        </div>
+    </div>
+}
+
 @section Scripts {
     <script>
+
+             const popup = document.getElementById("centerPopup");
+            if (popup) {
+                setTimeout(() => popup.remove(), 1200);
+            }
+
         function clearForm() {
             document.getElementById("Id").value = "";
             document.getElementById("Designation").value = "";

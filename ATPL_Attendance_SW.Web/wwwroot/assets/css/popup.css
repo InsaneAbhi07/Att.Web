@@ -1,0 +1,53 @@
+﻿/* ===== CENTER POPUP ===== */
+.popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.popup-box {
+    width: 480px; /* ⬅ pehle 420px tha */
+    height: 170px; /* ⬅ pehle 420px tha */
+    background: #fff;
+    border-radius: 12px; /* thoda premium look */
+    padding: 34px 38px; /* zyada breathing space */
+    text-align: center;
+    box-shadow: 0 25px 65px rgba(0,0,0,.40);
+    animation: popupIn .25s ease;
+}
+
+
+    .popup-box h4 {
+        color: #16a34a;
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .popup-box h4 {
+        font-size: 20px;
+    }
+    .popup-box p {
+        margin: 0;
+        font-size: 15px;
+        color: #374151;
+    }
+
+@keyframes popupIn {
+    from {
+        transform: scale(.9);
+        opacity: 0
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1
+    }
+}
+
+
+
+

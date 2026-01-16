@@ -27,8 +27,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Index", "Home");
+            //if (User.Identity.IsAuthenticated)
+            //    return RedirectToAction("Index", "Home");
 
             return View();
         }
@@ -47,15 +47,18 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             if (dt.Rows.Count > 0)
             {
-                var claims = new List<Claim>
-        {
+
+            string img = dt.Rows[0]["Emp_Img"] == DBNull.Value
+            ? ""
+            : dt.Rows[0]["Emp_Img"].ToString();
+
+             var claims = new List<Claim>
+            {
             new Claim(ClaimTypes.Name, dt.Rows[0]["UserName"].ToString()),
             new Claim(ClaimTypes.Role, dt.Rows[0]["Role"].ToString()),
-            new Claim(ClaimTypes.Role, dt.Rows[0]["Emp_Img"].ToString())
-        };
+            new Claim("UserImage", img)           };
 
-                var identity = new ClaimsIdentity(
-                claims, "AttendanceCookie");
+                var identity = new ClaimsIdentity(claims, "AttendanceCookie");
 
                 await HttpContext.SignInAsync(
                     "AttendanceCookie", 

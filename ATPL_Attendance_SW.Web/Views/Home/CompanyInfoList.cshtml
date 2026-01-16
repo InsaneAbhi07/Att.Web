@@ -1,224 +1,490 @@
 ﻿@model List<CompanyVM>
+
 @{
-    ViewData["Title"] = "Master Company";
+	ViewData["Title"] = "Master Company";
 }
 
-<div class="d-flex justify-content-between mb-3">
-    <h4>Master Company</h4>
-    <button class="btn btn-primary" data-bs-toggle="modal"
-            data-bs-target="#companyModal" onclick="clearForm()">
-        <i class="ti ti-plus"></i> Edit Company
-    </button>
+<head>
+	<link href="~/assets/css/popup.css" rel="stylesheet" />
+</head>
+<style>
+
+	:root {
+		--brand: orangered; /* template blue (soft) */
+		--brand-dark: #1e3a8a;
+		--border: #e5e7eb;
+		--bg-soft: #f9fafb;
+		--bg-section: #ffffff;
+		--bg-header: #f1f5f9;
+		--text-dark: #1f2937;
+		--text-muted: #6b7280;
+	}
+
+	/* ===== MODAL BODY ===== */
+	.modal-body {
+		max-height: 70vh;
+		overflow-y: auto;
+		background: #f8fafc;
+	}
+
+	/* ===== FORM SECTION ===== */
+	.form-section {
+		background: var(--bg-section);
+		border: 1px solid var(--border);
+		border-radius: 8px;
+		padding: 14px;
+		margin-bottom: 14px;
+	}
+
+		/* ===== SECTION HEADING ===== */
+		.form-section h6 {
+			font-size: 13px;
+			font-weight: 700;
+			color: var(--brand-dark);
+			margin-bottom: 12px;
+			padding: 7px 10px;
+			background: var(--bg-header);
+			border-left: 4px solid var(--brand);
+			border-radius: 6px;
+		}
+
+	/* ===== LABELS ===== */
+	label {
+		font-size: 12.5px;
+		font-weight: 600;
+		color: var(--text-muted);
+		margin-bottom: 3px;
+	}
+
+	/* ===== INPUTS ===== */
+	.form-control,
+	.form-select {
+		height: 34px;
+		font-size: 13.5px;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+		background: #ffffff;
+		color: var(--text-dark);
+	}
+
+	textarea.form-control {
+		height: auto;
+	}
+
+	/* ===== FOCUS ===== */
+	.form-control:focus,
+	.form-select:focus {
+		border-color: var(--brand);
+		box-shadow: 0 0 0 2px rgba(59,130,246,.15);
+	}
+
+	/* ===== COLUMN DIVIDER (SUBTLE) ===== */
+	.form-section .row > div {
+		position: relative;
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+		.form-section .row > div:not(:last-child)::after {
+			content: "";
+			position: absolute;
+			top: 10px;
+			bottom: 10px;
+			right: 0;
+			width: 1px;
+			background: #f1f5f9;
+		}
+
+	/* ===== TABLE ===== */
+	.table thead th {
+		background: var(--bg-header);
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--text-dark);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.table tbody tr:hover {
+		background: #f8fafc;
+	}
+
+	/* ===== MODAL HEADER / FOOTER ===== */
+	.modal-header {
+		background: var(--bg-header);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.modal-title {
+		font-weight: 700;
+		color: var(--text-dark);
+	}
+
+	.modal-footer {
+		background: var(--bg-soft);
+		border-top: 1px solid var(--border);
+		padding: 14px 20px;
+	}
+
+	/* ===== SAVE BUTTON ===== */
+	.btn-action {
+		min-width: 160px;
+		height: 42px;
+		border-radius: 8px;
+		font-size: 14.5px;
+		font-weight: 700;
+	}
+
+	.btn-save {
+		background: linear-gradient(135deg, orangered);
+		color: #ffffff;
+		border: none;
+	}
+
+		.btn-save:hover {
+			background: linear-gradient(135deg, #2563eb, #1e40af);
+			color: #ffffff;
+		}
+
+
+</style>
+
+
+<!-- ================= HEADER ================= -->
+<div class="d-flex justify-content-between align-items-center page-header mb-3">
+	<h5>Master Company</h5>
+	<button class="btn btn-primary btn-sm"
+			data-bs-toggle="modal"
+			data-bs-target="#companyModal"
+			onclick="clearForm()">
+		Edit Company
+	</button>
 </div>
 
+<!-- ================= TABLE ================= -->
 <div class="card">
-    <div class="card-body table-responsive">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>Company</th>
-                    <th>Abbreviation</th>
-                    <th>City</th>
-                    <th>Contact</th>
-                    <th>Website</th>
-                    <th>GSTIN</th>
-                    </tr>
-            </thead>
-            <tbody>
-                @foreach (var c in Model)
-                {
-                    <tr>
-                        <td>@c.CCode</td>
-                        <td>@c.CompanyName</td>
-                        <td>@c.Abbr</td>
-                        <td>@c.City</td>
-                        <td>@c.ContactNo</td>
-                        <td>@c.Website</td>
-                        <td>@c.GSTIN</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+	<div class="card-body table-responsive">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>Code</th>
+					<th>Company</th>
+					<th>City</th>
+					<th>Contact</th>
+					<th>GSTIN</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var c in Model)
+				{
+					<tr>
+						<td>@c.CCode</td>
+						<td>@c.CompanyName</td>
+						<td>@c.City</td>
+						<td>@c.ContactNo</td>
+						<td>@c.GSTIN</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
 </div>
 
-<!-- MODAL -->
+<!-- ================= MODAL ================= -->
 <div class="modal fade" id="companyModal">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content">
-            <form asp-action="SaveCompany" method="post">
-                <div class="modal-header">
-                    <h5>Edit Company details</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
 
-                <div class="modal-body">
-                    <input type="hidden" name="Id" id="Id" />
+			<form asp-action="SaveCompany" method="post">
 
-                    <div class="row">
-                        
-                        <div class="col-md-3 mb-3">
-                            <label>Company Code</label>
-                            <select id="CCode" name="CCode" class="form-select" onchange="loadCompanyByCode(this.value)">
-                                <option value="">-- Select Company Code --</option>
-                                @foreach (var d in (List<SelectListItem>)ViewBag.CCodeList)
-                                {
-                                    <option value="@d.Text">@d.Text</option>
-                                }
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Company Name</label>
-                            <input class="form-control" name="CompanyName" id="CompanyName" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>Abbr</label>
-                            <input class="form-control" name="Abbr" id="Abbr" />
-                        </div>
-                    </div>
+				<div class="modal-header">
+					<h5 class="modal-title">Company Details</h5>
+					<button class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label>Address</label>
-                        <textarea class="form-control" name="Address" id="Address"></textarea>
-                    </div>
+				<div class="modal-body">
+					<input type="hidden" id="Id" name="Id" />
 
-                        <div class="col-md-6 mb-3">
-                            <label>Address 2</label>
-                        <textarea class="form-control" name="Address2" id="Address2"></textarea>
-                    </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label>City</label>
-                            <input class="form-control" name="City" id="City" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>State</label>
-                            <input class="form-control" name="State" id="State" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>Pincode</label>
-                            <input class="form-control" name="Pincode" id="Pincode" />
-                        </div>
+					<!-- ===== Company Details ===== -->
+					<div class="form-section">
+						<h6>Company Details</h6>
 
-                        <div class="col-md-3 mb-3">
-                            <label>Country</label>
-                            <input class="form-control" name="Country" id="Country" />
-                        </div>
+						<div class="row">
+							<div class="col-md-2 mb-2">
+								<label>Company Code</label>
+								<select id="CCode" name="CCode" class="form-select"
+										onchange="loadCompanyByCode(this.value)">
+									<option value="">Select</option>
+									@foreach (var d in (List<SelectListItem>)ViewBag.CCodeList)
+									{
+										<option value="@d.Text">@d.Text</option>
+									}
+								</select>
+							</div>
 
-                    </div>
+							<div class="col-md-8 mb-2">
+								<label>Company Name</label>
+								<input class="form-control" id="CompanyName" name="CompanyName" readonly />
+							</div>
 
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label>Telephone</label>
-                            <input class="form-control" name="Telepohne" id="Telepohne" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>Contact No</label>
-                            <input class="form-control" name="ContactNo" id="ContactNo" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>Email</label>
-                            <input class="form-control" name="Email" id="Email" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>Website</label>
-                            <input class="form-control" name="Website" id="Website" />
-                        </div>
-                    </div>
+							<div class="col-md-2 mb-2">
+								<label>Abbreviation</label>
+								<input class="form-control" id="Abbr" name="Abbr" />
+							</div>
+						</div>
+					</div>
 
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label>GSTIN</label>
-                            <input class="form-control" name="GSTIN" id="GSTIN" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>Bank Name</label>
-                            <input class="form-control" name="BankName" id="BankName" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>Account No</label>
-                            <input class="form-control" name="AccountNo" id="AccountNo" />
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label>IFSC Code</label>
-                            <input class="form-control" name="IFSCCode" id="IFSCCode" />
-                        </div>
-                    </div>
+					<!-- ===== Address Details ===== -->
+					<div class="form-section">
+						<h6>Address Details</h6>
 
-                    
-                </div>
+						<div class="row">
+							<div class="col-md-3 mb-2">
+								<label>Country</label>
+								<select id="Country" name="Country" class="form-select"
+										onchange="loadStates(this.value)">
+									<option value="">Select Country</option>
+									<option value="India">India</option>
+									<option value="America">America</option>
+									<option value="UK">UK</option>
+								</select>
+							</div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-primary">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
+							<div class="col-md-3 mb-2">
+								<label>State</label>
+								<select class="form-select"
+										name="StateId"
+										id="StateId"
+										onchange="loadCities(this.value)">
+									<option value="">-- Select State --</option>
+									@foreach (var d in (List<SelectListItem>)ViewBag.StateList)
+									{
+										<option value="@d.Value">@d.Text</option>
+									}
+								</select>
+							</div>
+
+							<div class="col-md-3 mb-2">
+								<label>City</label>
+								<select class="form-select" name="CityId" id="CityId">
+									<option value="">-- Select City --</option>
+								</select>
+							</div>
+
+
+							<div class="col-md-3 mb-2">
+								<label>Pincode</label>
+								<input class="form-control" id="Pincode" name="Pincode" />
+							</div>
+						</div>
+
+						<div class="row">
+						   
+
+							<div class="col-md-6 mb-2">
+								<label>Address</label>
+								<input type="text" class="form-control" id="Address" name="Address" rows="2"></input>
+							</div>
+
+							<div class="col-md-6 mb-2">
+								<label>Address 2</label>
+								<input type="text" class="form-control" id="Address2" name="Address2" rows="2"></textarea>
+							</div>
+						</div>
+					</div>
+
+					<!-- ===== Contact Details ===== -->
+					<div class="form-section">
+						<h6>Contact Details</h6>
+
+						<div class="row">
+							<div class="col-md-2 mb-2">
+								<label>Telephone</label>
+								<input class="form-control" id="Telepohne" name="Telepohne" />
+							</div>
+
+							<div class="col-md-2 mb-2">
+								<label>Contact No</label>
+								<input class="form-control" id="ContactNo" name="ContactNo" />
+							</div>
+
+							<div class="col-md-2 mb-2">
+								<label>Email</label>
+								<input class="form-control" id="Email" name="Email" />
+							</div>
+
+							<div class="col-md-3 mb-2">
+								<label>GSTIN</label>
+								<input class="form-control" id="GSTIN" name="GSTIN" />
+							</div>
+
+							<div class="col-md-3 mb-2">
+								<label>Website</label>
+								<input class="form-control" id="Website" name="Website" />
+							</div>
+						</div>
+					</div>
+
+					<!-- ===== Bank Details ===== -->
+					<div class="form-section">
+						<h6>Bank Details</h6>
+
+						<div class="row">
+							<div class="col-md-4 mb-2">
+								<label>Bank Name</label>
+								<input class="form-control" id="BankName" name="BankName" />
+							</div>
+
+							<div class="col-md-4 mb-2">
+								<label>Account No</label>
+								<input class="form-control" id="AccountNo" name="AccountNo" />
+							</div>
+
+							<div class="col-md-4 mb-2">
+								<label>IFSC Code</label>
+								<input class="form-control" id="IFSCCode" name="IFSCCode" />
+							</div>
+						</div>
+					</div>
+				</div>
+
+					<div class="modal-footer">
+					<button type="submit"
+							class="btn btn-action btn-save">
+						Save
+					</button>
+
+					</div>
+
+			</form>
+		</div>
+	</div>
 </div>
 
-@section Scripts {
-    <script>
-        function clearForm(){
-            document.querySelectorAll("#companyModal input, #companyModal textarea")
-                .forEach(x => x.value = "");
-            Id.value = 0;
-        }
-
-        function editCompany(c){
-            for (const k in c){
-                if (document.getElementById(k))
-                    document.getElementById(k).value = c[k];
-            }
-            new bootstrap.Modal(document.getElementById('companyModal')).show();
-        }
-    </script>
-
-    <script>
-        function loadCompanyByCode(ccode) {
-
-            if (!ccode) {
-                clearForm();
-                return;
-            }
-
-            fetch('/Home/GetCompanyByCode?ccode=' + ccode)
-                .then(res => res.json())
-                .then(data => {
-                    if (!data) return;
-
-                    Id.value = data.id;
-                    CompanyName.value = data.companyName;
-                    Abbr.value = data.abbr;
-                    Address.value = data.address;
-                    Address2.value = data.address2;
-                    City.value = data.city;
-                    State.value = data.state;
-                    Pincode.value = data.pincode;
-                    Country.value = data.country;
-                    Telepohne.value = data.telepohne;
-                    ContactNo.value = data.contactNo;
-                    Email.value = data.email;
-                    Website.value = data.website;
-                    GSTIN.value = data.gSTIN;
-                    BankName.value = data.bankName;
-                    AccountNo.value = data.accountNo;
-                    IFSCCode.value = data.iFSCCode;
-                });
-        }
-    </script>
-
-    <script>
-        function clearForm() {
-            document.querySelectorAll(
-                '#companyModal input, #companyModal textarea'
-            ).forEach(x => x.value = "");
-            Id.value = 0;
-        }
-    </script>
-
-
-
+@if (TempData["Msg"] != null)
+{
+	<div class="popup-overlay" id="centerPopup">
+		<div class="popup-box">
+			<h4>Success</h4>
+			<p>@TempData["Msg"]</p>
+		</div>
+	</div>
 }
+
+
+	<script>
+
+		   const popup = document.getElementById("centerPopup");
+			if (popup) {
+				setTimeout(() => popup.remove(), 1200);
+			}
+
+	// ===== CLEAR FORM =====
+	function clearForm() {
+
+		document.querySelectorAll('#companyModal input, #companyModal textarea')
+			.forEach(x => x.value = '');
+
+		document.getElementById("StateId").value = "";
+		document.getElementById("CityId").innerHTML = '<option value="">-- Select City --</option>';
+
+		CompanyName.readOnly = true;
+		Id.value = 0;
+		setButtonMode(false);
+	}
+
+	// ===== LOAD COMPANY =====
+	function loadCompanyByCode(ccode) {
+
+		if (!ccode) {
+			clearForm();
+			return;
+		}
+
+		fetch('/Home/GetCompanyByCode?ccode=' + ccode)
+			.then(r => r.json())
+			.then(d => {
+
+				if (!d) return;
+
+				Id.value = d.id;
+				CompanyName.value = d.companyName;
+				CompanyName.readOnly = false;
+				Abbr.value = d.abbr;
+
+				Country.value = d.country;
+				Address.value = d.address;
+				Address2.value = d.address2;
+				Pincode.value = d.pincode;
+
+				Telepohne.value = d.telepohne;
+				ContactNo.value = d.contactNo;
+				Email.value = d.email;
+				GSTIN.value = d.gstin;
+				Website.value = d.website;
+
+				BankName.value = d.bankName;
+				AccountNo.value = d.accountNo;
+				IFSCCode.value = d.ifscCode;
+
+				// ✅ STATE FIRST
+				loadStates(d.stateId, d.cityId);
+
+				setButtonMode(true);
+			});
+	}
+
+	// ===== LOAD STATES =====
+	function loadStates(selectedStateId, selectedCityId) {
+
+		const stateDDL = document.getElementById("StateId");
+		const cityDDL = document.getElementById("CityId");
+
+		stateDDL.innerHTML = '<option value="">-- Select State --</option>';
+		cityDDL.innerHTML = '<option value="">-- Select City --</option>';
+
+		fetch('/Home/LoadStates')
+			.then(r => r.json())
+			.then(data => {
+
+				data.forEach(x => {
+					stateDDL.innerHTML +=
+						`<option value="${x.value}">${x.text}</option>`;
+				});
+
+				if (selectedStateId) {
+					stateDDL.value = selectedStateId;
+					loadCities(selectedStateId, selectedCityId);
+				}
+			});
+	}
+
+	// ===== LOAD CITIES =====
+	function loadCities(stateId, selectedCityId) {
+
+		const cityDDL = document.getElementById("CityId");
+		cityDDL.innerHTML = '<option value="">-- Select City --</option>';
+
+		if (!stateId) return;
+
+		fetch('/Home/LoadCities?stateId=' + stateId)
+			.then(r => r.json())
+			.then(data => {
+
+				data.forEach(x => {
+					cityDDL.innerHTML +=
+						`<option value="${x.value}">${x.text}</option>`;
+				});
+
+				if (selectedCityId) {
+					cityDDL.value = selectedCityId;
+				}
+			});
+	}
+
+	// ===== BUTTON MODE =====
+	function setButtonMode(isEdit) {
+		document.querySelector('.btn-save').innerText =
+			isEdit ? 'Update' : 'Save';
+	}
+
+</script>

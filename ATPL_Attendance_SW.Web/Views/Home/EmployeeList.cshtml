@@ -3,18 +3,113 @@
     ViewData["Title"] = "Master Employee";
 }
 
-<head>
-	<link href="~/assets/css/style.css" rel="stylesheet" />
-</head>
-<!-- PAGE HEADER -->
+<style>
+    :root {
+        --brand: #2563eb;
+        --brand-dark: #1e40af;
+        --border: #e5e7eb;
+        --bg-soft: #f8fafc;
+        --text: #1f2937;
+        --muted: #6b7280;
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        padding: 10px 14px;
+        background: #f1f5f9;
+        border-left: 5px solid var(--brand);
+        border-radius: 6px;
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        background: #f9fafb;
+    }
+
+    .form-section {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 14px;
+    }
+
+        .form-section h6 {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--brand-dark);
+            margin-bottom: 10px;
+            padding: 6px 10px;
+            background: #eef2ff;
+            border-left: 4px solid var(--brand);
+            border-radius: 6px;
+        }
+
+    label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+
+    .form-control, .form-select {
+        height: 36px;
+        font-size: 13.5px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+    }
+
+    textarea.form-control {
+        height: auto;
+    }
+
+    .emp-image-card {
+        background: linear-gradient(180deg,#eef2ff,#ffffff);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+    }
+
+        .emp-image-card img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #dbeafe;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+    .modal-footer {
+        background: #f8fafc;
+        border-top: 1px solid var(--border);
+        padding: 14px 20px;
+    }
+</style>
+
+<!-- HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h4 class="page-title">Master Employee</h4>
-
     <button class="btn btn-primary"
             data-bs-toggle="modal"
             data-bs-target="#empModal"
             onclick="clearForm()">
-        <i class="ti ti-plus"></i> Add Employee
+        + Add Employee
     </button>
 </div>
 
@@ -30,9 +125,9 @@
                     <th>Designation</th>
                     <th>Phone</th>
                     <th>Salary</th>
-                    <th>Emp. Image</th>
+                    <th>Image</th>
                     <th>Status</th>
-                    <th width="120">Action</th>
+                    <th width="150">Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -47,284 +142,268 @@
                         <td>@e.Salary</td>
                         <td>
                             <img src="@(string.IsNullOrEmpty(e.Emp_Img)
-                                ? Url.Content("~/assets/img/user-placeholder.png")
-                                : Url.Content("~/uploads/employee/" + e.Emp_Img))"
-                                 class="rounded-circle"
-                                 style="width:35px;height:35px;object-fit:cover;" />
-                        </td>
-
-                        <td>
-                            <span class="badge @(e.Status == "Active" ? "bg-success" : "bg-secondary")">
-                                @e.Status
-                            </span>
-                        </td>
-                        <td>
-
-                            <button class="btn btn-sm btn-warning"
-                                    onclick="editEmployee(
-                                    '@e.Emp_Id',
-                                    '@Html.Raw(e.Name)',
-                                    '@Html.Raw(e.DOB)',
-                                    '@e.DepartmentId',
-                                    '@e.DesignationId',
-                                    '@Html.Raw(e.EmailId)',
-                                    '@Html.Raw(e.PhoneNo)',
-                                    '@Html.Raw(e.JoiningDate)',
-                                    '@Html.Raw(e.Address)',
-                                    '@e.Salary',
-                                    '@e.Status',
-                                    '@Html.Raw(e.Shift)',
-                                    '@Html.Raw(e.Emp_Img)',
-                                    '@Html.Raw(e.UserName)',
-                                    '@Html.Raw(e.Password)',
-                                    '@Html.Raw(e.Role)'
-                                    )">
-                                <i class="ti ti-edit"></i>
-                            </button>   
+                                                                 ? Url.Content("~/assets/img/user-placeholder.png")
+                                                                 : Url.Content("~/uploads/employee/" + e.Emp_Img))"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;" />
+                    </td>
+                    <td>
+                        <span class="badge @(e.Status == "Active" ? "bg-success" : "bg-secondary")">
+                            @e.Status
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning"
+                                onclick='editEmployee({
+                                        empId:"@e.Emp_Id",
+                                        name:"@Html.Raw(e.Name)",
+                                        dob:"@e.DOB",
+                                        deptId:"@e.DepartmentId",
+                                        desigId:"@e.DesignationId",
+                                        email:"@e.EmailId",
+                                        phone:"@e.PhoneNo",
+                                        joiningDate:"@e.JoiningDate",
+                                        address:"@Html.Raw(e.Address)",
+                                        salary:"@e.Salary",
+                                        status:"@e.Status",
+                                        shiftId:"@e.ShiftId",
+                                        img:"@e.Emp_Img",
+                                        username:"@e.UserName",
+                                        password:"@e.Password",
+                                        role:"@e.Role"
+                                    })'>
+                            Edit
+                        </button>
 
                             <form asp-action="DeleteEmployee"
                                   method="post"
-                                  style="display:inline">
+                                  style="display:inline"
+                                  onsubmit="return confirm('Delete this employee?');">
                                 <input type="hidden" name="empId" value="@e.Emp_Id" />
-                                <button class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Delete this employee?')">
-                                    <i class="ti ti-trash"></i>
-                                </button>
+                                <button class="btn btn-sm btn-danger">Delete</button>
                             </form>
                         </td>
                     </tr>
-                }
+                                }
             </tbody>
         </table>
     </div>
 </div>
 
-<!-- ADD / EDIT MODAL -->
-<div class="modal fade" id="empModal" tabindex="-1">
+<!-- MODAL -->
+<div class="modal fade"
+     id="empModal"
+     data-bs-backdrop="static"
+     data-bs-keyboard="false">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
 
-            <div class="modal-header">
-                <h5 class="modal-title">Add / Edit Employee</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+            <form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
 
-            @* <form asp-action="SaveEmployee" method="post"> *@
-                <form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
-                <div class="col-md-4 mb-3">
-                    <input type="hidden" name="Emp_Id" id="Emp_Id" />
+                <input type="hidden" name="Emp_Id" id="Emp_Id" />
+                <input type="hidden" name="Emp_Img" id="Emp_Img" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Add / Edit Employee</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
+
                 <div class="modal-body">
-
                     <div class="row">
-                        <div class="col-md-9">
-                            <label class="form-label">Employee Full Name</label>
-                            <input type="text"
-                                   class="form-control"
-                                   name="Name"
-                                   id="Name"
-                                   required />
+
+                        <!-- IMAGE -->
+                        <div class="col-md-4">
+                            <div class="emp-image-card">
+                                <img id="imgPreview"
+                                     src="~/assets/img/user-placeholder.png" />
+                                <input type="file"
+                                       class="form-control"
+                                       name="EmpImage"
+                                       onchange="previewImage(this)" />
+
+                                <!-- STATIC INFO -->
+                                <div class="mt-3 text-start" style="font-size:13px">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-semibold">Module</span>
+                                        <span>Employee</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-semibold">Access</span>
+                                        <span class="badge bg-success">Enabled</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-semibold">Profile</span>
+                                        <span>HRMS</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="col-md-3">
-                            <label class="form-label">Date of Birth</label>
-                            <input type="date"
-                                   class="form-control"
-                                   name="Dob"
-                                   id="Dob" />
+                        <!-- FORM -->
+                        <div class="col-md-8">
+
+                            <div class="form-section">
+                                <h6>Basic Information</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <label>Full Name</label>
+                                        <input class="form-control" name="Name" id="Name" />
+                                    </div>
+                                        <div class="col-md-3 mb-2">
+                                            <label>DOB</label>
+                                            <input type="date"
+                                                   class="form-control"
+                                                   name="Dob"
+                                                   id="Dob" />
+                                        </div>
+
+                                        <div class="col-md-3 mb-2">
+                                            <label>Date of Joining</label>
+                                            <input type="date"
+                                                   class="form-control"
+                                                   name="JoiningDate"
+                                                   id="JoiningDate" />
+                                        </div>
+
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h6>Work Details</h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <label>Department</label>
+                                        <select class="form-select" name="DepartmentId" id="DepartmentId">
+                                            @foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
+                                            {
+                                                <option value="@d.Value">@d.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label>Designation</label>
+                                        <select class="form-select" name="DesignationId" id="DesignationId">
+                                            @foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
+                                            {
+                                                <option value="@d.Value">@d.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label>Shift</label>
+                                        <select class="form-select" name="ShiftId" id="ShiftId">
+                                            @foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
+                                            {
+                                                <option value="@d.Value">@d.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h6>Contact & Login</h6>
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <label>Email</label>
+                                        <input class="form-control" name="EmailId" id="EmailId" />
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label>Phone</label>
+                                        <input class="form-control" name="PhoneNo" id="PhoneNo" />
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label>Salary</label>
+                                        <input class="form-control" name="Salary" id="Salary" />
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4 mb-2">
+                                        <label>User Name</label>
+                                        <input class="form-control" name="UserName" id="UserName" />
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label>Password</label>
+                                        <input type="password" class="form-control" name="Password" id="Password" />
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <label>Status</label>
+                                        <select class="form-select" name="Status" id="Status">
+                                            <option>Active</option>
+                                            <option>Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <label>Address</label>
+                                <textarea class="form-control" rows="2" name="Address" id="Address"></textarea>
+                            </div>
+
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-4 mb-3 text-center">
-                            <label class="form-label d-block">Employee Photo</label>
-
-                            <img id="imgPreview"
-                                 src="~/assets/img/user-placeholder.png"
-                                 class="rounded-circle mb-2"
-                                 style="width:120px;height:120px;object-fit:cover;border:1px solid #ddd;" />
-
-                            <input type="file" class="form-control" name="EmpImage" accept="image/*" onchange="previewImage(this)" />
-                            <input type="hidden" name="Emp_Img" id="Emp_Img" />
-
-                        </div>
-                    </div>
-
-
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Department</label>
-                            <select class="form-select" name="DepartmentId" id="DepartmentId">
-                                @foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
-                                {
-                                    <option value="@d.Value">@d.Text</option>
-                                }
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Designation</label>
-                            <select class="form-select" name="DesignationId" id="DesignationId">
-                                @foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
-                                {
-                                    <option value="@d.Value">@d.Text</option>
-                                }
-                            </select>
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" class="form-control" name="EmailId" id="EmailId" />
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Phone</label>
-                            <input type="text" class="form-control" name="PhoneNo" id="PhoneNo" />
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Joining Date</label>
-                            <input type="text"
-                                   class="form-control datetimepicker"
-                                   name="JoiningDate"
-                                   id="JoiningDate" />
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Salary</label>
-                            <input type="number" class="form-control" name="Salary" id="Salary" />
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label class="form-label">Shift</label>
-                            <input type="text" class="form-control" name="Shift" id="Shift" />
-                        </div>
-                    </div>
-
-                    <!---USERID--->
-
-                    <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label>User Name</label>
-                            <input type="text" class="form-control" name="UserName" id="UserName" />
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label>Password</label>
-                            <input type="password" class="form-control" name="Password" id="Password" />
-                        </div>
-
-                        <div class="col-md-3 mb-3">
-                            <label>User Role</label>
-                            <select class="form-select" name="Role" id="Role">
-                                <option value="Admin">Admin</option>
-                                <option value="User">User</option>
-                            </select>
-                        </div>
-                    </div>
-
-
-                    <div class="mb-3">
-                        <label class="form-label">Address</label>
-                        <textarea class="form-control" rows="2" name="Address" id="Address"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" name="Status" id="Status">
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                        </select>
-                    </div>
-
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button"
-                            class="btn btn-light"
-                            data-bs-dismiss="modal">
-                        Cancel
-                    </button>
-                    <button type="submit"
-                            class="btn btn-primary">
-                        Save
-                    </button>
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Save</button>
                 </div>
-            </form>
 
+            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-               function clearForm() {
-            document.getElementById("Emp_Id").value = ""; 
-            Name.value = "";
-            DepartmentId.selectedIndex = 0;
-            DesignationId.selectedIndex = 0;
-            EmailId.value = "";
-            PhoneNo.value = "";
-            JoiningDate.value = "";
-            Dob.value = "";
-            Address.value = "";
-            Salary.value = "";
-            Status.value = "Active";
-            Shift.value = "";
-            Emp_Img.value = "";
-            Role.value = "";
-            UserName.value = "";
-            Password.value = "";
-            imgPreview.src = "/assets/img/user-placeholder.png";
-
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => imgPreview.src = e.target.result;
+                reader.readAsDataURL(input.files[0]);
+            }
         }
 
+        function clearForm() {
+            document.querySelectorAll('#empModal input, #empModal textarea').forEach(x => x.value = "");
+            DepartmentId.selectedIndex = 0;
+            DesignationId.selectedIndex = 0;
+            ShiftId.selectedIndex = 0;
+            Status.value = "Active";
+            imgPreview.src = "/assets/img/user-placeholder.png";
+        }
 
-
-                function editEmployee(empId, name,dob, deptId, desigId, email, phone, joinDate, address, salary, status, shift, img,username,password,role) {
-
-            document.getElementById("Emp_Id").value = empId;
-
-            Name.value = name;
-            Dob.value = dob;
-            DepartmentId.value = deptId;
-            DesignationId.value = desigId;
-            EmailId.value = email;
-            PhoneNo.value = phone;
-            JoiningDate.value = joinDate;
-            Address.value = address;
-            Salary.value = salary;
-            Status.value = status;
-            Shift.value = shift;
-            
-
-            Emp_Img.value = img;
-            imgPreview.src = img
-                ? '/uploads/employee/' + img
-                : '/assets/img/user-placeholder.png';
-            
-            UserName.value = username;
-            Password.value = password;
-            Role.value = role;
+        function editEmployee(e) {
+            Emp_Id.value = e.empId;
+            Name.value = e.name;
+            Dob.value = e.dob;
+            JoiningDate.value = e.joiningDate;
+            DepartmentId.value = e.deptId;
+            DesignationId.value = e.desigId;
+            EmailId.value = e.email;
+            PhoneNo.value = e.phone;
+            Address.value = e.address;
+            Salary.value = e.salary;
+            Status.value = e.status;
+            ShiftId.value = e.shiftId;
+            UserName.value = e.username;
+            Password.value = e.password;
+            Emp_Img.value = e.img;
+            imgPreview.src = e.img ? '/uploads/employee/' + e.img : '/assets/img/user-placeholder.png';
 
             new bootstrap.Modal(document.getElementById('empModal')).show();
         }
 
+              const empModalEl = document.getElementById('empModal');
 
+        empModalEl.addEventListener('hidden.bs.modal', function () {
+
+            // remove black overlay
+            document.querySelectorAll('.modal-backdrop')
+                .forEach(b => b.remove());
+
+            // restore body scroll
+            document.body.classList.remove('modal-open');
+            document.body.style = '';
+        });
     </script>
-
-    <script>
-        function previewImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    document.getElementById("imgPreview").src = e.target.result;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-    </script>
-
 }

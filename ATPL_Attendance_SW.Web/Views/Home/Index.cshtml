@@ -6,6 +6,9 @@
 }
 
 <style>
+	/* .body{
+	font-family:'Californian FB'
+	} */
 	.filter-area {
 		background: rgba(255,255,255,0.15);
 		padding: 6px;
@@ -62,6 +65,7 @@
 
 		.glass-card h3 {
 			font-weight: 700;
+			font-family:'Californian FB'
 			margin: 0;
 		}
 
@@ -147,13 +151,13 @@
 		}
 
 		.employee-card {
-    border-radius: 12px;
-    overflow: hidden;
+	border-radius: 12px;
+	overflow: hidden;
 }
 
 .employee-header {
-    background: linear-gradient(135deg, #4f46e5, #06b6d4);
-    padding: 14px 18px;
+	background: linear-gradient(135deg, #4f46e5, #06b6d4);
+	padding: 14px 18px;
 }
 
 
@@ -174,13 +178,14 @@
 			@{
 				var userImage = User.FindFirst("UserImage")?.Value;
 				var imagePath = string.IsNullOrWhiteSpace(userImage)
-				? Url.Content("~/assets/img/user-placeholder.png")
+				? Url.Content("~/assets/img/profiles.JPG")
 				: Url.Content("~/uploads/employee/" + userImage);
 			}
-
+.
 			<span class="avatar avatar-xl">
 				<img src="@imagePath" class="rounded-circle" />
 			</span>
+
 
 			<div class="ms-3">
 				<h3 class="mb-1">
@@ -221,8 +226,8 @@
 				<span class="avatar bg-primary mb-2">
 					<i class="ti ti-users"></i>
 				</span>
-				<h6>Total Registered Employees</h6>
-				<h3>154</h3>
+				<h6>Total Registered Employees</h6>  
+				<h3>@ViewBag.TotalR_E</h3>
 			</div>
 		</div>
 	</div>
@@ -234,7 +239,7 @@
 					<i class="ti ti-calendar"></i>
 				</span>
 				<h6>Total Active Employee</h6>
-				<h3>120</h3>
+				<h3>@ViewBag.ActiveE</h3>
 			</div>
 		</div>
 	</div>
@@ -541,7 +546,13 @@
 
 						<div class="col-md-3 mb-3">
 							<label>Shift</label>
-							<input type="text" class="form-control" name="Shift" id="Shift" />
+							<select class="form-select" name="ShiftId" id="ShiftId">
+								@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
+								{
+									<option value="@d.Value">@d.Text</option>
+								}
+							</select>
+
 						</div>
 					</div>
 

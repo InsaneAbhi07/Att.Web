@@ -1,0 +1,320 @@
+﻿@using ATPL_Attendance_SW.Web.Models
+
+@{
+    var states = ViewBag.States as List<MasterStateVM>;
+    var cities = ViewBag.Cities as List<MasterCityVM>;
+}
+	<link href="~/assets/css/popup.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #16a34a;
+            --border: #e5e7eb;
+            --bg-soft: #f8fafc;
+            --text-dark: #1f2937;
+        }
+
+        /* ===== PAGE TITLE ===== */
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            padding: 10px 14px;
+            background: var(--bg-soft);
+            border-left: 5px solid var(--primary);
+            border-radius: 6px;
+            color: var(--text-dark);
+        }
+
+        /* ===== SECTION TITLES ===== */
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: #eef2ff;
+            color: #1e3a8a;
+        }
+
+            .section-title.success {
+                background: #ecfdf5;
+                color: #065f46;
+            }
+
+        /* ===== TABLE STYLING ===== */
+        .table {
+            background: #fff;
+            border: 1px solid var(--border);
+        }
+
+            .table thead th {
+                background: var(--bg-soft);
+                font-weight: 700;
+                font-size: 14px;
+                border-bottom: 2px solid var(--border);
+                color: var(--text-dark);
+            }
+
+            .table td,
+            .table th {
+                vertical-align: middle;
+                padding: 8px 10px;
+            }
+
+            .table tbody tr:nth-child(even) {
+                background: #fafafa;
+            }
+
+            .table tbody tr:hover {
+                background: #eef2ff;
+            }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        /* ===== MODALS ===== */
+        .modal-header {
+            background: var(--bg-soft);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-footer {
+            background: #f9fafb;
+            border-top: 1px solid var(--border);
+        }
+    </style>
+
+<!-- ================= HEADER ================= -->
+<div class="d-flex justify-content-between mb-3">
+    <h2 class="page-title">State & City Master</h2>
+</div>
+
+<div class="row">
+
+    <!-- ================= STATE LIST ================= -->
+    <div class="col-md-6">
+        <div class="d-flex justify-content-between mb-2">
+            <h4 class="section-title">State List</h4>
+            <button class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#stateModal"
+                    onclick="clearState()">
+                + Add State
+            </button>
+        </div>
+
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>SNo</th>
+                    <th>State</th>
+                    <th width="150">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < states.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@states[i].State</td>
+                        <td>
+                            <button class="btn btn-warning btn-sm edit-state"
+                                    data-id="@states[i].Id"
+                                    data-state="@states[i].State">
+                                Edit
+                            </button>
+
+                            <form asp-action="DeleteState"
+                                  method="post"
+                                  style="display:inline"
+                                  onsubmit="return confirm('Delete this State?');">
+                                <input type="hidden" name="id" value="@states[i].Id" />
+                                <button class="btn btn-danger btn-sm">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ================= CITY LIST ================= -->
+    <div class="col-md-6">
+        <div class="d-flex justify-content-between mb-2">
+            <h4 class="section-title success">City List</h4>
+            <button class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#cityModal"
+                    onclick="clearCity()">
+                + Add City
+            </button>
+        </div>
+
+        <table class="table table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>SNo</th>
+                    <th>State</th>
+                    <th>City</th>
+                    <th width="120">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < cities.Count; i++)
+                {
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@states.First(x => x.Id == cities[i].StateId).State</td>
+                        <td>@cities[i].City</td>
+                        <td>
+                            <form asp-action="DeleteCity"
+                                  method="post"
+                                  onsubmit="return confirm('Delete this City?');">
+                                <input type="hidden" name="id" value="@cities[i].Id" />
+                                <button class="btn btn-danger btn-sm">
+                                    Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- ================= STATE MODAL ================= -->
+<div class="modal fade" id="stateModal">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:450px">
+        <div class="modal-content">
+            <form asp-action="SaveState" method="post">
+                <input type="hidden" name="Id" id="StateId" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title">State</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <label>State Name</label>
+                    <input class="form-control text-uppercase"
+                           id="StateName"
+                           name="State"
+                           required />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" id="stateSaveBtn">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CITY MODAL ================= -->
+<div class="modal fade" id="cityModal">
+    <div class="modal-dialog modal-dialog-centered" style="max-width:500px">
+        <div class="modal-content">
+            <form asp-action="SaveCity" method="post">
+                <input type="hidden" name="Id" id="CityId" />
+
+                <div class="modal-header">
+                    <h5 class="modal-title">City</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <label>State</label>
+                    <select class="form-select mb-2" name="StateId" id="CityState">
+                        @foreach (var s in states)
+                        {
+                            <option value="@s.Id">@s.State</option>
+                        }
+                    </select>
+
+                    <label>City Name</label>
+                    <input class="form-control text-uppercase"
+                           id="CityName"
+                           name="City"
+                           required />
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button class="btn btn-success" id="citySaveBtn">
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ================= CENTER POPUP ================= -->
+@if (TempData["Msg"] != null)
+{
+    <div class="popup-overlay" id="centerPopup">
+        <div class="popup-box">
+            <h4>Success</h4>
+            <p>@TempData["Msg"]</p>
+        </div>
+    </div>
+}
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // auto close popup after 1.2 sec
+        const popup = document.getElementById("centerPopup");
+        if (popup) {
+            setTimeout(() => popup.remove(), 1200);
+        }
+
+        document.querySelectorAll(".edit-state").forEach(btn => {
+            btn.addEventListener("click", function () {
+                StateId.value = this.dataset.id;
+                StateName.value = this.dataset.state;
+                stateSaveBtn.innerText = "Update";
+                new bootstrap.Modal(stateModal).show();
+            });
+        });
+    });
+
+    function clearState() {
+        StateId.value = "";
+        StateName.value = "";
+        stateSaveBtn.innerText = "Save";
+    }
+
+    function clearCity() {
+        CityId.value = "";
+        CityName.value = "";
+        citySaveBtn.innerText = "Save";
+    }
+</script>

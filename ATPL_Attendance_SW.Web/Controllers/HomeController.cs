@@ -28,10 +28,13 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             ViewBag.DepartmentList = GetDepartmentDDL();
             ViewBag.DesignationList = GetDesignationDDL();
+            ViewBag.Shiftlistt = GetSHiftDDL();
 
             ViewBag.TotalHolidays = du.ExecuteScalar("SELECT COUNT(*) FROM Tbl_MasterHolidays where Active='1'");
+            ViewBag.ActiveE = du.ExecuteScalar("SELECT COUNT(*) FROM Tbl_MasterEmployeeDetails where Status='Active'");
+            ViewBag.TotalR_E = du.ExecuteScalar("SELECT COUNT(*) FROM Tbl_MasterEmployeeDetails");
 
-            DataTable dt = du.GetDataTable("Sp_Get_UpcomingBirthdays",new SqlParameter[] { });
+            DataTable dt = du.GetDataTable("Sp_Get_UpcomingBirthdays", new SqlParameter[] { });
             List<EmployeeVM> birthdayList = new List<EmployeeVM>();
 
             foreach (DataRow row in dt.Rows)
@@ -41,7 +44,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Emp_Id = Convert.ToInt32(row["Emp_Id"]),
                     Name = row["Name"].ToString(),
                     DOB = row["Dob"].ToString(),
-                    PhoneNo= row["PhoneNo"].ToString()
+                    PhoneNo = row["PhoneNo"].ToString()
                 });
             }
 
@@ -238,7 +241,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         private List<SelectListItem> GetDepartmentDDL()
         {
-            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterDepartment",null);
+            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterDepartment", null);
             List<SelectListItem> list = new();
 
             foreach (DataRow row in dt.Rows)
@@ -267,11 +270,27 @@ namespace ATPL_Attendance_SW.Web.Controllers
             }
             return list;
         }
+        private List<SelectListItem> GetSHiftDDL()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterShift", null);
+            List<SelectListItem> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["Shift"].ToString()
+                });
+            }
+            return list;
+        }
 
         public IActionResult AddEmployee()
         {
             ViewBag.DepartmentList = GetDepartmentDDL();
             ViewBag.DesignationList = GetDesignationDDL();
+            ViewBag.Shiftlistt = GetSHiftDDL();
             return View();
         }
         public IActionResult EmployeeList()
@@ -290,12 +309,14 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
                     DepartmentId = row["DepartmentId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DepartmentId"]),
                     DesignationId = row["DesignationId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DesignationId"]),
+                    ShiftId = row["ShiftId"] == DBNull.Value ? 0 : Convert.ToInt32(row["ShiftId"]),
 
                     EmailId = row["EmailId"] == DBNull.Value ? "" : row["EmailId"].ToString(),
                     PhoneNo = row["PhoneNo"] == DBNull.Value ? "" : row["PhoneNo"].ToString(),
 
                     JoiningDate = row["JoiningDate"] == DBNull.Value ? "" : row["JoiningDate"].ToString(),
                     Address = row["Address"] == DBNull.Value ? "" : row["Address"].ToString(),
+                    DOB = row["Dob"] == DBNull.Value ? "" : row["Dob"].ToString(),
 
                     Emp_Img = row["Emp_Img"] == DBNull.Value ? "" : row["Emp_Img"].ToString(),
                     Designation = row["Designation"] == DBNull.Value ? "" : row["Designation"].ToString(),
@@ -314,6 +335,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             ViewBag.DepartmentList = GetDepartmentDDL();
             ViewBag.DesignationList = GetDesignationDDL();
+            ViewBag.Shiftlistt = GetSHiftDDL();
 
             return View(list);
         }
@@ -350,6 +372,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         new SqlParameter("@DepartmentId", model.DepartmentId == 0 ? (object)DBNull.Value : model.DepartmentId),
         new SqlParameter("@DesignationId", model.DesignationId == 0 ? (object)DBNull.Value : model.DesignationId),
+        new SqlParameter("@ShiftId", model.ShiftId == 0 ? (object)DBNull.Value : model.ShiftId),
 
         new SqlParameter("@EmailId", model.EmailId ?? ""),
         new SqlParameter("@PhoneNo", model.PhoneNo ?? ""),
@@ -364,7 +387,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             model.Salary == 0 ? (object)DBNull.Value : model.Salary),
 
         new SqlParameter("@Status", model.Status ?? ""),
-        new SqlParameter("@Shift", model.Shift ?? ""),
+        //new SqlParameter("@Shift", model.Shift ?? ""),
 
         new SqlParameter("@UserName", model.UserName ?? ""),
         new SqlParameter("@Password", model.Password ?? ""),
@@ -414,9 +437,60 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return list;
         }
 
+
+        private List<SelectListItem> GetStatesDDL()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterState", null);
+            List<SelectListItem> state = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                state.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["State"].ToString()
+                });
+            }
+            return state;
+        }
+        private List<SelectListItem> GetCityDDL(long stateId)
+        {
+            var param = new SqlParameter[]
+            {
+                 new SqlParameter("@StateId", stateId)
+            };
+
+            DataTable dt = du.GetDataTableByQuery("SELECT Id, City FROM Tbl_MasterCity WHERE StateId = @StateId",param);
+            List<SelectListItem> city = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                city.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["City"].ToString()
+                });
+            }
+            return city;
+        }
+
+        public IActionResult LoadCities(long stateId)
+        {
+            var data = GetCityDDL(stateId);
+            return Json(data);
+        }
+
+        public IActionResult LoadStates()
+        {
+            var data = GetStatesDDL();
+            return Json(data);
+        }
+
+
         public IActionResult CompanyInfoList()
         {
             ViewBag.CCodeList = GetCompanyDDL();
+            ViewBag.StateList = GetStatesDDL();
+            ViewBag.CityList = new List<SelectListItem>();
+
 
             DataTable dt = du.GetDataTable("Sp_Get_CompanyList", null);
             List<CompanyVM> list = new();
@@ -456,39 +530,50 @@ namespace ATPL_Attendance_SW.Web.Controllers
         public IActionResult SaveCompany(CompanyVM model)
         {
             SqlParameter[] prms =
-      {
-            new SqlParameter("@Id", model.Id),
-            new SqlParameter("@CCode", model.CCode ?? ""),
-            new SqlParameter("@CompanyName", model.CompanyName),
-            new SqlParameter("@Abbr", model.Abbr),
-            new SqlParameter("@Address", model.Address),
-            new SqlParameter("@Address2", model.Address2),
-            new SqlParameter("@City", model.City),
-            new SqlParameter("@State", model.State),
-            new SqlParameter("@Pincode", model.Pincode),
-            new SqlParameter("@Country", model.Country),
-            new SqlParameter("@Telepohne", model.Telepohne),
-            new SqlParameter("@ContactNo", model.ContactNo),
-            new SqlParameter("@Email", model.Email),
-            new SqlParameter("@Website", model.Website),
-            new SqlParameter("@GSTIN", model.GSTIN),
-            new SqlParameter("@BankName", model.BankName),
-            new SqlParameter("@AccountNo", model.AccountNo),
-            new SqlParameter("@IFSCCode", model.IFSCCode),
-            new SqlParameter("@msg", SqlDbType.NVarChar, 100)
-            { Direction = ParameterDirection.Output }
+            {
+        new SqlParameter("@Id", model.Id),
+
+        new SqlParameter("@CCode", model.CCode ?? ""),
+        new SqlParameter("@CompanyName", model.CompanyName ?? ""),
+        new SqlParameter("@Abbr", model.Abbr ?? ""),
+
+        new SqlParameter("@Address", model.Address ?? ""),
+        new SqlParameter("@Address2", model.Address2 ?? ""),
+
+        new SqlParameter("@StateId", model.StateId > 0 ? model.StateId : (object)DBNull.Value),
+        new SqlParameter("@CityId", model.CityId > 0 ? model.CityId : (object)DBNull.Value),
+
+        new SqlParameter("@Pincode", model.Pincode ?? ""),
+        new SqlParameter("@Country", model.Country ?? ""),
+
+        new SqlParameter("@Telepohne", model.Telepohne ?? ""),
+        new SqlParameter("@ContactNo", model.ContactNo ?? ""),
+        new SqlParameter("@Email", model.Email ?? ""),
+        new SqlParameter("@Website", model.Website ?? ""),
+        new SqlParameter("@GSTIN", model.GSTIN ?? ""),
+
+        new SqlParameter("@BankName", model.BankName ?? ""),
+        new SqlParameter("@AccountNo", model.AccountNo ?? ""),
+        new SqlParameter("@IFSCCode", model.IFSCCode ?? ""),
+
+        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
         };
 
             du.Execute("Sp_Insert_CompanyInformation", prms);
-            TempData["Msg"] = prms[^1].Value.ToString();
+
+            TempData["Msg"] = prms[^1].Value?.ToString();
 
             return RedirectToAction("CompanyInfoList");
         }
 
+
         [HttpGet]
         public JsonResult GetCompanyByCode(string ccode)
         {
-            if (string.IsNullOrEmpty(ccode)) 
+            if (string.IsNullOrEmpty(ccode))
                 return Json(null);
 
             SqlParameter[] prms =
@@ -510,8 +595,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 Abbr = r["Abbr"].ToString(),
                 Address = r["Address"].ToString(),
                 Address2 = r["Address2"].ToString(),
-                City = r["City"].ToString(),
-                State = r["State"].ToString(),
+                CityId = r["CityId"].ToString(),
+                StateId= r["StateId"].ToString(),
                 Pincode = r["Pincode"].ToString(),
                 Country = r["Country"].ToString(),
                 Telepohne = r["Telepohne"].ToString(),
@@ -585,7 +670,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     EmailId = r["EmailId"]?.ToString(),
                     PhoneNo = r["PhoneNo"]?.ToString(),
                     Designation = r["Designation"]?.ToString(),
-                    Department= r["Department"]?.ToString(),
+                    Department = r["Department"]?.ToString(),
                     JoiningDate = r["JoiningDate"]?.ToString(),
                     Status = r["Status"]?.ToString(),
                     Emp_Img = r["Emp_Img"]?.ToString(),
@@ -594,6 +679,194 @@ namespace ATPL_Attendance_SW.Web.Controllers
             }
 
             return list;
+        }
+
+        public IActionResult ShiftList()
+        {
+            DataTable dt = du.GetDataTable("Sp_Get_MasterShift", null);
+
+            List<MasterShift> list = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new MasterShift
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    Shift = row["Shift"].ToString(),
+                    ShiftType = row["ShiftType"].ToString(),
+                    InTime = row["InTime"].ToString(),
+                    OutTime = row["OutTime"].ToString(),
+                    BreakOut = row["BreakOut"].ToString(),
+                    BreakIn = row["BreakIn"].ToString()
+                });
+            }
+
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult AddShift(MasterShift model)
+        {
+            SqlParameter[] prms = { new SqlParameter("@Id", model.Id),
+
+                new SqlParameter("@Shift",string.IsNullOrWhiteSpace(model.Shift)? (object)DBNull.Value: model.Shift),
+
+                new SqlParameter("@ShiftType",string.IsNullOrWhiteSpace(model.ShiftType)? (object)DBNull.Value:model.ShiftType),
+
+                new SqlParameter("@InTime", string.IsNullOrWhiteSpace(model.InTime)? (object)DBNull.Value: model.InTime),
+
+                new SqlParameter("@OutTime",string.IsNullOrWhiteSpace(model.OutTime)? (object)DBNull.Value: model.OutTime),
+
+                new SqlParameter("@BreakOut",string.IsNullOrWhiteSpace(model.BreakOut)? (object)DBNull.Value: model.BreakOut),
+
+                new SqlParameter("@BreakIn",string.IsNullOrWhiteSpace(model.BreakIn)? (object)DBNull.Value: model.BreakIn),
+
+                new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+                {
+                    Direction = ParameterDirection.Output
+                }
+            };
+            du.Execute("Sp_Save_MasterShift", prms);
+            TempData["Msg"] = prms[7].Value.ToString();
+            return RedirectToAction("ShiftList");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteShift(int id)
+        {
+            SqlParameter[] prms =
+            {
+                  new SqlParameter("@Id", id),
+                  new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+             };
+
+            du.Execute("Sp_Delete_MasterShift", prms);
+            return RedirectToAction("ShiftList");
+        }
+
+        private static List<LeaveTypeVM> _leaveTypes = new();
+
+        // LIST
+        public IActionResult LeaveTypeList()
+        {
+            DataTable dt = du.GetDataTable("Sp_Get_LeaveTypeList", null);
+
+            List<LeaveTypeVM> list = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new LeaveTypeVM
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    LeaveType = row["LeaveType"].ToString(),
+                    Penalty = Convert.ToInt32(row["Penalty"]),
+                    Total_Y = Convert.ToInt32(row["Total_Y"])
+                });
+            }
+            return View(list);
+        }
+
+        // ADD / UPDATE
+        [HttpPost]
+        public IActionResult AddLeaveType(LeaveTypeVM model)
+        {
+            SqlParameter[] prms = { new SqlParameter("@Id", model.Id),
+
+                new SqlParameter("@LeaveType",string.IsNullOrWhiteSpace(model.LeaveType)? (object)DBNull.Value: model.LeaveType),
+
+                new SqlParameter("@Penalty", (object?)model.Penalty ?? DBNull.Value),
+                new SqlParameter("@Total_Y", (object?)model.Total_Y ?? DBNull.Value),
+
+                new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+                {
+                    Direction = ParameterDirection.Output
+                }
+            };
+            du.Execute("Sp_Insert_Master_LeaveType", prms);
+            TempData["Msg"] = prms[4].Value.ToString();
+            return RedirectToAction("LeaveTypeList");
+        }
+
+        // DELETE
+        [HttpPost]
+        public IActionResult DeleteLeaveType(int id)
+        {
+            SqlParameter[] prms =
+         {
+                  new SqlParameter("@Id", id),
+                  new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+                {
+                    Direction = ParameterDirection.Output
+                }
+         };
+
+            du.Execute("Sp_Delete_LeaveType", prms);
+            return RedirectToAction("LeaveTypeList");
+        }
+        public IActionResult MasterStateCityList()
+        {
+            DataTable dtState = du.GetDataTable("Sp_Get_MasterState", null);
+
+            List<MasterStateVM> states = new();
+            foreach (DataRow row in dtState.Rows)
+            {
+                states.Add(new MasterStateVM
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    State = row["State"].ToString(),
+                });
+            }
+
+            DataTable dtCity = du.GetDataTable("Sp_Get_MasterCity", null);
+            List<MasterCityVM> cities = new();
+            foreach (DataRow row in dtCity.Rows)
+            {
+                cities.Add(new MasterCityVM
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    StateId = Convert.ToInt32(row["StateId"]),
+                    City = row["City"].ToString()
+                });
+            }
+            ViewBag.States = states;
+            ViewBag.Cities = cities;
+
+            return View();
+        }
+        
+        [HttpPost]
+        public IActionResult SaveState(MasterStateVM model)
+        {
+            SqlParameter[] prms = { new SqlParameter("@Id", model.Id),
+
+                new SqlParameter("@State",string.IsNullOrWhiteSpace(model.State)? (object)DBNull.Value: model.State),
+                new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+                {
+                    Direction = ParameterDirection.Output
+                }
+            };
+            du.Execute("Sp_InsertMasterState", prms);
+            TempData["Msg"] = prms[2].Value.ToString();
+            return RedirectToAction("MasterStateCityList");
+
+        }
+
+        public IActionResult SaveCity(MasterCityVM model)
+        {
+            SqlParameter[] prms = { new SqlParameter("@Id", model.Id),
+
+                new SqlParameter("@StateId", (object?)model.StateId ?? DBNull.Value),
+                new SqlParameter("@City",string.IsNullOrWhiteSpace(model.City)? (object)DBNull.Value: model.City),
+                new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+                {
+                    Direction = ParameterDirection.Output
+                }
+            };
+            du.Execute("Sp_InsertMasterCity", prms);
+            TempData["Msg"] = prms[3].Value.ToString();
+            return RedirectToAction("MasterStateCityList");
+
         }
 
 

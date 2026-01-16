@@ -299,51 +299,12 @@
     <Style />
   </Page>
   <AutoRefresh>0</AutoRefresh>
-  <DataSources>
-    <DataSource Name="ATPL_ATT_DBDataSet">
-      <ConnectionProperties>
-        <DataProvider>System.Data.DataSet</DataProvider>
-        <ConnectString>/* Local Connection */</ConnectString>
-      </ConnectionProperties>
-      <rd:DataSourceID>afc4138c-91a6-42bb-8940-33b61562d4f5</rd:DataSourceID>
-    </DataSource>
-  </DataSources>
   <DataSets>
-    <DataSet Name="DatasetHoliday">
+    <DataSet Name="DataSetHoliday">
       <Query>
-        <DataSourceName>ATPL_ATT_DBDataSet</DataSourceName>
-        <CommandText>/* Local Query */</CommandText>
+        <DataSourceName />
+        <CommandText />
       </Query>
-      <Fields>
-        <Field Name="Id">
-          <DataField>Id</DataField>
-          <rd:TypeName>System.Decimal</rd:TypeName>
-        </Field>
-        <Field Name="Holiday">
-          <DataField>Holiday</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Date">
-          <DataField>Date</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Description">
-          <DataField>Description</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-        <Field Name="Active">
-          <DataField>Active</DataField>
-          <rd:TypeName>System.String</rd:TypeName>
-        </Field>
-      </Fields>
-      <rd:DataSetInfo>
-        <rd:DataSetName>ATPL_ATT_DBDataSet</rd:DataSetName>
-        <rd:SchemaPath>D:\Abhishek\ATPL_Attendance_SW.Web\ATPL_Attendance_SW.Web\ATPL_ATT_DBDataSet.xsd</rd:SchemaPath>
-        <rd:TableName>Sp_Get_HolidayList</rd:TableName>
-        <rd:TableAdapterFillMethod>Fill</rd:TableAdapterFillMethod>
-        <rd:TableAdapterGetDataMethod>GetData</rd:TableAdapterGetDataMethod>
-        <rd:TableAdapterName>Sp_Get_HolidayListTableAdapter</rd:TableAdapterName>
-      </rd:DataSetInfo>
     </DataSet>
   </DataSets>
   <rd:ReportUnitType>Cm</rd:ReportUnitType>

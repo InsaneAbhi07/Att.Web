@@ -30,36 +30,30 @@ namespace ATPL_Attendance_SW.Web.Controllers
         }
 
 
-       public IActionResult HolidayReportPdf()
-    {
-        DataTable dt = du.GetDataTable("Sp_Get_HolidayList", null);
 
-        LocalReport report = new LocalReport();
+        public IActionResult HolidayReportPdf()
+        {
+            DataTable dt = du.GetDataTable("Sp_Get_HolidayList", null);
 
-        string reportPath = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            "Reports",
-            "Holidays.rdlc");
+            LocalReport report = new LocalReport();
 
-        report.ReportPath = reportPath;
+            string path = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Reports",
+                "Holidays.rdlc");
 
-        report.DataSources.Add(
-            new ReportDataSource("DataSetHoliday", dt));
+            report.ReportPath = path;
 
-        byte[] pdf = report.Render(
-            "PDF",
-            null,
-            out string mimeType,
-            out string encoding,
-            out string extension,
-            out string[] streams,
-            out Warning[] warnings
-        );
+            report.DataSources.Clear();
+            report.DataSources.Add(
+                new ReportDataSource("DatasetHoliday", dt));
 
-        return File(pdf, "application/pdf", "HolidayReport.pdf");
-    }
+            byte[] pdf = report.Render("PDF");
 
-    public ActionResult HolidayReport()
+            return File(pdf, "application/pdf", "HolidayReport.pdf");
+        }
+
+        public ActionResult HolidayReport()
         {
             DataTable dt = du.GetDataTable("Sp_Get_HolidayList", null);
 

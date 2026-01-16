@@ -1,4 +1,6 @@
-﻿<!DOCTYPPE html>
+﻿@using System.Security.Claims
+
+<!DOCTYPPE html>
 <html lang="en">
 <head>
 
@@ -8,6 +10,10 @@
 	<title>Dashboard |Daily Attendance</title>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 
 	<!-- Favicon -->
 	<link rel="icon" href="~/assets/img/favicon.png" type="image/x-icon">
@@ -50,8 +56,12 @@
 	<!-- Main CSS -->
 	<link rel="stylesheet" href="~/assets/css/style.css">
 
-	<style>
-		/* ===== NEW SIDEBAR UI – BLUE CLEAN ===== */
+<style>
+		.sidebar,
+		.sidebar-inner {
+			height: 100vh;
+			overflow-y: auto;
+		}
 
 		.sidebar-menu {
 			padding: 8px 10px;
@@ -59,12 +69,11 @@
 
 			.sidebar-menu ul {
 				list-style: none;
-				padding: 0;
 				margin: 0;
+				padding: 0;
 			}
 
-			/* Main link */
-			.sidebar-menu li > a {
+			.sidebar-menu > ul > li > a {
 				display: flex;
 				align-items: center;
 				gap: 12px;
@@ -72,87 +81,133 @@
 				font-size: 14px;
 				color: #1f2937;
 				border-radius: 6px;
-				transition: all 0.25s ease;
-				position: relative;
+				transition: all .25s ease;
 			}
 
-				/* Icon */
-				.sidebar-menu li > a i {
+				.sidebar-menu > ul > li > a i {
 					font-size: 18px;
 					color: #2563eb;
 					min-width: 22px;
 				}
 
-				/* Hover */
-				.sidebar-menu li > a:hover {
+				.sidebar-menu > ul > li > a:hover {
 					background: #f1f5ff;
 					color: #2563eb;
 				}
 
-			/* Active / open */
-			.submenu.open > a,
-			.sidebar-menu li.active > a {
+			.sidebar-menu > ul > li.submenu.active > a {
 				background: #e0edff;
-				color: #2563eb;
 				font-weight: 600;
 			}
 
-				/* Left indicator bar */
-				.submenu.open > a::before,
-				.sidebar-menu li.active > a::before {
-					content: "";
-					position: absolute;
-					left: 0;
-					top: 8px;
-					bottom: 8px;
-					width: 4px;
-					background: #2563eb;
-					border-radius: 0 4px 4px 0;
-				}
-
-		/* Arrow */
-		.menu-arrow {
-			margin-left: auto;
-			font-size: 13px;
-			color: #6b7280;
-			transition: transform 0.25s ease;
+		.submenu > ul {
+			display: none;
+			padding: 6px 0;
+			margin-top: 6px;
 		}
 
-		.submenu.open > a .menu-arrow {
+
+		.submenu.active > ul {
+			display: block;
+		}
+
+		.submenu > ul > li > a,
+		.submenu-two > a {
+			color: #374151 !important;
+
+		}
+
+		.submenu-two > a {
+			display: flex;
+			align-items: center;
+			width: 100%; 
+			box-sizing: border-box;
+			padding: 10px 14px;
+			font-size: 14px !important;
+			font-weight: 700 !important;
+ 			color: #2563eb !important;
+			background: #e5e7eb;
+			border-radius: 6px;
+			transition: all .2s ease;
+		}
+
+			.submenu-two > a:hover {
+				background: #d1d5db;
+				color: #111827;
+			}
+
+
+		.submenu-two ul li a {
+			width: 100%;
+			display: block;
+			padding: 9px 16px;
+			background: transparent !important;
+			color: #374151 !important;
+			/* color: #2563eb !important; */
+
+			border-radius: 6px;
+			margin: 2px 0;
+			transition: all .25s ease;
+			font-size: 13px !important;
+			font-weight: 500;
+		}
+
+
+		.submenu-two ul li a.active {
+			background: #d1d5db;
+			color: #111827 !important;
+			font-weight: 600;
+		}
+
+		.submenu-two ul {
+			padding-left: 0;
+			font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
+		}
+
+			.submenu-two ul li a:hover {
+				background: #eef2ff;
+				color: orange!important;
+				padding-left: 16px;
+				font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
+			}
+
+		.menu-arrow {
+			margin-left: auto;
+			font-size: 12px;
+			color: #6b7280;
+			transition: transform .25s ease;
+		}
+
+		.submenu.active > a .menu-arrow,
+		.submenu-two.active > a .menu-arrow {
 			transform: rotate(90deg);
 		}
 
-		/* Submenu */
-		.sidebar-menu .submenu > ul {
-			display: none;
-			padding-left: 34px;
-			margin-top: 6px;
-			border-left: 1px dashed #dbeafe;
+		.sidebar-inner::-webkit-scrollbar {
+			width: 6px;
 		}
 
-		/* Submenu items */
-		.sidebar-menu .submenu ul li a {
-			padding: 8px 10px;
-			font-size: 13.5px;
-			color: #374151;
+		.sidebar-inner::-webkit-scrollbar-thumb {
+			background: orange;
+			border-radius: 10px;
 		}
 
-			/* Submenu hover */
-			.sidebar-menu .submenu ul li a:hover {
-				color: #2563eb;
-				background: transparent;
+		/* Sidebar toggle */
+		.mini-sidebar .sidebar {
+			width: 70px;
+		}
+
+			.mini-sidebar .sidebar .sidebar-menu span,
+			.mini-sidebar .sidebar .menu-arrow {
+				display: none;
 			}
 
-		/* Menu title */
-		.menu-title {
-			font-size: 11px;
-			font-weight: 600;
-			color: #9ca3af;
-			padding: 14px 10px 6px;
-			text-transform: uppercase;
-		}
+			.mini-sidebar .sidebar .sidebar-menu i {
+				font-size: 22px;
+				margin: auto;
+			}
 
-	</style>
+</style>
 </head>
 
 <body>
@@ -223,7 +278,12 @@
 								<div class="dropdown profile-dropdown">
 									<a href="javascript:void(0);" class="dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
 										<span class="avatar avatar-sm online">
-											<img src="assets/img/profiles/pro-1.jpg" alt="Img" class="img-fluid rounded-circle">
+											@{
+												var userImage = User.FindFirst("UserImage")?.Value;
+												var imagePath = string.IsNullOrWhiteSpace(userImage)
+												? Url.Content("~/assets/img/profiles.JPG")
+												: Url.Content("~/uploads/employee/" + userImage);
+											}
 										</span>
 									</a>
 									<div class="dropdown-menu shadow-none">
@@ -231,7 +291,12 @@
 											<div class="card-header">
 												<div class="d-flex align-items-center">
 													<span class="avatar avatar-lg me-2 avatar-rounded">
-														<img src="assets/img/profiles/pro-1.jpg" alt="img">
+														@{
+															var userImage1 = User.FindFirst("UserImage")?.Value;
+															var imagePath1 = string.IsNullOrWhiteSpace(userImage1)
+															? Url.Content("~/assets/img/profiles.JPG")
+															: Url.Content("~/uploads/employee/" + userImage1);
+														}
 													</span>
 													<div>
 														<h5 class="mb-0">Abhishek Singh</h5>
@@ -363,22 +428,110 @@
 							</li>
 
 							<!-- MASTER -->
+									 <!-- MASTERS MENU -->
 							<li class="submenu">
 								<a href="javascript:void(0);">
 									<i class="ti ti-file-time"></i>
-									<span>MASTES</span>
+									<span>MASTERS</span>
 									<span class="menu-arrow"></span>
 								</a>
+
 								<ul>
-									<li><a asp-controller="Home" asp-action="CompanyInfoList"> Master Company</a></li>
-									<li><a asp-controller="Home" asp-action="EmployeeList"> Master Employee</a></li>
-									<li><a asp-controller="Home" asp-action="HolidayList"> Master Holiday</a></li>
-									<li><a asp-controller="Home" asp-action="DepartmentList"> Master Department</a></li>
-									<li><a asp-controller="Home" asp-action="DesignationList"> Master Designation</a></li>
-									@* <li><a href="schedule-timing.html">Master Session</a></li> *@
-									@* <li><a href="overtime.html">Overtime</a></li> *@
+
+									<li class="submenu submenu-two">
+										<a href="javascript:void(0);">
+											Main Masters For Now
+											<span class="menu-arrow"></span>
+										</a>
+										<ul>
+											<li><a asp-controller="Home" asp-action="CompanyInfoList">Company Profile</a></li>
+											<li><a asp-controller="Home" asp-action="DepartmentList">Master Department</a></li>
+											<li><a asp-controller="Home" asp-action="DesignationList">Master Designation</a></li>
+											<li><a asp-controller="Home" asp-action="EmployeeList">Master Employee</a></li>
+											<li><a asp-controller="Home" asp-action="HolidayList">Working Calendar</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Master Shift</a></li>
+											<li><a asp-controller="Home" asp-action="LeaveTypeList">Master Leave Type</a></li>
+											<li><a asp-controller="Home" asp-action="MasterStateCityList">Master State/City</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Master City</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Master Category</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Master Employee Type</a></li>
+										</ul>
+									</li>
+
+									<hr>
+									<!-- Organization -->
+									<li class="submenu submenu-two">
+										<a href="javascript:void(0);">
+											Organization
+											<span class="menu-arrow"></span>
+										</a>
+										<ul>
+											<li><a asp-controller="Home" asp-action="CompanyInfoList">Factory Profile</a></li>
+											<li><a asp-controller="Home" asp-action="EmployeeList">Registration Details</a></li>
+											<li><a asp-controller="Home" asp-action="HolidayList">Working Calendar</a></li>
+											<li><a asp-controller="Home" asp-action="DepartmentList">Department</a></li>
+											<li><a asp-controller="Home" asp-action="DesignationList">Designation</a></li>
+										</ul>
+									</li>
+
+									<!-- Location -->
+									<li class="submenu submenu-two">
+										<a href="javascript:void(0);">
+											Location and Structure
+											<span class="menu-arrow"></span>
+										</a>
+										<ul>
+											<li><a asp-controller="Home" asp-action="ShiftList">Plant</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Unit / Section</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Floor</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Cost Center</a></li>
+										</ul>
+									</li>
+
+									<!-- Department & Role -->
+									<li class="submenu submenu-two">
+										<a href="javascript:void(0);">
+											Department & Role
+											<span class="menu-arrow"></span>
+										</a>
+										<ul>
+											<li><a asp-controller="Home" asp-action="ShiftList">Department</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Designation</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Skill Category</a></li>
+										</ul>
+									</li>
+
+									<!-- Contractor -->
+									<li class="submenu submenu-two">
+										<a href="javascript:void(0);">
+											Contractor
+											<span class="menu-arrow"></span>
+										</a>
+										<ul>
+											<li><a asp-controller="Home" asp-action="ShiftList">Contractor Profile</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Con. License Details</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Con. Wokr Category</a></li>
+										</ul>
+									</li>
+
+									<!-- Shift and Time -->
+									<li class="submenu submenu-two">
+										<a href="javascript:void(0);">
+											Shift & Time
+											<span class="menu-arrow"></span>
+										</a>
+										<ul>
+											<li><a asp-controller="Home" asp-action="ShiftList">Shift</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Grace Time Rules</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Night Shift Rules</a></li>
+										</ul>
+									</li>
+
 								</ul>
 							</li>
+
+
+
 
 							<!-- ATTENDANCE -->
 							<li class="submenu">
@@ -388,20 +541,8 @@
 									<span class="menu-arrow"></span>
 								</a>
 								<ul>
-									<li class="submenu submenu-two">
-										<a href="javascript:void(0);">
-											Leaves
-											<span class="menu-arrow inside-submenu"></span>
-										</a>
-										<ul>
-											<li><a href="leaves.html">Leaves (Admin)</a></li>
-											<li><a href="leaves-employee.html">Leave (Employee)</a></li>
-											<li><a href="leave-settings.html">Leave Settings</a></li>
-										</ul>
-									</li>
-									<li><a href="attendance-employee.html">Attendance (Employee)</a></li>
-									<li><a href="timesheets.html">Timesheets</a></li>
-									<li><a href="schedule-timing.html">Shift & Schedule</a></li>
+									<li><a href="timesheets.html">Manual Attendance Entry</a></li>
+									<li><a href="schedule-timing.html">Attendance</a></li>
 									<li><a href="overtime.html">Overtime</a></li>
 								</ul>
 							</li>
@@ -516,7 +657,8 @@
 					</div> 
 				</div>
 			</div>
-		</header>
+		</div>
+	</header>
 
 	<div class="page-wrapper">
 		<div class="content container-fluid">
@@ -562,22 +704,53 @@
 
 	<script src="~/assets/js/todo.js"></script>
 	<script src="~/assets/js/theme-colorpicker.js"></script>
-	<script src="~/assets/js/script.js"></script>
+	@* <script src="~/assets/js/script.js"></script> *@
 	<script defer="" src="../../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"d05194593ce14c8fa5c20a9737ff5d07","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 	@await RenderSectionAsync("Scripts", required: false)
 
+
 	<script>
-		$(document).on("click", ".submenu > a", function (e) {
-			e.preventDefault();
+		$(document).ready(function () {
 
-			const parent = $(this).parent();
+			/* FIRST LEVEL (MASTERS) */
+			$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
+				e.preventDefault();
 
-			$(".submenu").not(parent)
-				.removeClass("open")
-				.children("ul").slideUp(200);
+				let parent = $(this).parent();
 
-			parent.toggleClass("open");
-			parent.children("ul").stop(true, true).slideToggle(200);
+				$("#sidebar-menu > ul > li.submenu").not(parent)
+					.removeClass("active")
+					.children("ul")
+					.slideUp(250);
+
+				parent.toggleClass("active");
+				parent.children("ul").stop(true, true).slideToggle(250);
+			});
+
+			/* SECOND LEVEL (Organization / Location) */
+			$("#sidebar-menu .submenu-two > a").on("click", function (e) {
+				e.preventDefault();
+
+				let parent = $(this).parent();
+
+				parent.siblings(".submenu-two")
+					.removeClass("active")
+					.children("ul")
+					.slideUp(200);
+
+				parent.toggleClass("active");
+				parent.children("ul").stop(true, true).slideToggle(200);
+			});
+
+		});
+	</script>
+	<script>
+		$(document).ready(function () {
+
+			$("#toggle_btn").on("click", function () {
+				$("body").toggleClass("mini-sidebar");
+			});
+
 		});
 	</script>
 
