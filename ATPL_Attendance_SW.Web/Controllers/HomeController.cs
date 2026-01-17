@@ -188,7 +188,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 {
                     Id = Convert.ToInt32(row["Id"]),
                     Holiday = row["Holiday"].ToString(),
-                    Date = Convert.ToDateTime(row["Date"]).ToString("yyyy-MM-dd"),
+                    Date = row["Date"].ToString(),
                     Description = row["Description"].ToString(),
                     Active = row["Active"].ToString() == "1"
                 });
@@ -205,7 +205,10 @@ namespace ATPL_Attendance_SW.Web.Controllers
             {
             new SqlParameter("@Id", model.Id),
             new SqlParameter("@Holiday", model.Holiday),
-            new SqlParameter("@Date", model.Date),
+            new SqlParameter("@Date", SqlDbType.Date)
+            {
+                Value = model.Date
+            },
             new SqlParameter("@Description", model.Description),
             new SqlParameter("@Active", model.Active),
 

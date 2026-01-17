@@ -1,53 +1,139 @@
-﻿/* ===== CENTER POPUP ===== */
+﻿/* ===== PREMIUM WHITE POPUP ===== */
 .popup-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.45);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
+    animation: overlayFadeIn 0.3s ease;
 }
 
 .popup-box {
-    width: 480px; /* ⬅ pehle 420px tha */
-    height: 170px; /* ⬅ pehle 420px tha */
-    background: #fff;
-    border-radius: 12px; /* thoda premium look */
-    padding: 34px 38px; /* zyada breathing space */
+    width: 520px;
+    min-height: 320px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 52px 44px 44px;
     text-align: center;
-    box-shadow: 0 25px 65px rgba(0,0,0,.40);
-    animation: popupIn .25s ease;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 24px 60px rgba(0, 0, 0, 0.12), 0 12px 24px rgba(0, 0, 0, 0.08);
+    animation: popupIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-
-    .popup-box h4 {
-        color: #16a34a;
-        font-weight: 700;
-        margin-bottom: 8px;
+    /* Subtle gradient accent */
+    .popup-box::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
     }
 
-    .popup-box h4 {
-        font-size: 20px;
-    }
-    .popup-box p {
-        margin: 0;
-        font-size: 15px;
-        color: #374151;
+    /* Decorative background element */
+    .popup-box::after {
+        content: "";
+        position: absolute;
+        top: -100px;
+        right: -100px;
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
     }
 
-@keyframes popupIn {
+/* Icon container with depth */
+.popup-emoji {
+    width: 88px;
+    height: 88px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+    margin: 0 auto 28px;
+    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3), 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+    animation: iconBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s backwards;
+}
+
+    /* Subtle shimmer effect */
+    .popup-emoji::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+    }
+
+.popup-box h4 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: #0f172a;
+    letter-spacing: -0.03em;
+    position: relative;
+    z-index: 1;
+    line-height: 1.2;
+}
+
+.popup-box p {
+    font-size: 18px;
+    font-weight: 500;
+    color: #475569;
+    margin: 0;
+    line-height: 1.6;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Animations */
+@keyframes overlayFadeIn {
     from {
-        transform: scale(.9);
-        opacity: 0
+        opacity: 0;
     }
 
     to {
-        transform: scale(1);
-        opacity: 1
+        opacity: 1;
     }
 }
 
+@keyframes popupIn {
+    from {
+        transform: translateY(30px) scale(0.92);
+        opacity: 0;
+    }
 
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
 
+@keyframes iconBounce {
+    from {
+        transform: scale(0) rotate(-12deg);
+        opacity: 0;
+    }
 
+    to {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+/* Optional: Add hover state for interactive elements */
+.popup-box:hover {
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 28px 70px rgba(0, 0, 0, 0.14), 0 16px 32px rgba(0, 0, 0, 0.1);
+}

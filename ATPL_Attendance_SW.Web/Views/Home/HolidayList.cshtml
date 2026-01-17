@@ -3,6 +3,8 @@
     ViewData["Title"] = "Master Holiday";
 }
 
+<link href="~/assets/css/popup.css" rel="stylesheet" />
+
 @if (TempData["Msg"] != null)
 {
     <div class="alert alert-info">@TempData["Msg"]</div>
@@ -46,14 +48,16 @@
                             </span>
                         </td>
                         <td>
+
                             <button class="btn btn-sm btn-warning edit-btn"
                                     data-id="@Model[i].Id"
                                     data-holiday="@Model[i].Holiday"
-                                    data-date="@Model[i].Date"
+                                     data-date="@Model[i].Date"
                                     data-description="@Model[i].Description"
                                     data-active="@Model[i].Active">
                                 <i class="ti ti-edit"></i>
                             </button>
+
 
 
                             <form asp-action="DeleteHoliday"
@@ -122,7 +126,25 @@
     </div>
 </div>
 
+	<!-- ================= CENTER POPUP ================= -->
+@if (TempData["Msg"] != null)
+{
+		<div class="popup-overlay" id="centerPopup">
+			<div class="popup-box">
+				<h4>Success</h4>
+				<p>@TempData["Msg"]</p>
+			</div>
+		</div>
+}
+
 <script>
+
+
+
+                     const popup = document.getElementById("centerPopup");
+                if (popup) {
+                    setTimeout(() => popup.remove(), 1200);
+                }
     document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelectorAll(".edit-btn").forEach(btn => {
