@@ -55,7 +55,7 @@
 
 	<!-- Main CSS -->
 	<link rel="stylesheet" href="~/assets/css/style.css">
-
+	<link href="~/assets/css/sidebar.css" rel="stylesheet" />
 <style>
 		.sidebar,
 		.sidebar-inner {
@@ -125,7 +125,7 @@
 			padding: 10px 14px;
 			font-size: 14px !important;
 			font-weight: 700 !important;
- 			color: #2563eb !important;
+			color: #2563eb !important;
 			background: #e5e7eb;
 			border-radius: 6px;
 			transition: all .2s ease;
@@ -709,52 +709,61 @@
 	@await RenderSectionAsync("Scripts", required: false)
 
 
-	<script>
-		$(document).ready(function () {
-
-			/* FIRST LEVEL (MASTERS) */
-			$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
-				e.preventDefault();
-
-				let parent = $(this).parent();
-
-				$("#sidebar-menu > ul > li.submenu").not(parent)
-					.removeClass("active")
-					.children("ul")
-					.slideUp(250);
-
-				parent.toggleClass("active");
-				parent.children("ul").stop(true, true).slideToggle(250);
-			});
-
-			/* SECOND LEVEL (Organization / Location) */
-			$("#sidebar-menu .submenu-two > a").on("click", function (e) {
-				e.preventDefault();
-
-				let parent = $(this).parent();
-
-				parent.siblings(".submenu-two")
-					.removeClass("active")
-					.children("ul")
-					.slideUp(200);
-
-				parent.toggleClass("active");
-				parent.children("ul").stop(true, true).slideToggle(200);
-			});
-
-		});
-	</script>
-	<script>
-		$(document).ready(function () {
-
-			$("#toggle_btn").on("click", function () {
-				$("body").toggleClass("mini-sidebar");
-			});
-
-		});
-	</script>
-
 
 
 </body>
+
 </html>
+
+<script>
+	$(document).ready(function () {
+
+		/* ========== SIDEBAR TOGGLE (MOBILE + DESKTOP) ========== */
+		$("#mobile_btn, #toggle_btn").on("click", function (e) {
+			e.preventDefault();
+
+			if (window.innerWidth <= 768) {
+				$("body").toggleClass("sidebar-open");
+			} else {
+				$("body").toggleClass("mini-sidebar");
+			}
+		});
+
+		/* ========== OVERLAY CLICK (MOBILE CLOSE) ========== */
+		$("#sidebarOverlay").on("click", function () {
+			$("body").removeClass("sidebar-open");
+		});
+
+		/* ========== FIRST LEVEL MENU (MASTERS) ========== */
+		$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
+			e.preventDefault();
+
+			let parent = $(this).parent();
+
+			$("#sidebar-menu > ul > li.submenu").not(parent)
+				.removeClass("active")
+				.children("ul")
+				.slideUp(250);
+
+			parent.toggleClass("active");
+			parent.children("ul").stop(true, true).slideToggle(250);
+		});
+
+		/* ========== SECOND LEVEL MENU ========== */
+		$("#sidebar-menu .submenu-two > a").on("click", function (e) {
+			e.preventDefault();
+
+			let parent = $(this).parent();
+
+			parent.siblings(".submenu-two")
+				.removeClass("active")
+				.children("ul")
+				.slideUp(200);
+
+			parent.toggleClass("active");
+			parent.children("ul").stop(true, true).slideToggle(200);
+		});
+
+	});
+</script>
+

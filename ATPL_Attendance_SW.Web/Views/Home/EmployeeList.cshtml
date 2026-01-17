@@ -20,6 +20,9 @@
         background: #f1f5f9;
         border-left: 5px solid var(--brand);
         border-radius: 6px;
+        border-left: 5px solid var(--brand);
+        display: block; /* IMPORTANT */
+        width: 80%; /* full bg width */
     }
 
     .table thead th {
@@ -275,6 +278,7 @@
                                         <select class="form-select" name="DepartmentId" id="DepartmentId">
                                             @foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
                                             {
+                                                <option value="@d.Value">@d.Text</option>
                                                 <option value="@d.Value">@d.Text</option>
                                             }
                                         </select>

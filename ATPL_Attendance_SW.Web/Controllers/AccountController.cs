@@ -27,8 +27,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Login()
         {
-            //if (User.Identity.IsAuthenticated)
-            //    return RedirectToAction("Index", "Home");
+            if (User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "Home");
 
             return View();
         }

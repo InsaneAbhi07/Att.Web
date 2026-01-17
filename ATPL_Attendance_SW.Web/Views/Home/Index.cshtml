@@ -162,6 +162,74 @@
 
 
 
+	:root {
+		--brand: #2563eb;
+		--border: #e5e7eb;
+		--bg-soft: #f8fafc;
+	}
+
+	.modal-body {
+		max-height: 70vh;
+		overflow-y: auto;
+		background: #f9fafb;
+	}
+
+	.form-section {
+		background: #fff;
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 14px;
+		margin-bottom: 14px;
+	}
+
+		.form-section h6 {
+			font-size: 13px;
+			font-weight: 700;
+			color: #1e40af;
+			margin-bottom: 10px;
+			padding: 6px 10px;
+			background: #eef2ff;
+			border-left: 4px solid var(--brand);
+			border-radius: 6px;
+		}
+
+	label {
+		font-size: 12.5px;
+		font-weight: 600;
+		color: #374151;
+	}
+
+	.form-control, .form-select {
+		height: 36px;
+		font-size: 13px;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+	}
+
+	.emp-image-card {
+		background: linear-gradient(180deg,#eef2ff,#ffffff);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		padding: 18px;
+		text-align: center;
+	}
+
+		.emp-image-card img {
+			width: 140px;
+			height: 140px;
+			border-radius: 50%;
+			border: 4px solid #dbeafe;
+			object-fit: cover;
+			background: #fff;
+			margin-bottom: 10px;
+		}
+
+	.modal-footer {
+		background: #f8fafc;
+		border-top: 1px solid var(--border);
+		padding: 14px 20px;
+	}
+
 </style>
 <!-- PAGE TITLE + BREADCRUMB -->
 <div class="d-md-flex d-block align-items-center justify-content-between page-breadcrumb mb-3">
@@ -315,9 +383,22 @@
 							<div class="col-4">
 								@emp.Name
 							</div>
+
 							<div class="col-3 text-muted">
-								@emp.DOB
+								@{
+									DateTime dob;
+									if (DateTime.TryParse(emp.DOB?.ToString(), out dob))
+									{
+										@dob.ToString("dd/MM/yyyy")
+									}
+									else
+									{
+										<span>-</span>
+									}
+								}
 							</div>
+
+
 							<div class="col-3">
 								@emp.PhoneNo
 							</div>
@@ -445,189 +526,182 @@
 </div>
 
 
-@* //ADD EMP *@
-<div class="modal fade" id="empModal" tabindex="-1">
-		<div class="modal-dialog modal-xl modal-dialog-centered">
-			<div class="modal-content">
 
-			<!-- HEADER -->
-			<div class="modal-header">
-				<h5 class="modal-title">Add / Edit Employee</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-			</div>
+<div class="modal fade"
+	 id="empModal"
+	 data-bs-backdrop="static"
+	 data-bs-keyboard="false">
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
 
-			<!-- FORM -->
 			<form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
 
-				<!-- HIDDEN FIELDS -->
 				<input type="hidden" name="Emp_Id" id="Emp_Id" />
 				<input type="hidden" name="Emp_Img" id="Emp_Img" />
 
-				<div class="modal-body">
-
-					<!-- NAME -->
-					<div class="row">
-						<div class="col-md-9">
-							<label class="form-label">Employee Full Name</label>
-							<input type="text"
-								   class="form-control"
-								   name="Name"
-								   id="Name"
-								   required />
-						</div>
-
-						<div class="col-md-3">
-							<label class="form-label">Date of Birth</label>
-							<input type="date"
-								   class="form-control"
-								   name="Dob"
-								   id="Dob" />
-						</div>
-					</div>
-
-
-					<!-- IMAGE -->
-					<div class="mb-3 text-center">
-						<img id="imgPreview"
-							 src="~/assets/img/user-placeholder.png"
-							 style="width:120px;height:120px;border-radius:50%;object-fit:cover;border:1px solid #ccc" />
-						<input type="file"
-							   class="form-control mt-2"
-							   name="EmpImage"
-							   accept="image/*"
-							   onchange="previewImage(this)" />
-					</div>
-
-					<!-- DEPT / DESIGNATION -->
-					<div class="row">
-						<div class="col-md-3 mb-3">
-							<label>Department</label>
-							<select class="form-select" name="DepartmentId" id="DepartmentId">
-								@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
-								{
-									<option value="@d.Value">@d.Text</option>
-								}
-							</select>
-						</div>
-
-						<div class="col-md-3 mb-3">
-							<label>Designation</label>
-							<select class="form-select" name="DesignationId" id="DesignationId">
-								@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
-								{
-									<option value="@d.Value">@d.Text</option>
-								}
-							</select>
-						</div>
-
-					<!-- EMAIL / PHONE -->
-						<div class="col-md-3 mb-3">
-							<label>Email</label>
-							<input type="email" class="form-control" name="EmailId" id="EmailId" />
-						</div>
-
-						<div class="col-md-3 mb-3">
-							<label>Phone</label>
-							<input type="text" class="form-control" name="PhoneNo" id="PhoneNo" />
-						</div>
-					</div>
-
-					<!-- DATE / SALARY / SHIFT -->
-					<div class="row">
-						<div class="col-md-3 mb-3">
-							<label>Joining Date</label>
-							<input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
-						</div>
-
-						<div class="col-md-3 mb-3">
-							<label>Salary</label>
-							<input type="number" class="form-control" name="Salary" id="Salary" />
-						</div>
-
-						<div class="col-md-3 mb-3">
-							<label>Shift</label>
-							<select class="form-select" name="ShiftId" id="ShiftId">
-								@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
-								{
-									<option value="@d.Value">@d.Text</option>
-								}
-							</select>
-
-						</div>
-					</div>
-
-
-					<!---USERID--->
-
-						<div class="row">
-							<div class="col-md-3 mb-3">
-								<label>User Name</label>
-								<input type="text" class="form-control" name="UserName" id="UserName" />
-							</div>
-
-							<div class="col-md-3 mb-3">
-								<label>Password</label>
-								<input type="password" class="form-control" name="Password" id="Password" />
-							</div>
-
-							<div class="col-md-3 mb-3">
-								<label>User Role</label>
-								<select class="form-select" name="Role" id="Role">
-									<option value="Admin">Admin</option>
-									<option value="User">User</option>
-								</select>
-							</div>
-						</div>
-
-					<!-- ADDRESS -->
-					<div class="mb-3">
-						<label>Address</label>
-						<textarea class="form-control" name="Address" id="Address"></textarea>
-					</div>
-
-					<!-- STATUS -->
-					<div class="mb-3">
-						<label>Status</label>
-						<select class="form-select" name="Status" id="Status">
-							<option value="Active">Active</option>
-							<option value="Inactive">Inactive</option>
-						</select>
-					</div>
-
+				<div class="modal-header">
+					<h5 class="modal-title">Add Employee</h5>
+					<button class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 
-				<!-- FOOTER -->
+				<div class="modal-body">
+					<div class="row">
+
+						<!-- IMAGE -->
+						<div class="col-md-4">
+							<div class="emp-image-card">
+								<img id="imgPreview"
+									 src="/assets/img/user-placeholder.png" />
+								<input type="file"
+									   class="form-control"
+									   name="EmpImage"
+									   onchange="previewImage(this)" />
+
+								<div class="mt-3 text-start" style="font-size:13px">
+									<div class="d-flex justify-content-between">
+										<span class="fw-semibold">Module</span>
+										<span>Employee</span>
+									</div>
+									<div class="d-flex justify-content-between">
+										<span class="fw-semibold">Access</span>
+										<span class="badge bg-success">Enabled</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- FORM -->
+						<div class="col-md-8">
+
+							<div class="form-section">
+								<h6>Basic Information</h6>
+								<div class="row">
+									<div class="col-md-6 mb-2">
+										<label>Full Name</label>
+										<input class="form-control" name="Name" id="Name" />
+									</div>
+									<div class="col-md-3 mb-2">
+										<label>DOB</label>
+										<input type="date" class="form-control" name="Dob" id="Dob" />
+									</div>
+									<div class="col-md-3 mb-2">
+										<label>Joining Date</label>
+										<input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
+									</div>
+								</div>
+							</div>
+
+							<div class="form-section">
+								<h6>Work Details</h6>
+								<div class="row">
+									<div class="col-md-4 mb-2">
+										<label>Department</label>
+										<select class="form-select" name="DepartmentId" id="DepartmentId">
+											@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
+											{
+												<option value="@d.Value">@d.Text</option>
+											}
+										</select>
+									</div>
+
+									<div class="col-md-4 mb-2">
+										<label>Designation</label>
+										<select class="form-select" name="DesignationId" id="DesignationId">
+											@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
+											{
+												<option value="@d.Value">@d.Text</option>
+											}
+										</select>
+									</div>
+
+									<div class="col-md-4 mb-2">
+										<label>Shift</label>
+										<select class="form-select" name="ShiftId" id="ShiftId">
+											@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
+											{
+												<option value="@d.Value">@d.Text</option>
+											}
+										</select>
+									</div>
+
+								</div>
+							</div>
+
+							<div class="form-section">
+								<h6>Contact & Login</h6>
+								<div class="row">
+									<div class="col-md-4 mb-2">
+										<label>Email</label>
+										<input class="form-control" name="EmailId" id="EmailId" />
+									</div>
+									<div class="col-md-4 mb-2">
+										<label>Phone</label>
+										<input class="form-control" name="PhoneNo" id="PhoneNo" />
+									</div>
+									<div class="col-md-4 mb-2">
+										<label>Salary</label>
+										<input class="form-control" name="Salary" id="Salary" />
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-md-4 mb-2">
+										<label>User Name</label>
+										<input class="form-control" name="UserName" id="UserName" />
+									</div>
+									<div class="col-md-4 mb-2">
+										<label>Password</label>
+										<input type="password" class="form-control" name="Password" id="Password" />
+									</div>
+									<div class="col-md-4 mb-2">
+										<label>Status</label>
+										<select class="form-select" name="Status" id="Status">
+											<option>Active</option>
+											<option>Inactive</option>
+										</select>
+									</div>
+								</div>
+
+								<label>Address</label>
+								<textarea class="form-control" rows="2" name="Address" id="Address"></textarea>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
 				<div class="modal-footer">
-					<button type="button" class="btn btn-light" data-bs-dismiss="modal">
-						Cancel
-					</button>
-					<button type="submit" class="btn btn-primary">
-						Save
-					</button>
+					<button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+					<button class="btn btn-primary">Save</button>
 				</div>
 
 			</form>
-
 		</div>
 	</div>
 </div>
 
+
+ 
+
 @section Scripts {
 
 	<script>
-		function clearForm() {
-			Emp_Id.value = "";
-			Name.value = "";
-			EmailId.value = "";
-			PhoneNo.value = "";
-			JoiningDate.value = "";
-			Salary.value = "";
-			Shift.value = "";
-			Address.value = "";
-			Status.value = "Active";
-			Emp_Img.value = "";
-			imgPreview.src = "/assets/img/user-placeholder.png";
+		function previewImage(input) {
+			if (input.files && input.files[0]) {
+				const r = new FileReader();
+				r.onload = e => imgPreview.src = e.target.result;
+				r.readAsDataURL(input.files[0]);
+			}
 		}
+
+		const empModalEl = document.getElementById('empModal');
+		empModalEl.addEventListener('hidden.bs.modal', () => {
+			document.querySelectorAll('.modal-backdrop').forEach(b => b.remove());
+			document.body.classList.remove('modal-open');
+			document.body.style = '';
+		});
+	</script>
+	<script>
 
 		function previewImage(input) {
 			if (input.files && input.files[0]) {
