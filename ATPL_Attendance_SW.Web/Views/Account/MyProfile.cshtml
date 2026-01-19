@@ -1,0 +1,149 @@
+﻿@model System.Data.DataTable
+@{
+    var r = Model.Rows[0];
+}
+<style>
+    /* Background Gradient */
+    .glass-bg {
+        min-height: 100vh;
+        background:white;
+        padding: 40px 0;
+    }
+
+    /* Glass Card */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.18);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 18px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: black;
+    }
+
+    /* Glass Divider */
+    .glass-divider {
+        border-right: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    /* Labels */
+    .label-text {
+        color: darkgray;
+        font-weight: 500;
+    }
+
+    /* Profile Image Glow */
+    .profile-img {
+        border: 4px solid rgba(255, 255, 255, 0.4);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+    }
+
+    /* Section Title */
+    .section-title {
+        font-weight: 600;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        padding-bottom: 6px;
+        margin-bottom: 15px;
+    }
+
+</style>
+<div class="glass-bg">
+    <div class="container">
+
+        <div class="card glass-card shadow-lg">
+            <div class="card-body p-4">
+
+                <div class="row align-items-center">
+
+                    <!-- LEFT PROFILE -->
+                    <div class="col-md-4 text-center glass-divider">
+
+                        <img src="@Url.Content(string.IsNullOrEmpty(r["Emp_Img"]?.ToString())
+                                                         ? "~/images/profiles/avatar-01.jpg"
+                                                         : r["Emp_Img"].ToString())"
+                             class="rounded-circle profile-img mb-3"
+                             style="width:140px;height:140px;object-fit:cover;" />
+
+                        <h4 class="mb-1">@r["UserName"]</h4>
+
+                        <span class="badge bg-warning text-dark px-3 py-2 mt-2">
+                            @r["Role"]
+                        </span>
+                    </div>
+
+                    <!-- RIGHT DETAILS -->
+                    <div class="col-md-8 ps-md-4">
+
+                        <h3 class="section-title" style="color:orangered">Personal Information</h3>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">Name</div>
+                            <div class="col-sm-8">@r["Name"]</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">Date of Birth</div>
+                            <div class="col-sm-8">
+                                @Convert.ToDateTime(r["DOB"]).ToString("dd-MMM-yyyy")
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">Phone & Email</div>
+                            <div class="col-sm-8">
+                                @r["PhoneNO"] • @r["EmailId"]
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">Department</div>
+                            <div class="col-sm-8">@r["Department"]</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">Designation</div>
+                            <div class="col-sm-8">@r["Designation"]</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">Shift</div>
+                            <div class="col-sm-8">@r["Shift"]</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4 label-text">Joining Date</div>
+                            <div class="col-sm-8">
+                                @Convert.ToDateTime(r["JoiningDate"]).ToString("dd-MMM-yyyy")
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-sm-4 label-text">Address</div>
+                            <div class="col-sm-8">@r["Address"]</div>
+                        </div>
+                        <hr>
+                        <h5 class="section-title" style="color:orangered">Bank Details</h5>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">Bank Name</div>
+                            <div class="col-sm-8">@r["BankName"]</div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-sm-4 label-text">IFSC Code</div>
+                            <div class="col-sm-8">@r["IFSC_Code"]</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-4 label-text">Account No</div>
+                            <div class="col-sm-8">@r["Acc_No"]</div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>

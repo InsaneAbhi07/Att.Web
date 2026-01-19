@@ -1,16 +1,215 @@
-﻿/* ================= MOBILE SIDEBAR ================= */
+﻿/* ================= SIDEBAR BASE ================= */
+.sidebar {
+    width: 260px;
+    background: #ffffff;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    transition: all .3s ease;
+    border-right: 1px solid #e5e7eb;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.sidebar-inner {
+    height: 100%;
+    overflow-y: auto;
+}
+
+    /* scrollbar */
+    .sidebar-inner::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar-inner::-webkit-scrollbar-thumb {
+        background: #f59e0b;
+        border-radius: 10px;
+    }
+
+/* ================= LOGO ================= */
+.logo-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #ffffff;
+    text-align: center;
+    flex-shrink: 0;
+    padding: 10px 10px 6px; /* gap kam */
+    padding-bottom: 4px !important; /* pehle zyada tha */
+    border-bottom: 1px solid #e5e7eb;
+}
+
+
+.app-logo {
+    max-width: 100%;
+    display: block;
+    margin: 0 auto;
+    height: 90px;
+    margin-bottom: 0 !important;
+}
+
+/* ================= MENU ================= */
+ 
+.sidebar-menu {
+    flex: 1;
+    padding: 10px 8px;
+    text-align: left; /* 🔥 ye missing tha */
+}
+
+
+    .sidebar-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar-menu > ul > li > a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        color: #1f2937;
+        border-radius: 6px;
+        transition: all .25s ease;
+        position: relative;
+        justify-content: flex-start;
+    }
+
+    .sidebar-menu > ul > li > a {
+        font-family: "Ubuntu", "Roboto", sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+        padding: 10px 14px; /* vertical gap kam */
+    }
+    .sidebar-menu ul li {
+        margin-bottom: 2px;
+    }
+
+
+        .sidebar-menu > ul > li > a i {
+            font-size: 18px;
+            color: #2563eb;
+            min-width: 22px;
+            margin-left: 0;
+            margin-right: 10px;
+        }
+
+        .sidebar-menu > ul > li > a:hover {
+            background: #eef2ff;
+            color: #2563eb;
+        }
+
+    .sidebar-menu > ul > li.active > a {
+        background: #e0edff;
+        font-weight: 600;
+    }
+
+/* ================= SUBMENU LEVEL 1 ================= */
+.submenu > ul {
+    display: none;
+    padding-left: 0;
+    margin-top: 6px;
+}
+
+.submenu.active > ul {
+    display: block;
+}
+
+/* ================= SUBMENU LEVEL 2 ================= */
+.submenu-two > a {
+    font-weight: 600;
+    color: #2563eb !important;
+    background: #f1f5f9;
+    border-radius: 6px;
+    padding: 10px 14px;
+}
+
+.menu-title {
+    margin-top: -100px;
+}
+
+    .menu-title span {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        color: #6b7280;
+    }
+
+.submenu-two ul {
+    padding-left: 14px;
+    border-left: 2px solid #e5e7eb;
+    margin-top: 6px;
+}
+
+    .submenu-two ul li a {
+        display: block;
+        padding: 9px 12px;
+        font-size: 13px;
+        color: #374151 !important;
+        border-radius: 6px;
+        transition: all .2s ease;
+    }
+
+        .submenu-two ul li a:hover {
+            background: #eef2ff;
+            color: #2563eb !important;
+            padding-left: 16px;
+        }
+
+        .submenu-two ul li a.active {
+            background: #dbeafe;
+            font-weight: 600;
+            color: #1e40af !important;
+        }
+
+/* ================= ARROW ================= */
+.menu-arrow {
+    margin-left: auto;
+    font-size: 12px;
+    color: #6b7280;
+    transition: transform .25s ease;
+}
+
+.submenu.active > a .menu-arrow,
+.submenu-two.active > a .menu-arrow {
+    transform: rotate(90deg);
+}
+
+/* ================= MINI SIDEBAR ================= */
+.mini-sidebar .sidebar {
+    width: 70px;
+}
+
+    .mini-sidebar .sidebar .sidebar-menu span,
+    .mini-sidebar .sidebar .menu-arrow {
+        display: none;
+    }
+
+    .mini-sidebar .sidebar .sidebar-menu i {
+        font-size: 22px;
+        margin: auto;
+    }
+
+.mini-sidebar .logo-wrapper {
+    padding: 10px 5px;
+}
+
+.mini-sidebar .app-logo {
+    height: 40px;
+}
+
+/* ================= MOBILE ================= */
 @media (max-width: 768px) {
 
     .sidebar {
-        position: fixed;
-        top: 0;
         left: -260px;
-        width: 260px;
-        height: 100vh;
-        background: #fff;
-        z-index: 1050;
-        overflow-y: auto;
-        transition: all 0.3s ease-in-out;
     }
 
     body.sidebar-open .sidebar {
@@ -19,12 +218,9 @@
 
     #sidebarOverlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0,0,0,0.5);
-        z-index: 1040;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        z-index: 999;
         display: none;
     }
 
@@ -34,5 +230,21 @@
 
     .page-wrapper {
         margin-left: 0 !important;
+    }
+
+    /* mobile submenu spacing */
+    .submenu-two ul {
+        padding-left: 12px;
+    }
+
+        .submenu-two ul li a {
+            padding: 10px 12px;
+            font-size: 13px;
+        }
+}
+@media (min-width: 769px) {
+    .sidebar {
+        left: 0 !important;
+        position: fixed;
     }
 }

@@ -73,5 +73,9 @@ public class DataUtility
             }
         }
     }
- 
+
+    internal int ExecuteNonQuery(string v, SqlParameter[] prms)
+    {
+        throw new NotImplementedException();
+    }
 }

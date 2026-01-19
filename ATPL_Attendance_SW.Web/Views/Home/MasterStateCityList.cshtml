@@ -98,6 +98,12 @@
             background: #f9fafb;
             border-top: 1px solid var(--border);
         }
+
+    .grid-scroll {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
     </style>
 
 <!-- ================= HEADER ================= -->
@@ -119,8 +125,29 @@
             </button>
         </div>
 
-        <table class="table table-bordered">
-            <thead class="table-light">
+
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <select id="pageSize" class="form-select" style="width:120px">
+                    <option value="5">Top 5</option>
+                    <option value="10" selected>Top 10</option>
+                    <option value="25">Top 25</option>
+                    <option value="100">Top 100</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 text-end">
+                <input type="text"
+                       id="searchBox"
+                       class="form-control"
+                       placeholder="Search State..."
+                       style="width:250px; display:inline-block;">
+            </div>
+        </div>
+
+        <div class="table-responsive grid-scroll">
+            <table class="table table-hover" id="deptTable">
+                <thead class="table-light">
                 <tr>
                     <th>SNo</th>
                     <th>State</th>
@@ -156,6 +183,10 @@
         </table>
     </div>
 
+        <div class="d-flex justify-content-end mt-2">
+            <ul class="pagination" id="pagination"></ul>
+        </div>
+</div>
     <!-- ================= CITY LIST ================= -->
     <div class="col-md-6">
         <div class="d-flex justify-content-between mb-2">
@@ -168,8 +199,29 @@
             </button>
         </div>
 
-        <table class="table table-bordered">
-            <thead class="table-light">
+        <div class="row mb-2">
+            <div class="col-md-6">
+                <select id="cityPageSize" class="form-select" style="width:120px">
+                    <option value="5">Top 5</option>
+                    <option value="10" selected>Top 10</option>
+                    <option value="25">Top 25</option>
+                    <option value="100">Top 100</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 text-end">
+                <input type="text"
+                       id="citySearchBox"
+                       class="form-control"
+                       placeholder="Search city..."
+                       style="width:250px; display:inline-block;">
+
+            </div>
+        </div>
+
+        <div class="table-responsive grid-scroll">
+            <table class="table table-hover" id="cityTable">
+                <thead class="table-light">
                 <tr>
                     <th>SNo</th>
                     <th>State</th>
@@ -199,8 +251,12 @@
             </tbody>
         </table>
     </div>
-
+        <div class="d-flex justify-content-end mt-2">
+            <ul class="pagination" id="cityPagination"></ul>
+        </div>
+    </div>
 </div>
+
 
 <!-- ================= STATE MODAL ================= -->
 <div class="modal fade" id="stateModal">
@@ -286,7 +342,7 @@
         </div>
     </div>
 }
-
+<script src="~/assets/js/global.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
@@ -317,4 +373,71 @@
         CityName.value = "";
         citySaveBtn.innerText = "Save";
     }
+</script>
+<script>
+    function setupTable(searchId, sizeId, tableId, pagerId) {
+
+        let currentPage = 1;
+
+        const searchBox = document.getElementById(searchId);
+        const pageSize = document.getElementById(sizeId);
+        const table = document.getElementById(tableId);
+        const pagination = document.getElementById(pagerId);
+        const tbody = table.querySelector("tbody");
+        const rows = Array.from(tbody.querySelectorAll("tr"));
+
+        function render() {
+            let search = searchBox.value.toLowerCase();
+            let limit = parseInt(pageSize.value);
+
+            let filtered = rows.filter(r =>
+                r.innerText.toLowerCase().includes(search)
+            );
+
+            let totalPages = Math.ceil(filtered.length / limit);
+            if (currentPage > totalPages) currentPage = 1;
+
+            rows.forEach(r => r.style.display = "none");
+
+            let start = (currentPage - 1) * limit;
+            let end = start + limit;
+
+            filtered.slice(start, end).forEach(r => {
+                r.style.display = "";
+            });
+
+            pagination.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                let li = document.createElement("li");
+                li.className = "page-item " + (i === currentPage ? "active" : "");
+
+                let a = document.createElement("a");
+                a.className = "page-link";
+                a.href = "#";
+                a.innerText = i;
+                a.onclick = e => {
+                    e.preventDefault();
+                    currentPage = i;
+                    render();
+                };
+
+                li.appendChild(a);
+                pagination.appendChild(li);
+            }
+        }
+
+        searchBox.addEventListener("keyup", () => { currentPage = 1; render(); });
+        pageSize.addEventListener("change", () => { currentPage = 1; render(); });
+
+        render();
+    }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        setupTable("searchBox", "pageSize", "deptTable", "pagination");
+        setupTable("citySearchBox", "cityPageSize", "cityTable", "cityPagination");
+
+    });
 </script>

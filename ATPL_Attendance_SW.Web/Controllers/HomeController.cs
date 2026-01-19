@@ -347,6 +347,12 @@ namespace ATPL_Attendance_SW.Web.Controllers
         [HttpPost]
         public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage)
         {
+
+            if (!ModelState.IsValid)
+            {
+                return View("EmployeeList", model);   // return same view to show errors
+            }
+
             string imageName = model.Emp_Img ?? "";   // old image safe
 
             if (EmpImage != null && EmpImage.Length > 0)
@@ -370,7 +376,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             {
         new SqlParameter("@Emp_Id", model.Emp_Id),
 
-        new SqlParameter("@Name", model.Name ?? ""),
+        new SqlParameter("@Name", model.Name),
         new SqlParameter("@Dob", string.IsNullOrEmpty(model.DOB) ? (object)DBNull.Value : model.DOB),
 
         new SqlParameter("@DepartmentId", model.DepartmentId == 0 ? (object)DBNull.Value : model.DepartmentId),
@@ -594,6 +600,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             var data = new
             {
                 Id = r["Id"].ToString(),
+                CCode = r["CCode"].ToString(),
                 CompanyName = r["CompanyName"].ToString(),
                 Abbr = r["Abbr"].ToString(),
                 Address = r["Address"].ToString(),
@@ -617,17 +624,17 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
 
         [HttpPost]
-        public IActionResult DeleteCompany(long id)
+        public IActionResult DeleteCompany(string ccode)
         {
             SqlParameter[] prms =
             {
-            new SqlParameter("@Id", id)
+            new SqlParameter("@CCode", ccode)
         };
 
             du.Execute("Sp_Delete_MasterCompany", prms);
             TempData["Msg"] = "Record Deleted Successfully";
 
-            return RedirectToAction("CompanyList");
+            return RedirectToAction("CompanyInfoList");
         }
 
 

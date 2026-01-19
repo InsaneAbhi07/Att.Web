@@ -5,6 +5,13 @@
 <head>
 		<link href="~/assets/css/popup.css" rel="stylesheet" />
 </head>
+<style>
+		.grid-scroll {
+			max-height: 350px;
+			overflow-y: auto;
+		}
+
+</style>
 	<!-- PAGE HEADER -->
 	<div class="d-flex justify-content-between align-items-center mb-3">
 		<h4 class="page-title">Master Department</h4>
@@ -17,10 +24,30 @@
 		</button>
 	</div>
 
+	<div class="row mb-2">
+		<div class="col-md-6">
+			<select id="pageSize" class="form-select" style="width:120px">
+				<option value="5">Top 5</option>
+				<option value="10" selected>Top 10</option>
+				<option value="25">Top 25</option>
+				<option value="100">Top 100</option>
+			</select>
+		</div>
+
+		<div class="col-md-6 text-end">
+			<input type="text"
+				   id="searchBox"
+				   class="form-control"
+				   placeholder="Search department..."
+				   style="width:250px; display:inline-block;">
+		</div>
+	</div>
+
+
 	<!-- LIST -->
 	<div class="card">
-		<div class="card-body">
-			<table class="table table-hover">
+		<div class="table-responsive grid-scroll">
+			<table class="table table-hover" id="deptTable">
 				<thead>
 					<tr>
 						<th>Sr. No.</th>
@@ -55,6 +82,11 @@
 			</table>
 		</div>
 	</div>
+
+	<div class="d-flex justify-content-end mt-2">
+		<ul class="pagination" id="pagination"></ul>
+	</div>
+
 
 	<!-- ADD / EDIT MODAL -->
 	<div class="modal fade" id="designationModal">
@@ -105,7 +137,7 @@
 }
 
 
-
+	<script src="~/assets/js/global.js"></script>
 @section Scripts {
 		<script>
 

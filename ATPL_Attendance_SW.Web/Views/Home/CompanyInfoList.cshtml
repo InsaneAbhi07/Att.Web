@@ -152,11 +152,11 @@
 <!-- ================= HEADER ================= -->
 <div class="d-flex justify-content-between align-items-center page-header mb-3">
 	<h5>Master Company</h5>
-	<button class="btn btn-primary btn-sm"
+	<button class="btn btn-primary"
 			data-bs-toggle="modal"
 			data-bs-target="#companyModal"
 			onclick="clearForm()">
-		Edit Company
+		+ Add New Company
 	</button>
 </div>
 
@@ -171,6 +171,8 @@
 					<th>City</th>
 					<th>Contact</th>
 					<th>GSTIN</th>
+					<th width="120">Action</th>
+
 				</tr>
 			</thead>
 			<tbody>
@@ -182,6 +184,28 @@
 						<td>@c.City</td>
 						<td>@c.ContactNo</td>
 						<td>@c.GSTIN</td>
+						<td>
+						@* 	<button class="btn btn-sm btn-warning"
+									onclick="editCompanyByCode('@c.CCode')">
+								Edit
+							</button> *@
+							<button class="btn btn-sm btn-warning edit-btn"
+									data-ccode="@c.CCode">
+								Edit
+							</button>
+
+							<form asp-action="DeleteCompany"
+								  method="post"
+								  style="display:inline"
+								  onsubmit="return confirm('Delete this company?');">
+								<input type="hidden" name="ccode" value="@c.CCode" />
+								<button class="btn btn-sm btn-danger">
+									Delete
+								</button>
+							</form>
+						</td>
+
+
 					</tr>
 				}
 			</tbody>
@@ -211,19 +235,21 @@
 						<div class="row">
 							<div class="col-md-2 mb-2">
 								<label>Company Code</label>
-								<select id="CCode" name="CCode" class="form-select"
+								@* <select id="CCode" name="CCode" class="form-select"
 										onchange="loadCompanyByCode(this.value)">
 									<option value="">Select</option>
 									@foreach (var d in (List<SelectListItem>)ViewBag.CCodeList)
 									{
 										<option value="@d.Text">@d.Text</option>
 									}
-								</select>
+								</select> *@
+								<input class="form-control" id="CCode" name="CCode" />
+
 							</div>
 
 							<div class="col-md-8 mb-2">
 								<label>Company Name</label>
-								<input class="form-control" id="CompanyName" name="CompanyName" readonly />
+								<input class="form-control" id="CompanyName" name="CompanyName"/>
 							</div>
 
 							<div class="col-md-2 mb-2">
@@ -281,7 +307,7 @@
 						   
 
 							<div class="col-md-6 mb-2">
-								<label>Address</label>
+								<label>Address 1</label>
 								<input type="text" class="form-control" id="Address" name="Address" rows="2"></input>
 							</div>
 
@@ -387,51 +413,54 @@
 		document.getElementById("StateId").value = "";
 		document.getElementById("CityId").innerHTML = '<option value="">-- Select City --</option>';
 
-		CompanyName.readOnly = true;
+		//CompanyName.readOnly = true;
 		Id.value = 0;
 		setButtonMode(false);
 	}
 
 	// ===== LOAD COMPANY =====
-	function loadCompanyByCode(ccode) {
+		 function loadCompanyByCode(ccode) {
+
+		console.log("CCode:", ccode); // debug
 
 		if (!ccode) {
 			clearForm();
 			return;
 		}
 
-		fetch('/Home/GetCompanyByCode?ccode=' + ccode)
+		fetch('/Home/GetCompanyByCode?ccode=' + encodeURIComponent(ccode))
 			.then(r => r.json())
 			.then(d => {
 
 				if (!d) return;
 
-				Id.value = d.id;
-				CompanyName.value = d.companyName;
-				CompanyName.readOnly = false;
-				Abbr.value = d.abbr;
+				document.getElementById("Id").value = d.id;
+				document.getElementById("CCode").value = d.ccode;
+				// document.getElementById("CCode").readOnly = true;
 
-				Country.value = d.country;
-				Address.value = d.address;
-				Address2.value = d.address2;
-				Pincode.value = d.pincode;
+				document.getElementById("CompanyName").value = d.companyName;
+				document.getElementById("Abbr").value = d.abbr;
 
-				Telepohne.value = d.telepohne;
-				ContactNo.value = d.contactNo;
-				Email.value = d.email;
-				GSTIN.value = d.gstin;
-				Website.value = d.website;
+				document.getElementById("Country").value = d.country;
+				document.getElementById("Address").value = d.address;
+				document.getElementById("Address2").value = d.address2;
+				document.getElementById("Pincode").value = d.pincode;
 
-				BankName.value = d.bankName;
-				AccountNo.value = d.accountNo;
-				IFSCCode.value = d.ifscCode;
+				document.getElementById("Telepohne").value = d.telepohne;
+				document.getElementById("ContactNo").value = d.contactNo;
+				document.getElementById("Email").value = d.email;
+				document.getElementById("GSTIN").value = d.gstin;
+				document.getElementById("Website").value = d.website;
 
-				// ✅ STATE FIRST
+				document.getElementById("BankName").value = d.bankName;
+				document.getElementById("AccountNo").value = d.accountNo;
+				document.getElementById("IFSCCode").value = d.ifscCode;
+
 				loadStates(d.stateId, d.cityId);
-
 				setButtonMode(true);
 			});
 	}
+
 
 	// ===== LOAD STATES =====
 	function loadStates(selectedStateId, selectedCityId) {
@@ -487,4 +516,15 @@
 			isEdit ? 'Update' : 'Save';
 	}
 
+</script>
+
+<script>
+	document.querySelectorAll('.edit-btn').forEach(btn => {
+		btn.addEventListener('click', function () {
+			const ccode = this.getAttribute('data-ccode');
+
+			new bootstrap.Modal(document.getElementById('companyModal')).show();
+			loadCompanyByCode(ccode);
+		});
+	});
 </script>

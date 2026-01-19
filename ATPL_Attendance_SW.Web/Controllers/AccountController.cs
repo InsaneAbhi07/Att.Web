@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -48,9 +49,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             if (dt.Rows.Count > 0)
             {
 
-            string img = dt.Rows[0]["Emp_Img"] == DBNull.Value
-            ? ""
-            : dt.Rows[0]["Emp_Img"].ToString();
+            string img = dt.Rows[0]["Emp_Img"] == DBNull.Value?"": dt.Rows[0]["Emp_Img"].ToString();
 
              var claims = new List<Claim>
             {
@@ -84,5 +83,50 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             return RedirectToAction("Login", "Account");
         }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+
+        [HttpPost]
+        public IActionResult ForgotPassword(string username, string newPassword)
+        {
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Username", username),
+        new SqlParameter("@NewPassword", newPassword)
+    };
+
+            int res = du.ExecuteNonQuery("Sp_ForgotPassword", prms);
+
+            if (res > 0)
+            {
+                ViewBag.Success = "Password updated successfully";
+                return View();
+            }
+
+            ViewBag.Error = "Username not found";
+            return View();
+        }
+
+        [Authorize]
+        public IActionResult MyProfile()
+        {
+            string username = User.Identity.Name;
+
+            SqlParameter[] prms =
+            {
+                new SqlParameter("@Username", username)
+             };
+
+            DataTable dt = du.GetDataTable("Sp_GetMyProfile", prms);
+
+            return View(dt);
+        }
+
+
+
     }
 }

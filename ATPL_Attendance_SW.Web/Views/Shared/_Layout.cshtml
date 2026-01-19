@@ -236,17 +236,15 @@
 								</a>
 								<!-- Search -->
 								<div class="input-group input-group-flat d-inline-flex me-1">
-									<span class="input-icon-addon">
+									@* <span class="input-icon-addon">
 										<i class="ti ti-search"></i>
-									</span>
-									<input type="text" class="form-control" placeholder="Search in HRMS">
+									</span> *@
+									@* <input type="text" class="form-control" placeholder="Search in HRMS">
 									<span class="input-group-text">
 										<kbd>CTRL + / </kbd>
-									</span>
+									</span> *@
 								</div>
-								<a href="profile-settings.html" class="btn btn-menubar">
-									<i class="ti ti-settings-cog"></i>
-								</a>
+							 
 							</div>
 
 							<!-- Horizontal Single -->
@@ -305,8 +303,8 @@
 												</div>
 											</div>
 											<div class="card-body">
-												<a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="profile.html">
-													<i class="ti ti-user-circle me-1"></i>My Profile
+												<a asp-action="MyProfile" asp-controller="Account">
+													<i class="ti ti-user"></i> My Profile
 												</a>
 											</div>
 											<div class="card-footer">
@@ -348,16 +346,19 @@
 			<!-- Sidebar -->
 			<div class="sidebar" id="sidebar">
 				<!-- Logo -->
-				<div class="sidebar-logo">
+			@* 	<div class="sidebar-logo">
 					<a href="index.html" class="logo logo-normal">
-						<img src="assets/img/att.svg" alt="Logo">
+						<img src="assets/img/att.png" alt="Logo">
 					</a>
 					<a href="index.html" class="logo-small">
-						<img src="assets/img/att.svg" alt="Logo">
+						<img src="assets/img/att.png" alt="Logo">
 					</a>
 					<a href="index.html" class="dark-logo">
-						<img src="assets/img/att.svg" alt="Logo">
+						<img src="assets/img/att.png" alt="Logo">
 					</a>
+				</div> *@
+				<div class="logo-wrapper">
+					<img src="~/assets/img/att1.png" alt="Logo" class="app-logo" />
 				</div>
 				<!-- /Logo -->
 				<div class="modern-profile p-3 pb-0">
@@ -413,12 +414,12 @@
 						</div>
 					</div>
 				</div>
-				<div class="sidebar-inner slimscroll">
+				<div class="sidebar-inner slimscroll" style="margin-top:-50px">
 					<div id="sidebar-menu" class="sidebar-menu">
 						<ul>
 
 							<!-- MAIN -->
-							<li class="menu-title"><span>MAIN MENU</span></li>
+							@* <li class="menu-title"><span>MAIN MENU</span></li> *@
 
 							<li>
 								<a href="/Home/Index">
@@ -440,26 +441,30 @@
 
 									<li class="submenu submenu-two">
 										<a href="javascript:void(0);">
-											Main Masters For Now
+											Main Masters
 											<span class="menu-arrow"></span>
 										</a>
 										<ul>
+											<li class="menu-title"><span>COMPANY</span></li>
 											<li><a asp-controller="Home" asp-action="CompanyInfoList">Company Profile</a></li>
-											<li><a asp-controller="Home" asp-action="DepartmentList">Master Department</a></li>
-											<li><a asp-controller="Home" asp-action="DesignationList">Master Designation</a></li>
-											<li><a asp-controller="Home" asp-action="EmployeeList">Master Employee</a></li>
+											<li><a asp-controller="Home" asp-action="DepartmentList"> Add Department</a></li>
+											<li><a asp-controller="Home" asp-action="DesignationList">Add Designation</a></li>
+											<li><a asp-controller="Home" asp-action="EmployeeList">Add Employee</a></li>
 											<li><a asp-controller="Home" asp-action="HolidayList">Working Calendar</a></li>
-											<li><a asp-controller="Home" asp-action="ShiftList">Master Shift</a></li>
-											<li><a asp-controller="Home" asp-action="LeaveTypeList">Master Leave Type</a></li>
-											<li><a asp-controller="Home" asp-action="MasterStateCityList">Master State/City</a></li>
-											<li><a asp-controller="Home" asp-action="ShiftList">Master City</a></li>
-											<li><a asp-controller="Home" asp-action="ShiftList">Master Category</a></li>
-											<li><a asp-controller="Home" asp-action="ShiftList">Master Employee Type</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Add Shift</a></li>
+											<li><a asp-controller="Home" asp-action="LeaveTypeList">Leave Type Entry</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Add Category</a></li>
+											<li><a asp-controller="Home" asp-action="ShiftList">Add Employee Type</a></li>
+											<li class="menu-title"><span>LOCATION</span></li>
+											@* <li><a asp-controller="Home" asp-action="ShiftList">Add Country</a></li> *@
+											<li><a asp-controller="Home" asp-action="MasterStateCityList">Add State/City</a></li>
+											
+											
 										</ul>
 									</li>
 
 									<hr>
-									<!-- Organization -->
+								@* 	<!-- Organization -->
 									<li class="submenu submenu-two">
 										<a href="javascript:void(0);">
 											Organization
@@ -472,10 +477,10 @@
 											<li><a asp-controller="Home" asp-action="DepartmentList">Department</a></li>
 											<li><a asp-controller="Home" asp-action="DesignationList">Designation</a></li>
 										</ul>
-									</li>
+									</li> *@
 
 									<!-- Location -->
-									<li class="submenu submenu-two">
+									@* <li class="submenu submenu-two">
 										<a href="javascript:void(0);">
 											Location and Structure
 											<span class="menu-arrow"></span>
@@ -486,10 +491,10 @@
 											<li><a asp-controller="Home" asp-action="ShiftList">Floor</a></li>
 											<li><a asp-controller="Home" asp-action="ShiftList">Cost Center</a></li>
 										</ul>
-									</li>
+									</li> *@
 
 									<!-- Department & Role -->
-									<li class="submenu submenu-two">
+									@* <li class="submenu submenu-two">
 										<a href="javascript:void(0);">
 											Department & Role
 											<span class="menu-arrow"></span>
@@ -499,10 +504,10 @@
 											<li><a asp-controller="Home" asp-action="ShiftList">Designation</a></li>
 											<li><a asp-controller="Home" asp-action="ShiftList">Skill Category</a></li>
 										</ul>
-									</li>
+									</li> *@
 
 									<!-- Contractor -->
-									<li class="submenu submenu-two">
+								@* 	<li class="submenu submenu-two">
 										<a href="javascript:void(0);">
 											Contractor
 											<span class="menu-arrow"></span>
@@ -512,9 +517,9 @@
 											<li><a asp-controller="Home" asp-action="ShiftList">Con. License Details</a></li>
 											<li><a asp-controller="Home" asp-action="ShiftList">Con. Wokr Category</a></li>
 										</ul>
-									</li>
+									</li> *@
 
-									<!-- Shift and Time -->
+									@* <!-- Shift and Time -->
 									<li class="submenu submenu-two">
 										<a href="javascript:void(0);">
 											Shift & Time
@@ -525,7 +530,7 @@
 											<li><a asp-controller="Home" asp-action="ShiftList">Grace Time Rules</a></li>
 											<li><a asp-controller="Home" asp-action="ShiftList">Night Shift Rules</a></li>
 										</ul>
-									</li>
+									</li> *@
 
 								</ul>
 							</li>
@@ -668,7 +673,7 @@
 		<footer class="footer border-top text-muted">
 			<div class="container-fluid d-flex justify-content-between">
 				<span>2014 - 2025 © ATPL.</span>
-				<span>Designed & Developed By <span class="text-primary">BeLikeAbhi</span></span>
+				<span>Designed & Developed By <span class="text-primary">ATPL@INDIA</span></span>
 			</div>
 		</footer>
 	</div>
