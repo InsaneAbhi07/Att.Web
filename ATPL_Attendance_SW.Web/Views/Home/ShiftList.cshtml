@@ -124,8 +124,10 @@
 
                     <div class="col-md-6">
                         <label class="form-label">Shift Type</label>
-                        <input type="text" class="form-control"
-                               name="ShiftType" id="ShiftType" />
+                        <select id="ShiftType" name="ShiftType" class="form-control dropdown">
+                            <option value="Day">Day</option>
+                            <option value="Night">Night</option>
+                             </select>
                     </div>
 
                     <div class="col-md-4">
@@ -153,8 +155,36 @@
                     </div>
 
                 </div>
+             
 
-                <div class="modal-footer">
+                <div class="col-md-12 mt-2">
+    <label class="form-label">Carry Forward</label>
+    <div class="d-flex gap-3">
+        <label>
+            <input type="radio" name="CarryForward" value="Yes" checked
+                   onclick="toggleComp(false)"> Yes
+        </label>
+
+        <label>
+            <input type="radio" name="CarryForward" value="No"
+                   onclick="toggleComp(true)"> No
+        </label>
+    </div>
+</div>
+
+<div class="col-md-6 mt-2 d-none" id="compDiv">
+    <label class="form-label">Compensation Type</label>
+    <select name="CompensationType" id="CompensationType" class="form-control">
+        <option value="">-- Select --</option>
+        <option value="Leave">Leave</option>
+        <option value="OT">Over Time</option>
+        <option value="Amount">Amount</option>
+    </select>
+</div>
+
+
+
+                 <div class="modal-footer">
                     <button class="btn btn-secondary"
                             data-bs-dismiss="modal">
                         Cancel

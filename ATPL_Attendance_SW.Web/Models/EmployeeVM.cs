@@ -36,6 +36,19 @@ namespace ATPL_Attendance_SW.Web.Models
         public string? IFSC_Code { get; set;}
         public string? EmpType { get; set; }
         public decimal? Acc_No { get; set; }
+
+        public string Gender { get; set; }
+        public string MaritalStatus { get; set; }
+        public string EmergencyContact { get; set; }
+
+        public decimal BasicSalary { get; set; }
+        public decimal HRA { get; set; }
+        public decimal DA { get; set; }
+        public decimal PA { get; set; }
+        public decimal OtherAllowance { get; set; }
+        public decimal GrossSalary { get; set; }
+
+
     }
 
 }

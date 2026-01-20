@@ -1,0 +1,309 @@
+﻿@model List<EmployeeVM>
+@{
+    ViewData["Title"] = "Master Employee";
+}
+<link href="~/assets/css/popup.css" rel="stylesheet" />
+<style>
+    :root {
+        --brand: #2563eb;
+        --brand-dark: #1e40af;
+        --border: #e5e7eb;
+        --bg-soft: #f8fafc;
+        --text: #1f2937;
+        --muted: #6b7280;
+    }
+
+    .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        padding: 10px 14px;
+        background: #f1f5f9;
+        border-left: 5px solid var(--brand);
+        border-radius: 6px;
+        border-left: 5px solid var(--brand);
+        display: block; /* IMPORTANT */
+        width: 80%; /* full bg width */
+    }
+
+    .table thead th {
+        background: #f8fafc;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table tbody tr:hover {
+        background: #f9fafb;
+    }
+
+    .modal-dialog {
+        max-width: 95%;
+    }
+
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        background: #f9fafb;
+    }
+
+    .form-section {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 18px;
+        background: linear-gradient(180deg,#ffffff,#f9fafb);
+    }
+
+
+        .form-section h6 {
+            font-weight: 700;
+            color: var(--brand-dark);
+            padding: 6px 10px;
+            background: #eef2ff;
+            border-left: 4px solid var(--brand);
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+
+    .modal-footer .btn-primary {
+        background: linear-gradient(90deg,#2563eb,#1e40af);
+        border: none;
+    }
+
+    label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+
+    .form-control, .form-select {
+        height: 36px;
+        font-size: 13.5px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+    }
+
+    textarea.form-control {
+        height: auto;
+    }
+
+    .emp-image-card {
+        background: linear-gradient(180deg,#eef2ff,#ffffff);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+    }
+
+        .emp-image-card img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #dbeafe;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+    .modal-footer {
+        background: #f8fafc;
+        border-top: 1px solid var(--border);
+        padding: 14px 20px;
+    }
+
+    .grid-scroll {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
+    label.required::after {
+        content: " *";
+        color: red;
+    }
+
+    .left-card {
+        background: linear-gradient(180deg,#eef2ff,#ffffff);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+    }
+
+    .left-profile {
+        height: 100%;
+        min-height: 78vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .emp-type-box {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .emp-type-row {
+        display: flex;
+        gap: 12px; /* space between Contract & Permanent */
+    }
+
+    .emp-type-inline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+        background: #f8fafc;
+    }
+
+        .emp-type-inline input:checked + span {
+            font-weight: 700;
+            color: var(--brand-dark);
+        }
+
+
+        .emp-type-inline:hover {
+            background: #f1f5f9;
+        }
+
+        .emp-type-inline input {
+            accent-color: var(--brand);
+        }
+
+</style>
+
+<!-- HEADER -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="page-title">Master Employee</h4>
+    
+    <a class="btn btn-primary" href="/Home/SaveEmployee">
+        + Add Employee
+    </a>
+
+</div>
+
+<input type="hidden" id="OldUserName" />
+
+
+<div class="row mb-2">
+    <div class="col-md-6">
+        <select id="pageSize" class="form-select" style="width:120px">
+            <option value="5">Top 5</option>
+            <option value="10" selected>Top 10</option>
+            <option value="25">Top 25</option>
+            <option value="100">Top 100</option>
+        </select>
+    </div>
+
+    <div class="col-md-6 text-end">
+        <input type="text"
+               id="searchBox"
+               class="form-control"
+               placeholder="Search Employee..."
+               style="width:250px; display:inline-block;">
+    </div>
+</div>
+
+<!-- LIST -->
+<div class="card">
+    <div class="table-responsive grid-scroll">
+        <table class="table table-hover" id="deptTable">
+            <thead>
+                <tr>
+                    <th>Emp Id</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Phone</th>
+                    <th>Shift</th>
+                    <th>Image</th>
+                    <th>Status</th>
+                    <th width="150">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td>@e.Emp_Id</td>
+                        <td>@e.Name</td>
+                        <td>@e.Department</td>
+                        <td>@e.Designation</td>
+                        <td>@e.PhoneNo</td>
+                        <td>@e.Shift</td>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(e.Emp_Img)
+                                                                                                  ? Url.Content("~/assets/img/user-placeholder.png")
+                                                                                                  : Url.Content("~/uploads/employee/" + e.Emp_Img))"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;" />
+                    </td>
+                    <td>
+                        <span class="badge @(e.Status == "Active" ? "bg-success" : "bg-secondary")">
+                            @e.Status
+                        </span>
+                    </td>
+                    <td>
+                        <a class="btn btn-sm btn-warning"
+                           href="/Home/SaveEmployee/@e.Emp_Id">
+                            Edit
+                        </a>
+
+                            <form asp-action="DeleteEmployee" method="post" style="display:inline">
+                                <input type="hidden" name="empId" value="@e.Emp_Id" />
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+
+                    </tr>
+                                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end mt-2">
+    <ul class="pagination" id="pagination"></ul>
+</div>
+ 
+
+
+@if (TempData["Msg"] != null)
+{
+    <div class="popup-overlay" id="centerPopup">
+        <div class="popup-box">
+            <h4>Success</h4>
+            <p>@TempData["Msg"]</p>
+        </div>
+    </div>
+}
+
+@section Scripts {
+
+    <script src="~/assets/js/global.js"></script>
+
+ 
+
+
+    <script>
+        // SUCCESS POPUP AUTO CLOSE
+        const popup = document.getElementById("centerPopup");
+        if (popup) {
+            setTimeout(() => popup.remove(), 1200);
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => imgPreview.src = e.target.result;
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        </script>
+        }

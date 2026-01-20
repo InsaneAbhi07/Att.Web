@@ -1,0 +1,401 @@
+﻿@model EmployeeVM
+@{
+    ViewData["Title"] = Model.Emp_Id == 0 ? "Add Employee" : "Edit Employee";
+}
+<link href="~/assets/css/emp.css" rel="stylesheet" />
+<style>
+   
+</style>
+
+<div class="employee-form-container">
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Emp_Id" />
+
+        <!-- Header -->
+        <div class="form-header">
+            <h2>@ViewData["Title"]</h2>
+            <p>Complete all required fields to @(Model.Emp_Id == 0 ? "add a new" : "update") employee record</p>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav modern-tabs" id="empTabs" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabPersonal" type="button">
+                    👤 Personal Info
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabContact" type="button">
+                    📞 Contact & Employment
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabSalary" type="button">
+                    💰 Salary Structure
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBank" type="button">
+                    🏦 Bank Details
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- PERSONAL INFO TAB -->
+            <div class="tab-pane fade show active" id="tabPersonal">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <div class="image-upload-section">
+                            <img id="imgPreview" class="profile-image-preview"
+                                 src="@(string.IsNullOrEmpty(Model.Emp_Img) ? "/assets/img/user-placeholder.png" : "/uploads/employee/" + Model.Emp_Img)"
+                                 alt="Employee Photo" />
+                            <div class="upload-btn-wrapper">
+                                <button class="upload-btn" type="button">
+                                    📸 Upload Photo
+                                </button>
+                                <input type="file" name="EmpImage" accept="image/*" onchange="previewImage(this)" />
+                            </div>
+                            <p style="margin-top: 8px; font-size: 10px; color: #6b7280;">Max 2MB, JPG/PNG</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="section-card">
+                            <div class="section-title">Basic Information</div>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Full Name *</label>
+                                    <input asp-for="Name" class="form-control" placeholder="Enter full name" required />
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Date of Birth *</label>
+                                    <input asp-for="DOB" type="date" class="form-control" required />
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Employment Type *</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="EmpType" value="Permanent" />
+                                            <span>Permanent</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="EmpType" value="Contract" />
+                                            <span>Contract</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Gender *</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="Gender" value="Male" />
+                                            <span>Male</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="Gender" value="Female" />
+                                            <span>Female</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Marital Status</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="MaritalStatus" value="Single" />
+                                            <span>Single</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="MaritalStatus" value="Married" />
+                                            <span>Married</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <label class="form-label">Status *</label>
+                                    <div class="radio-group">
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="Status" value="Male" />
+                                            <span>Active</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="Status" value="Female" />
+                                            <span>Inactive</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTACT & EMPLOYMENT TAB -->
+            <div class="tab-pane fade" id="tabContact">
+                <div class="section-card">
+                    <div class="section-title">Contact Information</div>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Phone Number *</label>
+                            <input asp-for="PhoneNo" class="form-control" placeholder="+91 XXXXX XXXXX" required />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Emergency Contact</label>
+                            <input asp-for="EmergencyContact" class="form-control" placeholder="+91 XXXXX XXXXX" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Email Address *</label>
+                            <input asp-for="EmailId" type="email" class="form-control" placeholder="email@example.com" required />
+                        </div>
+
+                        <div class="col-12 mb-2">
+                            <label class="form-label">Full Address</label>
+                            <textarea asp-for="Address" class="form-control" rows="3" placeholder="Enter complete address"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title">Employment Details</div>
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Department *</label>
+                            <select asp-for="DepartmentId" asp-items="ViewBag.DepartmentList" class="form-select" required>
+                                <option value="">Select Department</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Designation *</label>
+                            <select asp-for="DesignationId" asp-items="ViewBag.DesignationList" class="form-select" required>
+                                <option value="">Select Designation</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Work Shift *</label>
+                            <select asp-for="ShiftId" asp-items="ViewBag.Shiftlistt" class="form-select" required>
+                                <option value="">Select Shift</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Joining Date *</label>
+                            <input asp-for="JoiningDate" type="date" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SALARY TAB -->
+            <div class="tab-pane fade" id="tabSalary">
+                <div class="section-card">
+                    <div class="section-title">Salary Components</div>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Basic Salary *</label>
+                            <input asp-for="BasicSalary" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">House Rent Allowance (HRA)</label>
+                            <input asp-for="HRA" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Dearness Allowance (DA)</label>
+                            <input asp-for="DA" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Performance Allowance (PA)</label>
+                            <input asp-for="PA" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Other Allowances</label>
+                            <input asp-for="OtherAllowance" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Gross Salary</label>
+                            <input asp-for="GrossSalary" type="number" step="0.01" class="form-control" readonly style="font-weight: 700; font-size: 14px; color: #10b981;" />
+                        </div>
+                    </div>
+
+                    <div class="salary-summary">
+                        <h4>Total Gross Salary</h4>
+                        <p class="amount">₹ <span id="grossDisplay">0.00</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BANK TAB -->
+            <div class="tab-pane fade" id="tabBank">
+                <div class="section-card">
+                    <div class="section-title">Bank Account Details</div>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Bank Name *</label>
+                            <input asp-for="BankName" class="form-control" placeholder="e.g., State Bank of India" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Account Number *</label>
+                            <input asp-for="Acc_No" class="form-control" placeholder="Enter account number" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">IFSC Code *</label>
+                            <input asp-for="IFSC_Code" class="form-control" placeholder="e.g., SBIN0001234" style="text-transform: uppercase;" />
+                        </div>
+                    </div>
+
+                    <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 6px; margin-top: 12px;">
+                        <p style="margin: 0; color: #92400e; font-size: 11px; font-weight: 500;">
+                            ⚠️ <strong>Important:</strong> Please verify all bank details carefully. Incorrect information may delay salary processing.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+            <div class="nav-buttons">
+                <button type="button" class="btn-nav" id="btnPrevious" onclick="previousTab()">
+                    ← Previous
+                </button>
+                <button type="button" class="btn-nav" id="btnNext" onclick="nextTab()">
+                    Next →
+                </button>
+            </div>
+            <div class="submit-buttons">
+                <button type="button" class="btn-secondary-custom" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn-primary-custom">
+                    @(Model.Emp_Id == 0 ? "✓ Create" : "✓ Update")
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Tab navigation
+    const tabs = ['#tabPersonal', '#tabContact', '#tabSalary', '#tabBank'];
+    let currentTabIndex = 0;
+
+    function updateNavigationButtons() {
+        const btnPrevious = document.getElementById('btnPrevious');
+        const btnNext = document.getElementById('btnNext');
+
+        btnPrevious.disabled = currentTabIndex === 0;
+        btnNext.disabled = currentTabIndex === tabs.length - 1;
+    }
+
+    function nextTab() {
+        if (currentTabIndex < tabs.length - 1) {
+            currentTabIndex++;
+            const nextTabElement = document.querySelector(`[data-bs-target="${tabs[currentTabIndex]}"]`);
+            const bootstrapTab = new bootstrap.Tab(nextTabElement);
+            bootstrapTab.show();
+            updateNavigationButtons();
+        }
+    }
+
+    function previousTab() {
+        if (currentTabIndex > 0) {
+            currentTabIndex--;
+            const prevTabElement = document.querySelector(`[data-bs-target="${tabs[currentTabIndex]}"]`);
+            const bootstrapTab = new bootstrap.Tab(prevTabElement);
+            bootstrapTab.show();
+            updateNavigationButtons();
+        }
+    }
+
+    // Update current tab index when tabs are clicked
+    document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab, index) => {
+        tab.addEventListener('shown.bs.tab', function() {
+            currentTabIndex = index;
+            updateNavigationButtons();
+            localStorage.setItem('activeTab', this.getAttribute('data-bs-target'));
+        });
+    });
+
+    // Image preview
+    function previewImage(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imgPreview').src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    // Salary calculation
+    document.querySelectorAll('.salary').forEach(input => {
+        input.addEventListener('input', calculateGross);
+    });
+
+    function calculateGross() {
+        let total = 0;
+        document.querySelectorAll('.salary').forEach(input => {
+            const value = parseFloat(input.value) || 0;
+            total += value;
+        });
+
+        document.querySelector('[name="GrossSalary"]').value = total.toFixed(2);
+        document.getElementById('grossDisplay').textContent = total.toLocaleString('en-IN', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+    }
+
+    // Initialize on page load
+    calculateGross();
+    updateNavigationButtons();
+
+    // Form validation enhancement
+    document.querySelector('form').addEventListener('submit', function(e) {
+        const requiredFields = this.querySelectorAll('[required]');
+        let isValid = true;
+
+        requiredFields.forEach(field => {
+            if (!field.value.trim()) {
+                isValid = false;
+                field.style.borderColor = '#ef4444';
+            } else {
+                field.style.borderColor = '#e5e7eb';
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            alert('Please fill all required fields marked with *');
+        }
+    });
+
+    // Restore last active tab
+    window.addEventListener('load', function() {
+        const activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            const tab = document.querySelector(`[data-bs-target="${activeTab}"]`);
+            if (tab) {
+                const bootstrapTab = new bootstrap.Tab(tab);
+                bootstrapTab.show();
+                currentTabIndex = tabs.indexOf(activeTab);
+                updateNavigationButtons();
+            }
+        }
+    });
+</script>

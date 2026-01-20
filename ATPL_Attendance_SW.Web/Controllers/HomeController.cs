@@ -1,5 +1,6 @@
 using System.Data;
 using System.Diagnostics;
+using System.Drawing.Printing;
 using ATPL_Attendance_SW.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -349,113 +350,259 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return View(list);
         }
 
-        [HttpPost]
-        [HttpPost]
+        public IActionResult EmployeeList1()
+        {
+            DataTable dt = du.GetDataTable("Sp_Get_EmployeeList", null);
+            List<EmployeeVM> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new EmployeeVM
+                {
+                    Emp_Id = Convert.ToInt32(row["Emp_Id"]),
+                    Name = row["Name"]?.ToString(),
+
+                    DepartmentId = row["DepartmentId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DepartmentId"]),
+                    DesignationId = row["DesignationId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DesignationId"]),
+                    ShiftId = row["ShiftId"] == DBNull.Value ? 0 : Convert.ToInt32(row["ShiftId"]),
+
+                    EmailId = row["EmailId"]?.ToString() ?? "",
+                    PhoneNo = row["PhoneNo"]?.ToString() ?? "",
+
+                    JoiningDate = row["JoiningDate"]?.ToString() ?? "",
+                    Address = row["Address"]?.ToString() ?? "",
+                    DOB = row["Dob"]?.ToString() ?? "",
+
+                    Emp_Img = row["Emp_Img"]?.ToString() ?? "",
+                    Designation = row["Designation"]?.ToString() ?? "",
+                    Department = row["Department"]?.ToString() ?? "",
+
+                    Salary = row["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Salary"]),
+                    Status = row["Status"]?.ToString() ?? "Inactive",
+                    Shift = row["Shift"]?.ToString() ?? "",
+
+                    BankName = row["BankName"]?.ToString() ?? "",
+                    Ac_HolderName = row["AC_HolderName"]?.ToString() ?? "",
+                    IFSC_Code = row["IFSC_Code"]?.ToString() ?? "",
+                    Acc_No = row["Acc_No"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Acc_No"]),
+
+                    EmpType = row["EmpType"]?.ToString() ?? "",
+                    UserName = row["UserName"]?.ToString() ?? "",
+                    Role = row["Role"]?.ToString() ?? ""
+                });
+            }
+
+            ViewBag.DepartmentList = GetDepartmentDDL();
+            ViewBag.DesignationList = GetDesignationDDL();
+            ViewBag.Shiftlistt = GetSHiftDDL();
+
+            return View(list);
+        }
+
+        public IActionResult SaveEmployee(long id = 0)
+        {
+            ViewBag.DepartmentList = GetDepartmentDDL();
+            ViewBag.DesignationList = GetDesignationDDL();
+            ViewBag.Shiftlistt = GetSHiftDDL();
+
+            // ADD
+            if (id == 0)
+                return View(new EmployeeVM());
+
+            // EDIT
+            SqlParameter[] p = { new SqlParameter("@EmpId", id) };
+            DataTable dt = du.GetDataTable("Sp_GetEmployeeById", p);
+
+            if (dt.Rows.Count == 0)
+                return RedirectToAction("EmployeeList");
+
+            DataRow r = dt.Rows[0];
+
+            EmployeeVM model = new EmployeeVM
+            {
+                Emp_Id = (int)id,
+                Name = r["Name"]?.ToString(),
+                DOB = r["DOB"]?.ToString(),
+                JoiningDate = r["JoiningDate"]?.ToString(),
+                DepartmentId = Convert.ToInt32(r["DepartmentId"]),
+                DesignationId = Convert.ToInt32(r["DesignationId"]),
+                ShiftId = Convert.ToInt32(r["ShiftId"]),
+                EmailId = r["EmailId"]?.ToString(),
+                PhoneNo = r["PhoneNo"]?.ToString(),
+                Address = r["Address"]?.ToString(),
+                Emp_Img = r["Emp_Img"]?.ToString(),
+                Salary = r["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Salary"]),
+                Status = r["Status"]?.ToString(),
+                UserName = r["UserName"]?.ToString(),
+                Password = r["PasswordHash"]?.ToString(),
+                BankName = r["BankName"]?.ToString(),
+                Ac_HolderName = r["AC_HolderName"]?.ToString(),
+                IFSC_Code = r["IFSC_Code"]?.ToString(),
+                Acc_No = r["Acc_No"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Acc_No"]),
+                EmpType = r["EmpType"]?.ToString()
+            };
+
+            return View(model);
+        }
+
         [HttpPost]
         public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage)
         {
-            try
+            string fileName = model.Emp_Img;
+
+            // IMAGE UPLOAD
+            if (EmpImage != null && EmpImage.Length > 0)
             {
-                if (string.IsNullOrWhiteSpace(model.Name))
-                {
-                    TempData["Msg"] = "Employee Name is required";
-                    return RedirectToAction("EmployeeList");
-                }
+                fileName = Guid.NewGuid() + Path.GetExtension(EmpImage.FileName);
+                string path = Path.Combine(Directory.GetCurrentDirectory(),
+                            "wwwroot/uploads/employee", fileName);
 
-                string imageName = model.Emp_Img ?? "";
+                using var stream = new FileStream(path, FileMode.Create);
+                EmpImage.CopyTo(stream);
+            }
 
-                if (EmpImage != null && EmpImage.Length > 0)
-                {
-                    string uploadPath = Path.Combine(
-                        Directory.GetCurrentDirectory(),
-                        "wwwroot/uploads/employee"
-                    );
-
-                    if (!Directory.Exists(uploadPath))
-                        Directory.CreateDirectory(uploadPath);
-
-                    imageName = Guid.NewGuid() + Path.GetExtension(EmpImage.FileName);
-                    string filePath = Path.Combine(uploadPath, imageName);
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        EmpImage.CopyTo(stream);
-                    }
-                }
-
-                SqlParameter[] prms =
-                {
-            new SqlParameter("@Emp_Id", model.Emp_Id),
-
-            new SqlParameter("@Name", model.Name),
-
-            new SqlParameter("@Dob",
-                string.IsNullOrEmpty(model.DOB)
-                ? (object)DBNull.Value
-                : model.DOB),
-
-            new SqlParameter("@DepartmentId",
-                model.DepartmentId == 0
-                ? (object)DBNull.Value
-                : model.DepartmentId),
-
-            new SqlParameter("@DesignationId",
-                model.DesignationId == 0
-                ? (object)DBNull.Value
-                : model.DesignationId),
-
-            new SqlParameter("@ShiftId",
-                model.ShiftId == 0
-                ? (object)DBNull.Value
-                : model.ShiftId),
-
-            new SqlParameter("@EmailId", model.EmailId ?? ""),
-            new SqlParameter("@PhoneNo", model.PhoneNo ?? ""),
-
-            new SqlParameter("@JoiningDate",
-                string.IsNullOrEmpty(model.JoiningDate)
-                ? (object)DBNull.Value
-                : model.JoiningDate),
-
-            new SqlParameter("@Address", model.Address ?? ""),
-
-            new SqlParameter("@Emp_Img", imageName),
-
-            new SqlParameter("@Salary",
-                model.Salary == 0
-                ? (object)DBNull.Value
-                : model.Salary),
-
-            new SqlParameter("@Status", model.Status ?? "Active"),
-            new SqlParameter("@UserName", model.UserName ?? ""),
-            new SqlParameter("@Password", model.Password ?? ""),
-            new SqlParameter("@Role", model.Role ?? ""),
-
-            // BANK DETAILS
-            new SqlParameter("@BankName", model.BankName ?? ""),
-            new SqlParameter("@Ac_HolderName", model.Ac_HolderName ?? ""),
-            new SqlParameter("@IFSC_Code", model.IFSC_Code ?? ""),
-
-            // EMP TYPE (FIXED)
-            new SqlParameter("@EmpType", model.EmpType ?? ""),
-
-            new SqlParameter("@Acc_No", model.Acc_No == 0 ? (object)DBNull.Value : model.Acc_No),
-
-            new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+            SqlParameter msg = new SqlParameter("@msg", SqlDbType.NVarChar, 100)
             {
                 Direction = ParameterDirection.Output
-            }
-        };
-                du.Execute("Sp_Insert_MasterEmployee", prms);
+            };
 
-                TempData["Msg"] = prms[^1].Value?.ToString() ?? "Saved successfully";
-            }
-            catch (Exception ex)
+            SqlParameter[] prms =
             {
-                TempData["Msg"] = "Something went wrong. Please try again.";
-            }
+            new("@Emp_Id", model.Emp_Id),
+            new("@Name", model.Name),
+            new("@Dob", model.DOB),
+            new("@DepartmentId", model.DepartmentId),
+            new("@DesignationId", model.DesignationId),
+            new("@EmailId", model.EmailId),
+            new("@PhoneNo", model.PhoneNo),
+            new("@JoiningDate", model.JoiningDate),
+            new("@Address", model.Address),
+            new("@Emp_Img", fileName),
+            new("@Salary", model.Salary),
+            new("@Status", model.Status),
+            new("@ShiftId", model.ShiftId),
+            new("@UserName", model.UserName),
+            new("@Password", model.Password),
+            new("@Role", model.Role ?? "Employee"),
+            new("@BankName", model.BankName),
+            new("@AC_HolderName", model.Ac_HolderName),
+            new("@Emptype", model.EmpType),
+            new("@IFSC_Code", model.IFSC_Code),
+            new("@Acc_No", model.Acc_No),
+            msg
+        };
+
+            du.Execute("Sp_Insert_MasterEmployee", prms);
+
+            TempData["Msg"] = msg.Value.ToString();
             return RedirectToAction("EmployeeList");
         }
+
+
+        //public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage)
+        //{
+        //    try
+        //    {
+        //        if (string.IsNullOrWhiteSpace(model.Name))
+        //        {
+        //            TempData["Msg"] = "Employee Name is required";
+        //            return RedirectToAction("EmployeeList");
+        //        }
+
+        //        string imageName = model.Emp_Img ?? "";
+
+        //        if (EmpImage != null && EmpImage.Length > 0)
+        //        {
+        //            string uploadPath = Path.Combine(
+        //                Directory.GetCurrentDirectory(),
+        //                "wwwroot/uploads/employee"
+        //            );
+
+        //            if (!Directory.Exists(uploadPath))
+        //                Directory.CreateDirectory(uploadPath);
+
+        //            imageName = Guid.NewGuid() + Path.GetExtension(EmpImage.FileName);
+        //            string filePath = Path.Combine(uploadPath, imageName);
+
+        //            using (var stream = new FileStream(filePath, FileMode.Create))
+        //            {
+        //                EmpImage.CopyTo(stream);
+        //            }
+        //        }
+
+        //        SqlParameter[] prms =
+        //        {
+        //    new SqlParameter("@Emp_Id", model.Emp_Id),
+
+        //    new SqlParameter("@Name", model.Name),
+
+        //    new SqlParameter("@Dob",
+        //        string.IsNullOrEmpty(model.DOB)
+        //        ? (object)DBNull.Value
+        //        : model.DOB),
+
+        //    new SqlParameter("@DepartmentId",
+        //        model.DepartmentId == 0
+        //        ? (object)DBNull.Value
+        //        : model.DepartmentId),
+
+        //    new SqlParameter("@DesignationId",
+        //        model.DesignationId == 0
+        //        ? (object)DBNull.Value
+        //        : model.DesignationId),
+
+        //    new SqlParameter("@ShiftId",
+        //        model.ShiftId == 0
+        //        ? (object)DBNull.Value
+        //        : model.ShiftId),
+
+        //    new SqlParameter("@EmailId", model.EmailId ?? ""),
+        //    new SqlParameter("@PhoneNo", model.PhoneNo ?? ""),
+
+        //    new SqlParameter("@JoiningDate",
+        //        string.IsNullOrEmpty(model.JoiningDate)
+        //        ? (object)DBNull.Value
+        //        : model.JoiningDate),
+
+        //    new SqlParameter("@Address", model.Address ?? ""),
+
+        //    new SqlParameter("@Emp_Img", imageName),
+
+        //    new SqlParameter("@Salary",
+        //        model.Salary == 0
+        //        ? (object)DBNull.Value
+        //        : model.Salary),
+
+        //    new SqlParameter("@Status", model.Status ?? "Active"),
+        //    new SqlParameter("@UserName", model.UserName ?? ""),
+        //    new SqlParameter("@Password", model.Password ?? ""),
+        //    new SqlParameter("@Role", model.Role ?? ""),
+
+        //    // BANK DETAILS
+        //    new SqlParameter("@BankName", model.BankName ?? ""),
+        //    new SqlParameter("@Ac_HolderName", model.Ac_HolderName ?? ""),
+        //    new SqlParameter("@IFSC_Code", model.IFSC_Code ?? ""),
+
+        //    // EMP TYPE (FIXED)
+        //    new SqlParameter("@EmpType", model.EmpType ?? ""),
+
+        //    new SqlParameter("@Acc_No", model.Acc_No == 0 ? (object)DBNull.Value : model.Acc_No),
+
+        //    new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        //    {
+        //        Direction = ParameterDirection.Output
+        //    }
+        //};
+        //        du.Execute("Sp_Insert_MasterEmployee", prms);
+
+        //        TempData["Msg"] = prms[^1].Value?.ToString() ?? "Saved successfully";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        TempData["Msg"] = "Something went wrong. Please try again.";
+        //    }
+        //    return RedirectToAction("EmployeeList");
+        //}
 
         [HttpGet]
         [HttpGet]
