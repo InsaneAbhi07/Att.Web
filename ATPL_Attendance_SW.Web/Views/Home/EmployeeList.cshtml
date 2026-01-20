@@ -1,470 +1,474 @@
 ﻿@model List<EmployeeVM>
 @{
-	ViewData["Title"] = "Master Employee";
+    ViewData["Title"] = "Master Employee";
 }
 <link href="~/assets/css/popup.css" rel="stylesheet" />
 <style>
-	:root {
-		--brand: #2563eb;
-		--brand-dark: #1e40af;
-		--border: #e5e7eb;
-		--bg-soft: #f8fafc;
-		--text: #1f2937;
-		--muted: #6b7280;
-	}
+    :root {
+        --brand: #2563eb;
+        --brand-dark: #1e40af;
+        --border: #e5e7eb;
+        --bg-soft: #f8fafc;
+        --text: #1f2937;
+        --muted: #6b7280;
+    }
 
-	.page-title {
-		font-size: 20px;
-		font-weight: 700;
-		padding: 10px 14px;
-		background: #f1f5f9;
-		border-left: 5px solid var(--brand);
-		border-radius: 6px;
-		border-left: 5px solid var(--brand);
-		display: block; /* IMPORTANT */
-		width: 80%; /* full bg width */
-	}
+    .page-title {
+        font-size: 20px;
+        font-weight: 700;
+        padding: 10px 14px;
+        background: #f1f5f9;
+        border-left: 5px solid var(--brand);
+        border-radius: 6px;
+        border-left: 5px solid var(--brand);
+        display: block; /* IMPORTANT */
+        width: 80%; /* full bg width */
+    }
 
-	.table thead th {
-		background: #f8fafc;
-		font-size: 13px;
-		font-weight: 700;
-		color: var(--text);
-		border-bottom: 1px solid var(--border);
-	}
+    .table thead th {
+        background: #f8fafc;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--text);
+        border-bottom: 1px solid var(--border);
+    }
 
-	.table tbody tr:hover {
-		background: #f9fafb;
-	}
+    .table tbody tr:hover {
+        background: #f9fafb;
+    }
 
-	.modal-dialog {
-		max-width: 95%;
-	}
+    .modal-dialog {
+        max-width: 95%;
+    }
 
-	.modal-body {
-		max-height: 70vh;
-		overflow-y: auto;
-		background: #f9fafb;
+    .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        background: #f9fafb;
 
-	}
+    }
 
-	.form-section {
-		background: #ffffff;
-		border: 1px solid var(--border);
-		border-radius: 12px;
-		padding: 18px;
-		margin-bottom: 18px;
-		background: linear-gradient(180deg,#ffffff,#f9fafb);
-	}
-
-
-		.form-section h6 {
-			font-weight: 700;
-			color: var(--brand-dark);
-			padding: 6px 10px;
-			background: #eef2ff;
-			border-left: 4px solid var(--brand);
-			border-radius: 6px;
-			font-size: 14px;
-			margin-bottom: 14px;
-
-		}
-
-	.modal-footer .btn-primary {
-		background: linear-gradient(90deg,#2563eb,#1e40af);
-		border: none;
-	}
-
-	label {
-		font-size: 12.5px;
-		font-weight: 600;
-		color: var(--muted);
-		margin-bottom: 4px;
-	}
-
-	.form-control, .form-select {
-		height: 36px;
-		font-size: 13.5px;
-		border-radius: 6px;
-		border: 1px solid var(--border);
-	}
-
-	textarea.form-control {
-		height: auto;
-	}
-
-	.emp-image-card {
-		background: linear-gradient(180deg,#eef2ff,#ffffff);
-		border: 1px solid var(--border);
-		border-radius: 14px;
-		padding: 18px;
-		text-align: center;
-	}
-
-		.emp-image-card img {
-			width: 140px;
-			height: 140px;
-			object-fit: cover;
-			border-radius: 50%;
-			border: 4px solid #dbeafe;
-			margin-bottom: 10px;
-			background: #fff;
-		}
-
-	.modal-footer {
-		background: #f8fafc;
-		border-top: 1px solid var(--border);
-		padding: 14px 20px;
-	}
-
-	.grid-scroll {
-		max-height: 350px;
-		overflow-y: auto;
-	}
-
-	label.required::after {
-		content: " *";
-		color: red;
-	}
-
-	.left-card {
-		background: linear-gradient(180deg,#eef2ff,#ffffff);
-		border-radius: 16px;
-		border: 1px solid var(--border);
-	}
-	.left-profile {
-		height: 100%;
-		min-height: 78vh;
-		position: sticky;
-		top: 0;
-	}
-
-	.emp-type-box {
-		border: 1px solid var(--border);
-		border-radius: 10px;
-		padding: 10px;
-		background: #fff;
-	}
-
-	.emp-type-row {
-		display: flex;
-		gap: 12px; /* space between Contract & Permanent */
-	}
-
-	.emp-type-inline {
-		display: flex;
-		align-items: center;
-		gap: 8px;
-		padding: 8px 14px;
-		border: 1px solid #e5e7eb;
-		border-radius: 8px;
-		cursor: pointer;
-		font-size: 13px;
-		transition: 0.2s;
-		background: #f8fafc;
-	}
-
-		.emp-type-inline input:checked + span {
-			font-weight: 700;
-			color: var(--brand-dark);
-		}
+    .form-section {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 18px;
+        margin-bottom: 18px;
+        background: linear-gradient(180deg,#ffffff,#f9fafb);
+    }
 
 
-		.emp-type-inline:hover {
-			background: #f1f5f9;
-		}
+        .form-section h6 {
+            font-weight: 700;
+            color: var(--brand-dark);
+            padding: 6px 10px;
+            background: #eef2ff;
+            border-left: 4px solid var(--brand);
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 14px;
 
-		.emp-type-inline input {
-			accent-color: var(--brand);
-		}
+        }
+
+    .modal-footer .btn-primary {
+        background: linear-gradient(90deg,#2563eb,#1e40af);
+        border: none;
+    }
+
+    label {
+        font-size: 12.5px;
+        font-weight: 600;
+        color: var(--muted);
+        margin-bottom: 4px;
+    }
+
+    .form-control, .form-select {
+        height: 36px;
+        font-size: 13.5px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+    }
+
+    textarea.form-control {
+        height: auto;
+    }
+
+    .emp-image-card {
+        background: linear-gradient(180deg,#eef2ff,#ffffff);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 18px;
+        text-align: center;
+    }
+
+        .emp-image-card img {
+            width: 140px;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid #dbeafe;
+            margin-bottom: 10px;
+            background: #fff;
+        }
+
+    .modal-footer {
+        background: #f8fafc;
+        border-top: 1px solid var(--border);
+        padding: 14px 20px;
+    }
+
+    .grid-scroll {
+        max-height: 350px;
+        overflow-y: auto;
+    }
+
+    label.required::after {
+        content: " *";
+        color: red;
+    }
+
+    .left-card {
+        background: linear-gradient(180deg,#eef2ff,#ffffff);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+    }
+    .left-profile {
+        height: 100%;
+        min-height: 78vh;
+        position: sticky;
+        top: 0;
+    }
+
+    .emp-type-box {
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+    }
+
+    .emp-type-row {
+        display: flex;
+        gap: 12px; /* space between Contract & Permanent */
+    }
+
+    .emp-type-inline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: 0.2s;
+        background: #f8fafc;
+    }
+
+        .emp-type-inline input:checked + span {
+            font-weight: 700;
+            color: var(--brand-dark);
+        }
+
+
+        .emp-type-inline:hover {
+            background: #f1f5f9;
+        }
+
+        .emp-type-inline input {
+            accent-color: var(--brand);
+        }
 
 
 </style>
 
 <!-- HEADER -->
 <div class="d-flex justify-content-between align-items-center mb-3">
-	<h4 class="page-title">Master Employee</h4>
-	<button class="btn btn-primary"
-			data-bs-toggle="modal"
-			data-bs-target="#empModal"
-			onclick="clearForm()">
-		+ Add Employee
-	</button>
+    <h4 class="page-title">Master Employee</h4>
+    <button class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#empModal"
+            onclick="clearForm()">
+        + Add Employee
+    </button>
 </div>
 
-<div class="row mb-2">
-	<div class="col-md-6">
-		<select id="pageSize" class="form-select" style="width:120px">
-			<option value="5">Top 5</option>
-			<option value="10" selected>Top 10</option>
-			<option value="25">Top 25</option>
-			<option value="100">Top 100</option>
-		</select>
-	</div>
+<input type="hidden" id="OldUserName" />
 
-	<div class="col-md-6 text-end">
-		<input type="text"
-			   id="searchBox"
-			   class="form-control"
-			   placeholder="Search Employee..."
-			   style="width:250px; display:inline-block;">
-	</div>
+
+<div class="row mb-2">
+    <div class="col-md-6">
+        <select id="pageSize" class="form-select" style="width:120px">
+            <option value="5">Top 5</option>
+            <option value="10" selected>Top 10</option>
+            <option value="25">Top 25</option>
+            <option value="100">Top 100</option>
+        </select>
+    </div>
+
+    <div class="col-md-6 text-end">
+        <input type="text"
+               id="searchBox"
+               class="form-control"
+               placeholder="Search Employee..."
+               style="width:250px; display:inline-block;">
+    </div>
 </div>
 
 <!-- LIST -->
 <div class="card">
-	<div class="table-responsive grid-scroll">
-		<table class="table table-hover" id="deptTable">
-			<thead>
-				<tr>
-					<th>Emp Id</th>
-					<th>Name</th>
-					<th>Department</th>
-					<th>Designation</th>
-					<th>Phone</th>
-					<th>Salary</th>
-					<th>Image</th>
-					<th>Status</th>
-					<th width="150">Action</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var e in Model)
-				{
-					<tr>
-						<td>@e.Emp_Id</td>
-						<td>@e.Name</td>
-						<td>@e.Department</td>
-						<td>@e.Designation</td>
-						<td>@e.PhoneNo</td>
-						<td>@e.Salary</td>
-						<td>
-							<img src="@(string.IsNullOrEmpty(e.Emp_Img)
-																 ? Url.Content("~/assets/img/user-placeholder.png")
-																 : Url.Content("~/uploads/employee/" + e.Emp_Img))"
-							 style="width:36px;height:36px;border-radius:50%;object-fit:cover;" />
-					</td>
-					<td>
-						<span class="badge @(e.Status == "Active" ? "bg-success" : "bg-secondary")">
-							@e.Status
-						</span>
-					</td>
-					<td>		
-						<button type="button"
-								class="btn btn-sm btn-warning edit-btn"
-								data-emp='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(e))'>
-							Edit
-						</button>
+    <div class="table-responsive grid-scroll">
+        <table class="table table-hover" id="deptTable">
+            <thead>
+                <tr>
+                    <th>Emp Id</th>
+                    <th>Name</th>
+                    <th>Department</th>
+                    <th>Designation</th>
+                    <th>Phone</th>
+                    <th>Salary</th>
+                    <th>Image</th>
+                    <th>Status</th>
+                    <th width="150">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td>@e.Emp_Id</td>
+                        <td>@e.Name</td>
+                        <td>@e.Department</td>
+                        <td>@e.Designation</td>
+                        <td>@e.PhoneNo</td>
+                        <td>@e.Salary</td>
+                        <td>
+                            <img src="@(string.IsNullOrEmpty(e.Emp_Img)
+                                                                 ? Url.Content("~/assets/img/user-placeholder.png")
+                                                                 : Url.Content("~/uploads/employee/" + e.Emp_Img))"
+                             style="width:36px;height:36px;border-radius:50%;object-fit:cover;" />
+                    </td>
+                    <td>
+                        <span class="badge @(e.Status == "Active" ? "bg-success" : "bg-secondary")">
+                            @e.Status
+                        </span>
+                    </td>
+                    <td>		
+                        <button type="button"
+                                class="btn btn-sm btn-warning edit-btn"
+                                data-emp='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(e))'>
+                            Edit
+                        </button>
 
-							<form asp-action="DeleteEmployee"
-								  method="post"
-								  style="display:inline"
-								  onsubmit="return confirm('Delete this employee?');">
-								<input type="hidden" name="empId" value="@e.Emp_Id" />
-								<button class="btn btn-sm btn-danger">Delete</button>
-							</form>
-						</td>
-					</tr>
-								}
-			</tbody>
-		</table>
-	</div>
+                            <form asp-action="DeleteEmployee"
+                                  method="post"
+                                  style="display:inline"
+                                  onsubmit="return confirm('Delete this employee?');">
+                                <input type="hidden" name="empId" value="@e.Emp_Id" />
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                                }
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <div class="d-flex justify-content-end mt-2">
-	<ul class="pagination" id="pagination"></ul>
+    <ul class="pagination" id="pagination"></ul>
 </div>
 <!-- MODAL -->
 <!-- MODAL -->
 <div class="modal fade" id="empModal" data-bs-backdrop="static">
-	<div class="modal-dialog modal-xl modal-dialog-centered">
-		<div class="modal-content">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
 
-			<form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
+            <form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
 
-				<input type="hidden" name="Emp_Id" id="Emp_Id" />
-				<input type="hidden" name="Emp_Img" id="Emp_Img" />
+                <input type="hidden" name="Emp_Id" id="Emp_Id" />
+                <input type="hidden" name="Emp_Img" id="Emp_Img" />
 
-				<div class="modal-header">
-					<h5 class="modal-title">Add / Edit Employee</h5>
-					<button class="btn-close" data-bs-dismiss="modal"></button>
-				</div>
+                <div class="modal-header">
+                    <h5 class="modal-title">Add / Edit Employee</h5>
+                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
 
-				<div class="modal-body">
-					<div class="row">
+                <div class="modal-body">
+                    <div class="row">
 
-						<!-- LEFT -->
-						<div class="col-md-4">
-							<div class="card p-3 h-100 left-card">
+                        <!-- LEFT -->
+                        <div class="col-md-4">
+                            <div class="card p-3 h-100 left-card">
 
-								<div class="text-center mb-3">
-									<img id="imgPreview"
-										 src="~/assets/img/user-placeholder.png"
-										 class="rounded-circle"
-										 style="width:140px;height:140px;object-fit:cover" />
+                                <div class="text-center mb-3">
+                                    <img id="imgPreview"
+                                         src="~/assets/img/user-placeholder.png"
+                                         class="rounded-circle"
+                                         style="width:140px;height:140px;object-fit:cover" />
 
-									<input type="file"
-										   class="form-control form-control-sm mt-2"
-										   name="EmpImage"
-										   onchange="previewImage(this)" />
-								</div>
+                                    <input type="file"
+                                           class="form-control form-control-sm mt-2"
+                                           name="EmpImage"
+                                           onchange="previewImage(this)" />
+                                </div>
 
-								<!-- EMP TYPE -->
-								<div class="emp-type-box mb-3">
-									<label class="fw-semibold mb-2 d-block">Employee Type</label>
-									<div class="emp-type-row">
-										<label class="emp-type-inline">
-											<input type="radio" name="EmpType" value="Contract" />
-											<span>Contract</span>
-										</label>
-										<label class="emp-type-inline">
-											<input type="radio" name="EmpType" value="Permanent" />
-											<span>Permanent</span>
-										</label>
-									</div>
-								</div>
+                                <!-- EMP TYPE -->
+                                <div class="emp-type-box mb-3">
+                                    <label class="fw-semibold mb-2 d-block">Employee Type</label>
+                                    <div class="emp-type-row">
+                                        <label class="emp-type-inline">
+                                            <input type="radio" name="EmpType" value="Contract" />
+                                            <span>Contract</span>
+                                        </label>
+                                        <label class="emp-type-inline">
+                                            <input type="radio" name="EmpType" value="Permanent" />
+                                            <span>Permanent</span>
+                                        </label>
+                                    </div>
+                                </div>
 
-								<!-- WORKING -->
-								<div class="mb-3">
-									<label class="fw-semibold">Working Details</label>
+                                <!-- WORKING -->
+                                <div class="mb-3">
+                                    <label class="fw-semibold">Working Details</label>
 
-									<label class="small mt-2">Department</label>
-									<select class="form-select form-select-sm" name="DepartmentId" id="DepartmentId">
-										@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
-										{
-											<option value="@d.Value">@d.Text</option>
-										}
-									</select>
+                                    <label class="small mt-2">Department</label>
+                                    <select class="form-select form-select-sm" name="DepartmentId" id="DepartmentId">
+                                        @foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
+                                        {
+                                            <option value="@d.Value">@d.Text</option>
+                                        }
+                                    </select>
 
-									<label class="small mt-2">Designation</label>
-									<select class="form-select form-select-sm" name="DesignationId" id="DesignationId">
-										@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
-										{
-											<option value="@d.Value">@d.Text</option>
-										}
-									</select>
+                                    <label class="small mt-2">Designation</label>
+                                    <select class="form-select form-select-sm" name="DesignationId" id="DesignationId">
+                                        @foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
+                                        {
+                                            <option value="@d.Value">@d.Text</option>
+                                        }
+                                    </select>
 
-									<label class="small mt-2">Shift</label>
-									<select class="form-select form-select-sm" name="ShiftId" id="ShiftId">
-										@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
-										{
-											<option value="@d.Value">@d.Text</option>
-										}
-									</select>
-								</div>
+                                    <label class="small mt-2">Shift</label>
+                                    <select class="form-select form-select-sm" name="ShiftId" id="ShiftId">
+                                        @foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
+                                        {
+                                            <option value="@d.Value">@d.Text</option>
+                                        }
+                                    </select>
+                                </div>
 
-								<label>Status</label>
-								<select class="form-select form-select-sm" name="Status" id="Status">
-									<option>Active</option>
-									<option>Inactive</option>
-								</select>
-							</div>
-						</div>
+                                <label>Status</label>
+                                <select class="form-select form-select-sm" name="Status" id="Status">
+                                    <option>Active</option>
+                                    <option>Inactive</option>
+                                </select>
+                            </div>
+                        </div>
 
-						<!-- RIGHT -->
-						<div class="col-md-8">
+                        <!-- RIGHT -->
+                        <div class="col-md-8">
 
-							<div class="form-section">
-								<h6>Basic Information</h6>
-								<div class="row">
-									<div class="col-md-6">
-										<label class="required">Full Name</label>
-										<input class="form-control" name="Name" id="Name" />
-									</div>
-									<div class="col-md-3">
-										<label>DOB</label>
-										<input type="date" class="form-control" name="Dob" id="Dob" />
-									</div>
-									<div class="col-md-3">
-										<label>Joining Date</label>
-										<input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
-									</div>
-								</div>
-							</div>
+                            <div class="form-section">
+                                <h6>Basic Information</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="required">Full Name</label>
+                                        <input class="form-control" name="Name" id="Name" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>DOB</label>
+                                        <input type="date" class="form-control" name="Dob" id="Dob" />
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label>Joining Date</label>
+                                        <input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="form-section">
-								<h6>Contact & Login</h6>
-								<div class="row">
-									<div class="col-md-6">
-										<label>Email</label>
-										<input class="form-control" name="EmailId" id="EmailId" />
-									</div>
-									<div class="col-md-6">
-										<label>Phone</label>
-										<input class="form-control" name="PhoneNo" id="PhoneNo" />
-									</div>
-									<div class="col-md-6">
-										<label>User Name</label>
-										<input class="form-control" name="UserName" id="UserName" />
-									</div>
-									<div class="col-md-6">
-										<label>Password</label>
-										<input type="password" class="form-control" name="Password" id="Password" />
-									</div>
-								</div>
-							</div>
+                            <div class="form-section">
+                                <h6>Contact & Login</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Email</label>
+                                        <input class="form-control" name="EmailId" id="EmailId" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Phone</label>
+                                        <input class="form-control" name="PhoneNo" id="PhoneNo" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>User Name</label>
+                                        <input class="form-control" name="UserName" id="UserName" onblur="checkUsername()" />
+                                        <small id="userMsg"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>Password</label>
+                                        <input type="password" class="form-control" name="Password" id="Password" />
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="form-section">
-								<h6>Bank & Salary</h6>
-								<div class="row">
-									<div class="col-md-6">
-										<label>Bank Name</label>
-										<input class="form-control" name="BankName" id="BankName" />
-									</div>
-									<div class="col-md-6">
-										<label>A/C Holder</label>
-										<input class="form-control" name="AC_HolderName" id="AC_HolderName" />
-									</div>
-									<div class="col-md-4">
-										<label>IFSC</label>
-										<input class="form-control" name="IFSC_Code" id="IFSC_Code" />
-									</div>
-									<div class="col-md-4">
-										<label>Acc No</label>
-										<input class="form-control" name="Acc_No" id="Acc_No" />
-									</div>
-									<div class="col-md-4">
-										<label>Salary</label>
-										<input class="form-control" name="Salary" id="Salary" />
-									</div>
-								</div>
-							</div>
+                            <div class="form-section">
+                                <h6>Bank & Salary</h6>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label>Bank Name</label>
+                                        <input class="form-control" name="BankName" id="BankName" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>A/C Holder</label>
+                                        <input class="form-control" name="AC_HolderName" id="AC_HolderName" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>IFSC</label>
+                                        <input class="form-control" name="IFSC_Code" id="IFSC_Code" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Acc No</label>
+                                        <input class="form-control" name="Acc_No" id="Acc_No" />
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>Salary</label>
+                                        <input class="form-control" name="Salary" id="Salary" />
+                                    </div>
+                                </div>
+                            </div>
 
-							<div class="form-section">
-								<h6>Address</h6>
-								<textarea class="form-control" name="Address" id="Address"></textarea>
-							</div>
+                            <div class="form-section">
+                                <h6>Address</h6>
+                                <textarea class="form-control" name="Address" id="Address"></textarea>
+                            </div>
 
-						</div>
-					</div>
-				</div>
+                        </div>
+                    </div>
+                </div>
 
-				<div class="modal-footer">
-					<button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-					<button class="btn btn-primary">Save</button>
-				</div>
+                <div class="modal-footer">
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
 
-			</form>
-		</div>
-	</div>
+            </form>
+        </div>
+    </div>
 </div>
 
 
 @if (TempData["Msg"] != null)
 {
-	<div class="popup-overlay" id="centerPopup">
-		<div class="popup-box">
-			<h4>Success</h4>
-			<p>@TempData["Msg"]</p>
-		</div>
-	</div>
+    <div class="popup-overlay" id="centerPopup">
+        <div class="popup-box">
+            <h4>Success</h4>
+            <p>@TempData["Msg"]</p>
+        </div>
+    </div>
 }
 
 @section Scripts {
 
     <script src="~/assets/js/global.js"></script>
 
-	<script>
+    <script>
     document.addEventListener("click", function (e) {
 
         if (e.target.classList.contains("edit-btn")) {
@@ -505,48 +509,72 @@
             imgPreview.src = "/assets/img/user-placeholder.png";
         }
 
-			   function editEmployee(e) {
+               function editEmployee(e) {
 
-			document.getElementById("Emp_Id").value = e.Emp_Id;
-			document.getElementById("Name").value = e.Name || "";
-			document.getElementById("Dob").value = formatDate(e.DOB);
-			document.getElementById("JoiningDate").value = formatDate(e.JoiningDate);
+            document.getElementById("Emp_Id").value = e.Emp_Id;
+            document.getElementById("Name").value = e.Name || "";
+            document.getElementById("Dob").value = formatDate(e.DOB);
+            document.getElementById("JoiningDate").value = formatDate(e.JoiningDate);
 
-			document.getElementById("DepartmentId").value = e.DepartmentId;
-			document.getElementById("DesignationId").value = e.DesignationId;
-			document.getElementById("ShiftId").value = e.ShiftId;
-			document.getElementById("Status").value = e.Status;
+            document.getElementById("DepartmentId").value = e.DepartmentId;
+            document.getElementById("DesignationId").value = e.DesignationId;
+            document.getElementById("ShiftId").value = e.ShiftId;
+            document.getElementById("Status").value = e.Status;
 
-			document.getElementById("EmailId").value = e.EmailId || "";
-			document.getElementById("PhoneNo").value = e.PhoneNo || "";
-			document.getElementById("UserName").value = e.UserName || "";
-			document.getElementById("Password").value = e.Password || "";
+            document.getElementById("EmailId").value = e.EmailId || "";
+            document.getElementById("PhoneNo").value = e.PhoneNo || "";
+            document.getElementById("UserName").value = e.UserName || "";
+            document.getElementById("Password").value = e.Password || "";
 
-			document.getElementById("Address").value = e.Address || "";
+            document.getElementById("Address").value = e.Address || "";
 
-			document.getElementById("BankName").value = e.BankName || "";
-			document.getElementById("AC_HolderName").value = e.Ac_HolderName || "";
-			document.getElementById("IFSC_Code").value = e.IFSC_Code || "";
-			document.getElementById("Acc_No").value = e.Acc_No || "";
-			document.getElementById("Salary").value = e.Salary || "";
+            document.getElementById("BankName").value = e.BankName || "";
+            document.getElementById("AC_HolderName").value = e.Ac_HolderName || "";
+            document.getElementById("IFSC_Code").value = e.IFSC_Code || "";
+            document.getElementById("Acc_No").value = e.Acc_No || "";
+            document.getElementById("Salary").value = e.Salary || "";
 
-			document.querySelectorAll('input[name="EmpType"]').forEach(r => {
-				r.checked = (r.value === e.EmpType);
-			});
+            document.querySelectorAll('input[name="EmpType"]').forEach(r => {
+                r.checked = (r.value === e.EmpType);
+            });
 
-			document.getElementById("Emp_Img").value = e.Emp_Img || "";
-			document.getElementById("imgPreview").src =
-				e.Emp_Img ? '/uploads/employee/' + e.Emp_Img : '/assets/img/user-placeholder.png';
+            document.getElementById("Emp_Img").value = e.Emp_Img || "";
+            document.getElementById("imgPreview").src =
+                e.Emp_Img ? '/uploads/employee/' + e.Emp_Img : '/assets/img/user-placeholder.png';
 
-			new bootstrap.Modal(document.getElementById('empModal')).show();
-		}
+            new bootstrap.Modal(document.getElementById('empModal')).show();
+        }
 
-		function formatDate(dateVal) {
-			if (!dateVal) return "";
-			return dateVal.split('T')[0]; // yyyy-MM-dd
-		}
+        function formatDate(dateVal) {
+            if (!dateVal) return "";
+            return dateVal.split('T')[0]; // yyyy-MM-dd
+        }
 
 
+    </script>
+     <script>
+        function checkUsername() {
+
+        const username = UserName.value.trim();
+        const oldUser = OldUserName.value.trim();
+
+        if (username.length < 3) return;
+
+        fetch(`/Home/CheckUsername?username=${username}&oldUsername=${oldUser}`)
+            .then(r => r.json())
+            .then(exists => {
+
+                if (exists) {
+                    userMsg.innerText = "❌ Username already exists";
+                    userMsg.style.color = "red";
+                    saveBtn.disabled = true;
+                } else {
+                    userMsg.innerText = "✅ Username available";
+                    userMsg.style.color = "green";
+                    saveBtn.disabled = false;
+                }
+            });
+    }
     </script>
 
 }

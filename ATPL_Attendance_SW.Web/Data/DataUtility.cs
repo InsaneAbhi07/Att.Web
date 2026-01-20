@@ -10,7 +10,7 @@ public class DataUtility
     {
         _con = config.GetConnectionString("DefaultConnection");
     }
-    
+
     public DataTable GetDataTable(string spName, SqlParameter[] prms)
     {
         using SqlConnection con = new SqlConnection(_con);
@@ -73,6 +73,8 @@ public class DataUtility
             }
         }
     }
+   
+
 
     internal int ExecuteNonQuery(string v, SqlParameter[] prms)
     {

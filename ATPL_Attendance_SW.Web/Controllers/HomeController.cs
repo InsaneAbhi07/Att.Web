@@ -457,7 +457,24 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return RedirectToAction("EmployeeList");
         }
 
+        [HttpGet]
+        [HttpGet]
+        public IActionResult CheckUsername(string username, string oldUsername)
+        {
+             if (username == oldUsername)
+                return Json(false);
 
+            SqlParameter[] prms =
+            {
+              new SqlParameter("@UserName", username)
+            };
+
+            int count = Convert.ToInt32(
+                du.Execute("Sp_CheckUsernameExissts", prms)
+            );
+
+            return Json(count > 0);
+        }
 
         [HttpPost]
         public IActionResult DeleteEmployee(long empId)

@@ -644,7 +644,8 @@
 									</div>
 									<div class="col-md-6">
 										<label>User Name</label>
-										<input class="form-control" name="UserName" id="UserName" />
+										<input class="form-control" name="UserName" id="UserName" onblur="checkUsername()" />
+										<small id="userMsg"></small>/>
 									</div>
 									<div class="col-md-6">
 										<label>Password</label>
@@ -733,6 +734,30 @@
 		}
 
 		$("#designationFilter, #statusFilter").on("change", loadEmployees);
+	</script>
+	<script>
+		function checkUsername() {
+
+			const username = document.getElementById("UserName").value;
+			const empId = document.getElementById("Emp_Id").value || 0;
+
+			if (username.length < 3) return;
+
+			fetch(`/Home/CheckUsername?username=${username}&empId=${empId}`)
+				.then(res => res.json())
+				.then(exists => {
+
+					const msg = document.getElementById("userMsg");
+
+					if (exists) {
+						msg.innerText = "❌ Username already exists";
+						msg.style.color = "red";
+					} else {
+						msg.innerText = "✅ Username available";
+						msg.style.color = "green";
+					}
+				});
+		}
 	</script>
 
 }
