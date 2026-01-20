@@ -145,6 +145,10 @@
 			color: #ffffff;
 		}
 
+	label.required::after {
+		content: " *";
+		color: red;
+	}
 
 </style>
 
@@ -222,7 +226,9 @@
 
 				<div class="modal-header">
 					<h5 class="modal-title">Company Details</h5>
-					<button class="btn-close" data-bs-dismiss="modal"></button>
+					@* <button class="btn-close" data-bs-dismiss="modal"></button> *@
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
 				</div>
 
 				<div class="modal-body">
@@ -234,7 +240,7 @@
 
 						<div class="row">
 							<div class="col-md-2 mb-2">
-								<label>Company Code</label>
+								<label class="required">Company Code</label>
 								@* <select id="CCode" name="CCode" class="form-select"
 										onchange="loadCompanyByCode(this.value)">
 									<option value="">Select</option>
@@ -243,18 +249,18 @@
 										<option value="@d.Text">@d.Text</option>
 									}
 								</select> *@
-								<input class="form-control" id="CCode" name="CCode" />
+								<input class="form-control" id="CCode" name="CCode" required />
 
 							</div>
 
 							<div class="col-md-8 mb-2">
-								<label>Company Name</label>
-								<input class="form-control" id="CompanyName" name="CompanyName"/>
+								<label class="required">Company Name</label>
+								<input class="form-control" id="CompanyName" name="CompanyName" required />
 							</div>
 
 							<div class="col-md-2 mb-2">
-								<label>Abbreviation</label>
-								<input class="form-control" id="Abbr" name="Abbr" />
+								<label class="required">Abbreviation</label>
+								<input class="form-control" id="Abbr" name="Abbr" required/>
 							</div>
 						</div>
 					</div>
@@ -329,7 +335,7 @@
 							</div>
 
 							<div class="col-md-2 mb-2">
-								<label>Contact No</label>
+								<label class="required">Contact No</label>
 								<input class="form-control" id="ContactNo" name="ContactNo" />
 							</div>
 
@@ -396,6 +402,10 @@
 	</div>
 }
 
+
+@section Scripts {
+	<partial name="_ValidationScriptsPartial" />
+}
 
 	<script>
 

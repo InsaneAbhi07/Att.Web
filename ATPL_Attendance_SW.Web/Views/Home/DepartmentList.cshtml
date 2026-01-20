@@ -11,6 +11,12 @@
 			overflow-y: auto;
 		}
 
+		label.required::after {
+			content: " *";
+			color: red;
+		}
+
+
 </style>
 	<!-- PAGE HEADER -->
 	<div class="d-flex justify-content-between align-items-center mb-3">
@@ -71,7 +77,7 @@
 								<form asp-action="DeleteDepartment" method="post" style="display:inline">
 									<input type="hidden" name="id" value="@Model[i].Id" />
 									<button class="btn btn-sm btn-danger"
-											onclick="return confirm('Delete this record?')">
+											onclick="return confirm('Do you really want to delete this record?')">
 										<i class="ti ti-trash"></i>
 									</button>
 								</form>
@@ -105,7 +111,7 @@
 						<input type="hidden" id="Id"
 							   name="Id" />
 
-						<label class="form-label">Department Name</label>
+						<label class="form-label required">Department Name</label>
 						<input type="text"
 							   class="form-control"
 							   name="Department"

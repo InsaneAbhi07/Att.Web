@@ -4,7 +4,7 @@
 	ViewData["Title"] = "Admin Dashboard";
 	Layout = "_Layout";
 }
-
+<link href="~/assets/css/stylesheet.css" rel="stylesheet" />
 <style>
 	/* .body{
 	font-family:'Californian FB'
@@ -228,8 +228,6 @@
 		background: #f8fafc;
 		border-top: 1px solid var(--border);
 		padding: 14px 20px;
-
-
 
 </style>
 <!-- PAGE TITLE + BREADCRUMB -->
@@ -527,11 +525,7 @@
 </div>
 
 
-
-<div class="modal fade"
-	 id="empModal"
-	 data-bs-backdrop="static"
-	 data-bs-keyboard="false">
+<div class="modal fade" id="empModal" data-bs-backdrop="static">
 	<div class="modal-dialog modal-xl modal-dialog-centered">
 		<div class="modal-content">
 
@@ -541,51 +535,96 @@
 				<input type="hidden" name="Emp_Img" id="Emp_Img" />
 
 				<div class="modal-header">
-					<h5 class="modal-title">Add Employee</h5>
+					<h5 class="modal-title">Add / Edit Employee</h5>
 					<button class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 
 				<div class="modal-body">
 					<div class="row">
 
-						<!-- IMAGE -->
+						<!-- LEFT -->
 						<div class="col-md-4">
-							<div class="emp-image-card">
-								<img id="imgPreview"
-									 src="/assets/img/user-placeholder.png" />
-								<input type="file"
-									   class="form-control"
-									   name="EmpImage"
-									   onchange="previewImage(this)" />
+							<div class="card p-3 h-100 left-card">
 
-								<div class="mt-3 text-start" style="font-size:13px">
-									<div class="d-flex justify-content-between">
-										<span class="fw-semibold">Module</span>
-										<span>Employee</span>
-									</div>
-									<div class="d-flex justify-content-between">
-										<span class="fw-semibold">Access</span>
-										<span class="badge bg-success">Enabled</span>
+								<div class="text-center mb-3">
+									<img id="imgPreview"
+										 src="~/assets/img/user-placeholder.png"
+										 class="rounded-circle"
+										 style="width:140px;height:140px;object-fit:cover" />
+
+									<input type="file"
+										   class="form-control form-control-sm mt-2"
+										   name="EmpImage"
+										   onchange="previewImage(this)" />
+								</div>
+
+								<!-- EMP TYPE -->
+								<div class="emp-type-box mb-3">
+									<label class="fw-semibold mb-2 d-block">Employee Type</label>
+									<div class="emp-type-row">
+										<label class="emp-type-inline">
+											<input type="radio" name="EmpType" value="Contract" />
+											<span>Contract</span>
+										</label>
+										<label class="emp-type-inline">
+											<input type="radio" name="EmpType" value="Permanent" />
+											<span>Permanent</span>
+										</label>
 									</div>
 								</div>
+
+								<!-- WORKING -->
+								<div class="mb-3">
+									<label class="fw-semibold">Working Details</label>
+
+									<label class="small mt-2">Department</label>
+									<select class="form-select form-select-sm" name="DepartmentId" id="DepartmentId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
+
+									<label class="small mt-2">Designation</label>
+									<select class="form-select form-select-sm" name="DesignationId" id="DesignationId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
+
+									<label class="small mt-2">Shift</label>
+									<select class="form-select form-select-sm" name="ShiftId" id="ShiftId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
+								</div>
+
+								<label>Status</label>
+								<select class="form-select form-select-sm" name="Status" id="Status">
+									<option>Active</option>
+									<option>Inactive</option>
+								</select>
 							</div>
 						</div>
 
-						<!-- FORM -->
+						<!-- RIGHT -->
 						<div class="col-md-8">
 
 							<div class="form-section">
 								<h6>Basic Information</h6>
 								<div class="row">
-									<div class="col-md-6 mb-2">
-										<label>Full Name</label>
+									<div class="col-md-6">
+										<label class="required">Full Name</label>
 										<input class="form-control" name="Name" id="Name" />
 									</div>
-									<div class="col-md-3 mb-2">
+									<div class="col-md-3">
 										<label>DOB</label>
 										<input type="date" class="form-control" name="Dob" id="Dob" />
 									</div>
-									<div class="col-md-3 mb-2">
+									<div class="col-md-3">
 										<label>Joining Date</label>
 										<input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
 									</div>
@@ -593,78 +632,56 @@
 							</div>
 
 							<div class="form-section">
-								<h6>Work Details</h6>
+								<h6>Contact & Login</h6>
 								<div class="row">
-									<div class="col-md-4 mb-2">
-										<label>Department</label>
-										<select class="form-select" name="DepartmentId" id="DepartmentId">
-											@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
-											{
-												<option value="@d.Value">@d.Text</option>
-											}
-										</select>
+									<div class="col-md-6">
+										<label>Email</label>
+										<input class="form-control" name="EmailId" id="EmailId" />
 									</div>
-
-									<div class="col-md-4 mb-2">
-										<label>Designation</label>
-										<select class="form-select" name="DesignationId" id="DesignationId">
-											@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
-											{
-												<option value="@d.Value">@d.Text</option>
-											}
-										</select>
+									<div class="col-md-6">
+										<label>Phone</label>
+										<input class="form-control" name="PhoneNo" id="PhoneNo" />
 									</div>
-
-									<div class="col-md-4 mb-2">
-										<label>Shift</label>
-										<select class="form-select" name="ShiftId" id="ShiftId">
-											@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
-											{
-												<option value="@d.Value">@d.Text</option>
-											}
-										</select>
+									<div class="col-md-6">
+										<label>User Name</label>
+										<input class="form-control" name="UserName" id="UserName" />
 									</div>
-
+									<div class="col-md-6">
+										<label>Password</label>
+										<input type="password" class="form-control" name="Password" id="Password" />
+									</div>
 								</div>
 							</div>
 
 							<div class="form-section">
-								<h6>Contact & Login</h6>
+								<h6>Bank & Salary</h6>
 								<div class="row">
-									<div class="col-md-4 mb-2">
-										<label>Email</label>
-										<input class="form-control" name="EmailId" id="EmailId" />
+									<div class="col-md-6">
+										<label>Bank Name</label>
+										<input class="form-control" name="BankName" id="BankName" />
 									</div>
-									<div class="col-md-4 mb-2">
-										<label>Phone</label>
-										<input class="form-control" name="PhoneNo" id="PhoneNo" />
+									<div class="col-md-6">
+										<label>A/C Holder</label>
+										<input class="form-control" name="AC_HolderName" id="AC_HolderName" />
 									</div>
-									<div class="col-md-4 mb-2">
+									<div class="col-md-4">
+										<label>IFSC</label>
+										<input class="form-control" name="IFSC_Code" id="IFSC_Code" />
+									</div>
+									<div class="col-md-4">
+										<label>Acc No</label>
+										<input class="form-control" name="Acc_No" id="Acc_No" />
+									</div>
+									<div class="col-md-4">
 										<label>Salary</label>
 										<input class="form-control" name="Salary" id="Salary" />
 									</div>
 								</div>
+							</div>
 
-								<div class="row">
-									<div class="col-md-4 mb-2">
-										<label>User Name</label>
-										<input class="form-control" name="UserName" id="UserName" />
-									</div>
-									<div class="col-md-4 mb-2">
-										<label>Password</label>
-										<input type="password" class="form-control" name="Password" id="Password" />
-									</div>
-									<div class="col-md-4 mb-2">
-										<label>Status</label>
-										<select class="form-select" name="Status" id="Status">
-											<option>Active</option>
-											<option>Inactive</option>
-										</select>
-									</div>
-								</div>
-
-								<label>Address</label>
-								<textarea class="form-control" rows="2" name="Address" id="Address"></textarea>
+							<div class="form-section">
+								<h6>Address</h6>
+								<textarea class="form-control" name="Address" id="Address"></textarea>
 							</div>
 
 						</div>
@@ -681,19 +698,18 @@
 	</div>
 </div>
 
-
  
 
 @section Scripts {
 
 	<script>
 		function previewImage(input) {
-			if (input.files && input.files[0]) {
-				const r = new FileReader();
-				r.onload = e => imgPreview.src = e.target.result;
-				r.readAsDataURL(input.files[0]);
+				if (input.files && input.files[0]) {
+					const reader = new FileReader();
+					reader.onload = e => imgPreview.src = e.target.result;
+					reader.readAsDataURL(input.files[0]);
+				}
 			}
-		}
 
 		const empModalEl = document.getElementById('empModal');
 		empModalEl.addEventListener('hidden.bs.modal', () => {
@@ -701,16 +717,6 @@
 			document.body.classList.remove('modal-open');
 			document.body.style = '';
 		});
-	</script>
-	<script>
-
-		function previewImage(input) {
-			if (input.files && input.files[0]) {
-				const reader = new FileReader();
-				reader.onload = e => imgPreview.src = e.target.result;
-				reader.readAsDataURL(input.files[0]);
-			}
-		}
 	</script>
 
 	<script>

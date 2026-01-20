@@ -5,23 +5,22 @@ namespace ATPL_Attendance_SW.Web.Models
     public class CompanyVM
     {
         public long Id { get; set; }
-        public string CCode { get; set; }
+        [Required(ErrorMessage = "Company Code required")]
+        public string? CCode { get; set; }
+        [Required(ErrorMessage = "Company Name required")]
         public string CompanyName { get; set; }
         public string? Abbr { get; set; }
         [Required(ErrorMessage ="This field is required")]
         public string? Address { get; set; }
         public string? Address2 { get; set; }
-        [Required(ErrorMessage = "This field is required")]
-        public int CityId { get; set; }
-        public int StateId { get; set; }
+        public int? CityId { get; set; }
+        public int? StateId { get; set; }
         public string? Pincode { get; set; }
         public string Country { get; set; }
         public string? Telepohne { get; set; }
         [Required(ErrorMessage = "This field is required")]
         public string? ContactNo { get; set; }
         public string? Email { get; set; }
-        [Required(ErrorMessage = "This field is required")]
-
         public string? Website { get; set; }
         [Required(ErrorMessage = "This field is required")]
         public string? GSTIN { get; set; }

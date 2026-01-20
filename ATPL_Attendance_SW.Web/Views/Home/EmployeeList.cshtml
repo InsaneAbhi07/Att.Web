@@ -37,30 +37,43 @@
 		background: #f9fafb;
 	}
 
+	.modal-dialog {
+		max-width: 95%;
+	}
+
 	.modal-body {
 		max-height: 70vh;
 		overflow-y: auto;
 		background: #f9fafb;
+
 	}
 
 	.form-section {
-		background: #fff;
+		background: #ffffff;
 		border: 1px solid var(--border);
-		border-radius: 10px;
-		padding: 14px;
-		margin-bottom: 14px;
+		border-radius: 12px;
+		padding: 18px;
+		margin-bottom: 18px;
+		background: linear-gradient(180deg,#ffffff,#f9fafb);
 	}
 
+
 		.form-section h6 {
-			font-size: 13px;
 			font-weight: 700;
 			color: var(--brand-dark);
-			margin-bottom: 10px;
 			padding: 6px 10px;
 			background: #eef2ff;
 			border-left: 4px solid var(--brand);
 			border-radius: 6px;
+			font-size: 14px;
+			margin-bottom: 14px;
+
 		}
+
+	.modal-footer .btn-primary {
+		background: linear-gradient(90deg,#2563eb,#1e40af);
+		border: none;
+	}
 
 	label {
 		font-size: 12.5px;
@@ -108,6 +121,64 @@
 		max-height: 350px;
 		overflow-y: auto;
 	}
+
+	label.required::after {
+		content: " *";
+		color: red;
+	}
+
+	.left-card {
+		background: linear-gradient(180deg,#eef2ff,#ffffff);
+		border-radius: 16px;
+		border: 1px solid var(--border);
+	}
+	.left-profile {
+		height: 100%;
+		min-height: 78vh;
+		position: sticky;
+		top: 0;
+	}
+
+	.emp-type-box {
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 10px;
+		background: #fff;
+	}
+
+	.emp-type-row {
+		display: flex;
+		gap: 12px; /* space between Contract & Permanent */
+	}
+
+	.emp-type-inline {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 14px;
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		cursor: pointer;
+		font-size: 13px;
+		transition: 0.2s;
+		background: #f8fafc;
+	}
+
+		.emp-type-inline input:checked + span {
+			font-weight: 700;
+			color: var(--brand-dark);
+		}
+
+
+		.emp-type-inline:hover {
+			background: #f1f5f9;
+		}
+
+		.emp-type-inline input {
+			accent-color: var(--brand);
+		}
+
+
 </style>
 
 <!-- HEADER -->
@@ -178,26 +249,10 @@
 							@e.Status
 						</span>
 					</td>
-					<td>
-						<button class="btn btn-sm btn-warning"
-								onclick='editEmployee({
-										empId:"@e.Emp_Id",
-										name:"@Html.Raw(e.Name)",
-										dob:"@e.DOB",
-										deptId:"@e.DepartmentId",
-										desigId:"@e.DesignationId",
-										email:"@e.EmailId",
-										phone:"@e.PhoneNo",
-										joiningDate:"@e.JoiningDate",
-										address:"@Html.Raw(e.Address)",
-										salary:"@e.Salary",
-										status:"@e.Status",
-										shiftId:"@e.ShiftId",
-										img:"@e.Emp_Img",
-										username:"@e.UserName",
-										password:"@e.Password",
-										role:"@e.Role"
-									})'>
+					<td>		
+						<button type="button"
+								class="btn btn-sm btn-warning edit-btn"
+								data-emp='@Html.Raw(System.Text.Json.JsonSerializer.Serialize(e))'>
 							Edit
 						</button>
 
@@ -220,10 +275,8 @@
 	<ul class="pagination" id="pagination"></ul>
 </div>
 <!-- MODAL -->
-<div class="modal fade"
-	 id="empModal"
-	 data-bs-backdrop="static"
-	 data-bs-keyboard="false">
+<!-- MODAL -->
+<div class="modal fade" id="empModal" data-bs-backdrop="static">
 	<div class="modal-dialog modal-xl modal-dialog-centered">
 		<div class="modal-content">
 
@@ -240,94 +293,91 @@
 				<div class="modal-body">
 					<div class="row">
 
-						<!-- IMAGE -->
+						<!-- LEFT -->
 						<div class="col-md-4">
-							<div class="emp-image-card">
-								<img id="imgPreview"
-									 src="~/assets/img/user-placeholder.png" />
-								<input type="file"
-									   class="form-control"
-									   name="EmpImage"
-									   onchange="previewImage(this)" />
+							<div class="card p-3 h-100 left-card">
 
-								<!-- STATIC INFO -->
-								<div class="mt-3 text-start" style="font-size:13px">
-									<div class="d-flex justify-content-between">
-										<span class="fw-semibold">Module</span>
-										<span>Employee</span>
-									</div>
-									<div class="d-flex justify-content-between">
-										<span class="fw-semibold">Access</span>
-										<span class="badge bg-success">Enabled</span>
-									</div>
-									<div class="d-flex justify-content-between">
-										<span class="fw-semibold">Profile</span>
-										<span>HRMS</span>
+								<div class="text-center mb-3">
+									<img id="imgPreview"
+										 src="~/assets/img/user-placeholder.png"
+										 class="rounded-circle"
+										 style="width:140px;height:140px;object-fit:cover" />
+
+									<input type="file"
+										   class="form-control form-control-sm mt-2"
+										   name="EmpImage"
+										   onchange="previewImage(this)" />
+								</div>
+
+								<!-- EMP TYPE -->
+								<div class="emp-type-box mb-3">
+									<label class="fw-semibold mb-2 d-block">Employee Type</label>
+									<div class="emp-type-row">
+										<label class="emp-type-inline">
+											<input type="radio" name="EmpType" value="Contract" />
+											<span>Contract</span>
+										</label>
+										<label class="emp-type-inline">
+											<input type="radio" name="EmpType" value="Permanent" />
+											<span>Permanent</span>
+										</label>
 									</div>
 								</div>
+
+								<!-- WORKING -->
+								<div class="mb-3">
+									<label class="fw-semibold">Working Details</label>
+
+									<label class="small mt-2">Department</label>
+									<select class="form-select form-select-sm" name="DepartmentId" id="DepartmentId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
+
+									<label class="small mt-2">Designation</label>
+									<select class="form-select form-select-sm" name="DesignationId" id="DesignationId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
+
+									<label class="small mt-2">Shift</label>
+									<select class="form-select form-select-sm" name="ShiftId" id="ShiftId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
+								</div>
+
+								<label>Status</label>
+								<select class="form-select form-select-sm" name="Status" id="Status">
+									<option>Active</option>
+									<option>Inactive</option>
+								</select>
 							</div>
 						</div>
 
-						<!-- FORM -->
+						<!-- RIGHT -->
 						<div class="col-md-8">
 
 							<div class="form-section">
 								<h6>Basic Information</h6>
 								<div class="row">
-									<div class="col-md-6 mb-2">
-										<label>Full Name</label>
+									<div class="col-md-6">
+										<label class="required">Full Name</label>
 										<input class="form-control" name="Name" id="Name" />
-										@* <span asp-validation-for="Name" class="text-danger"></span> *@
 									</div>
-										<div class="col-md-3 mb-2">
-											<label>DOB</label>
-											<input type="date"
-												   class="form-control"
-												   name="Dob"
-												   id="Dob" />
-										</div>
-
-										<div class="col-md-3 mb-2">
-											<label>Date of Joining</label>
-											<input type="date"
-												   class="form-control"
-												   name="JoiningDate"
-												   id="JoiningDate" />
-										</div>
-
-								</div>
-							</div>
-
-							<div class="form-section">
-								<h6>Work Details</h6>
-								<div class="row">
-									<div class="col-md-4 mb-2">
-										<label>Department</label>
-										<select class="form-select" name="DepartmentId" id="DepartmentId">
-											@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
-											{
-												<option value="@d.Value">@d.Text</option>
-												<option value="@d.Value">@d.Text</option>
-											}
-										</select>
+									<div class="col-md-3">
+										<label>DOB</label>
+										<input type="date" class="form-control" name="Dob" id="Dob" />
 									</div>
-									<div class="col-md-4 mb-2">
-										<label>Designation</label>
-										<select class="form-select" name="DesignationId" id="DesignationId">
-											@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
-											{
-												<option value="@d.Value">@d.Text</option>
-											}
-										</select>
-									</div>
-									<div class="col-md-4 mb-2">
-										<label>Shift</label>
-										<select class="form-select" name="ShiftId" id="ShiftId">
-											@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
-											{
-												<option value="@d.Value">@d.Text</option>
-											}
-										</select>
+									<div class="col-md-3">
+										<label>Joining Date</label>
+										<input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
 									</div>
 								</div>
 							</div>
@@ -335,40 +385,54 @@
 							<div class="form-section">
 								<h6>Contact & Login</h6>
 								<div class="row">
-									<div class="col-md-4 mb-2">
+									<div class="col-md-6">
 										<label>Email</label>
 										<input class="form-control" name="EmailId" id="EmailId" />
 									</div>
-									<div class="col-md-4 mb-2">
+									<div class="col-md-6">
 										<label>Phone</label>
 										<input class="form-control" name="PhoneNo" id="PhoneNo" />
 									</div>
-									<div class="col-md-4 mb-2">
+									<div class="col-md-6">
+										<label>User Name</label>
+										<input class="form-control" name="UserName" id="UserName" />
+									</div>
+									<div class="col-md-6">
+										<label>Password</label>
+										<input type="password" class="form-control" name="Password" id="Password" />
+									</div>
+								</div>
+							</div>
+
+							<div class="form-section">
+								<h6>Bank & Salary</h6>
+								<div class="row">
+									<div class="col-md-6">
+										<label>Bank Name</label>
+										<input class="form-control" name="BankName" id="BankName" />
+									</div>
+									<div class="col-md-6">
+										<label>A/C Holder</label>
+										<input class="form-control" name="AC_HolderName" id="AC_HolderName" />
+									</div>
+									<div class="col-md-4">
+										<label>IFSC</label>
+										<input class="form-control" name="IFSC_Code" id="IFSC_Code" />
+									</div>
+									<div class="col-md-4">
+										<label>Acc No</label>
+										<input class="form-control" name="Acc_No" id="Acc_No" />
+									</div>
+									<div class="col-md-4">
 										<label>Salary</label>
 										<input class="form-control" name="Salary" id="Salary" />
 									</div>
 								</div>
+							</div>
 
-								<div class="row">
-									<div class="col-md-4 mb-2">
-										<label>User Name</label>
-										<input class="form-control" name="UserName" id="UserName" />
-									</div>
-									<div class="col-md-4 mb-2">
-										<label>Password</label>
-										<input type="password" class="form-control" name="Password" id="Password" />
-									</div>
-									<div class="col-md-4 mb-2">
-										<label>Status</label>
-										<select class="form-select" name="Status" id="Status">
-											<option>Active</option>
-											<option>Inactive</option>
-										</select>
-									</div>
-								</div>
-
-								<label>Address</label>
-								<textarea class="form-control" rows="2" name="Address" id="Address"></textarea>
+							<div class="form-section">
+								<h6>Address</h6>
+								<textarea class="form-control" name="Address" id="Address"></textarea>
 							</div>
 
 						</div>
@@ -385,6 +449,7 @@
 	</div>
 </div>
 
+
 @if (TempData["Msg"] != null)
 {
 	<div class="popup-overlay" id="centerPopup">
@@ -395,65 +460,93 @@
 	</div>
 }
 
-
-<script src="~/assets/js/global.js"></script>
 @section Scripts {
+
+    <script src="~/assets/js/global.js"></script>
+
 	<script>
+    document.addEventListener("click", function (e) {
 
-				 const popup = document.getElementById("centerPopup");
-			if (popup) {
-				setTimeout(() => popup.remove(), 1200);
-			}
+        if (e.target.classList.contains("edit-btn")) {
 
-		function previewImage(input) {
-			if (input.files && input.files[0]) {
-				const reader = new FileReader();
-				reader.onload = e => imgPreview.src = e.target.result;
-				reader.readAsDataURL(input.files[0]);
-			}
-		}
+            const emp = JSON.parse(e.target.dataset.emp);
+            editEmployee(emp);
+        }
+    });
+</script>
 
-		function clearForm() {
-			document.querySelectorAll('#empModal input, #empModal textarea').forEach(x => x.value = "");
-			DepartmentId.selectedIndex = 0;
-			DesignationId.selectedIndex = 0;
-			ShiftId.selectedIndex = 0;
-			Status.value = "Active";
-			imgPreview.src = "/assets/img/user-placeholder.png";
-		}
 
-		function editEmployee(e) {
-			Emp_Id.value = e.empId;
-			Name.value = e.name;
-			Dob.value = e.dob;
-			JoiningDate.value = e.joiningDate;
-			DepartmentId.value = e.deptId;
-			DesignationId.value = e.desigId;
-			EmailId.value = e.email;
-			PhoneNo.value = e.phone;
-			Address.value = e.address;
-			Salary.value = e.salary;
-			Status.value = e.status;
-			ShiftId.value = e.shiftId;
-			UserName.value = e.username;
-			Password.value = e.password;
-			Emp_Img.value = e.img;
-			imgPreview.src = e.img ? '/uploads/employee/' + e.img : '/assets/img/user-placeholder.png';
+    <script>
+        // SUCCESS POPUP AUTO CLOSE
+        const popup = document.getElementById("centerPopup");
+        if (popup) {
+            setTimeout(() => popup.remove(), 1200);
+        }
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => imgPreview.src = e.target.result;
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function clearForm() {
+            document.querySelectorAll('#empModal input, #empModal textarea')
+                .forEach(x => x.value = "");
+
+            document.querySelectorAll('#empModal select')
+                .forEach(s => s.selectedIndex = 0);
+
+            document.querySelectorAll('input[name="EmpType"]')
+                .forEach(r => r.checked = false);
+
+            document.getElementById("Status").value = "Active";
+            imgPreview.src = "/assets/img/user-placeholder.png";
+        }
+
+			   function editEmployee(e) {
+
+			document.getElementById("Emp_Id").value = e.Emp_Id;
+			document.getElementById("Name").value = e.Name || "";
+			document.getElementById("Dob").value = formatDate(e.DOB);
+			document.getElementById("JoiningDate").value = formatDate(e.JoiningDate);
+
+			document.getElementById("DepartmentId").value = e.DepartmentId;
+			document.getElementById("DesignationId").value = e.DesignationId;
+			document.getElementById("ShiftId").value = e.ShiftId;
+			document.getElementById("Status").value = e.Status;
+
+			document.getElementById("EmailId").value = e.EmailId || "";
+			document.getElementById("PhoneNo").value = e.PhoneNo || "";
+			document.getElementById("UserName").value = e.UserName || "";
+			document.getElementById("Password").value = e.Password || "";
+
+			document.getElementById("Address").value = e.Address || "";
+
+			document.getElementById("BankName").value = e.BankName || "";
+			document.getElementById("AC_HolderName").value = e.Ac_HolderName || "";
+			document.getElementById("IFSC_Code").value = e.IFSC_Code || "";
+			document.getElementById("Acc_No").value = e.Acc_No || "";
+			document.getElementById("Salary").value = e.Salary || "";
+
+			document.querySelectorAll('input[name="EmpType"]').forEach(r => {
+				r.checked = (r.value === e.EmpType);
+			});
+
+			document.getElementById("Emp_Img").value = e.Emp_Img || "";
+			document.getElementById("imgPreview").src =
+				e.Emp_Img ? '/uploads/employee/' + e.Emp_Img : '/assets/img/user-placeholder.png';
 
 			new bootstrap.Modal(document.getElementById('empModal')).show();
 		}
 
-			  const empModalEl = document.getElementById('empModal');
+		function formatDate(dateVal) {
+			if (!dateVal) return "";
+			return dateVal.split('T')[0]; // yyyy-MM-dd
+		}
 
-		empModalEl.addEventListener('hidden.bs.modal', function () {
 
-			// remove black overlay
-			document.querySelectorAll('.modal-backdrop')
-				.forEach(b => b.remove());
+    </script>
 
-			// restore body scroll
-			document.body.classList.remove('modal-open');
-			document.body.style = '';
-		});
-	</script>
 }

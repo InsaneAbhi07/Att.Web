@@ -28,8 +28,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
         [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Login()
         {
-            if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Index", "Home");
+            //if (User.Identity.IsAuthenticated)
+            //    return RedirectToAction("Index", "Home");
 
             return View();
         }
@@ -124,6 +124,54 @@ namespace ATPL_Attendance_SW.Web.Controllers
             DataTable dt = du.GetDataTable("Sp_GetMyProfile", prms);
 
             return View(dt);
+        }
+
+        [HttpPost]
+        public IActionResult SendForgotOtp(string username)
+        {
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Username", username)
+    };
+
+            DataTable dt = du.GetDataTable("Sp_GetEmployeeByUsername", prms);
+
+            if (dt.Rows.Count == 0)
+            {
+                return Json(new { success = false, message = "User not found" });
+            }
+
+            string otp = "123456"; 
+
+            HttpContext.Session.SetString("FP_OTP", otp);
+            HttpContext.Session.SetString("FP_USER", username);
+
+            return Json(new { success = true });
+        }
+
+        [HttpPost]
+        public IActionResult ResetForgotPassword(string otp, string newPassword)
+        {
+            string sessionOtp = HttpContext.Session.GetString("FP_OTP");
+            string username = HttpContext.Session.GetString("FP_USER");
+
+            if (sessionOtp == null || otp != sessionOtp)
+            {
+                return Json(new { success = false, message = "Invalid OTP" });
+            }
+
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Username", username),
+        new SqlParameter("@Password", newPassword)
+    };
+
+            du.Execute("Sp_UpdateEmployeePassword", prms);
+
+            HttpContext.Session.Remove("FP_OTP");
+            HttpContext.Session.Remove("FP_USER");
+
+            return Json(new { success = true });
         }
 
 

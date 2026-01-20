@@ -4,218 +4,362 @@
 
 
 <style>
-    :root {
-        --brand: #2563eb;
-        --border: #e5e7eb;
-        --bg-soft: #f8fafc;
-    }
+	:root {
+		--brand: #2563eb;
+		--brand-dark: #1e40af;
+		--border: #e5e7eb;
+		--bg-soft: #f8fafc;
+		--text: #1f2937;
+		--muted: #6b7280;
+	}
 
-    .modal-body {
-        max-height: 70vh;
-        overflow-y: auto;
-        background: #f9fafb;
-    }
+	.page-title {
+		font-size: 20px;
+		font-weight: 700;
+		padding: 10px 14px;
+		background: #f1f5f9;
+		border-left: 5px solid var(--brand);
+		border-radius: 6px;
+		border-left: 5px solid var(--brand);
+		display: block; /* IMPORTANT */
+		width: 80%; /* full bg width */
+	}
 
-    .form-section {
-        background: #fff;
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 14px;
-        margin-bottom: 14px;
-    }
+	.table thead th {
+		background: #f8fafc;
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--text);
+		border-bottom: 1px solid var(--border);
+	}
 
-        .form-section h6 {
-            font-size: 13px;
-            font-weight: 700;
-            color: #1e40af;
-            margin-bottom: 10px;
-            padding: 6px 10px;
-            background: #eef2ff;
-            border-left: 4px solid var(--brand);
-            border-radius: 6px;
-        }
+	.table tbody tr:hover {
+		background: #f9fafb;
+	}
 
-    label {
-        font-size: 12.5px;
-        font-weight: 600;
-        color: #374151;
-    }
+	.modal-dialog {
+		max-width: 95%;
+	}
 
-    .form-control, .form-select {
-        height: 36px;
-        font-size: 13px;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-    }
+	.modal-body {
+		max-height: 70vh;
+		overflow-y: auto;
+		background: #f9fafb;
+	}
 
-    .emp-image-card {
-        background: linear-gradient(180deg,#eef2ff,#ffffff);
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 18px;
-        text-align: center;
-    }
+	.form-section {
+		background: #ffffff;
+		border: 1px solid var(--border);
+		border-radius: 12px;
+		padding: 18px;
+		margin-bottom: 18px;
+		background: linear-gradient(180deg,#ffffff,#f9fafb);
+	}
 
-        .emp-image-card img {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            border: 4px solid #dbeafe;
-            object-fit: cover;
-            background: #fff;
-            margin-bottom: 10px;
-        }
 
-    .modal-footer {
-        background: #f8fafc;
-        border-top: 1px solid var(--border);
-        padding: 14px 20px;
-    }
+		.form-section h6 {
+			font-weight: 700;
+			color: var(--brand-dark);
+			padding: 6px 10px;
+			background: #eef2ff;
+			border-left: 4px solid var(--brand);
+			border-radius: 6px;
+			font-size: 14px;
+			margin-bottom: 14px;
+		}
+
+	.modal-footer .btn-primary {
+		background: linear-gradient(90deg,#2563eb,#1e40af);
+		border: none;
+	}
+
+	label {
+		font-size: 12.5px;
+		font-weight: 600;
+		color: var(--muted);
+		margin-bottom: 4px;
+	}
+
+	.form-control, .form-select {
+		height: 36px;
+		font-size: 13.5px;
+		border-radius: 6px;
+		border: 1px solid var(--border);
+	}
+
+	textarea.form-control {
+		height: auto;
+	}
+
+	.emp-image-card {
+		background: linear-gradient(180deg,#eef2ff,#ffffff);
+		border: 1px solid var(--border);
+		border-radius: 14px;
+		padding: 18px;
+		text-align: center;
+	}
+
+		.emp-image-card img {
+			width: 140px;
+			height: 140px;
+			object-fit: cover;
+			border-radius: 50%;
+			border: 4px solid #dbeafe;
+			margin-bottom: 10px;
+			background: #fff;
+		}
+
+	.modal-footer {
+		background: #f8fafc;
+		border-top: 1px solid var(--border);
+		padding: 14px 20px;
+	}
+
+	.grid-scroll {
+		max-height: 350px;
+		overflow-y: auto;
+	}
+
+	label.required::after {
+		content: " *";
+		color: red;
+	}
+
+	.left-card {
+		background: linear-gradient(180deg,#eef2ff,#ffffff);
+		border-radius: 16px;
+		border: 1px solid var(--border);
+	}
+
+	.left-profile {
+		height: 100%;
+		min-height: 78vh;
+		position: sticky;
+		top: 0;
+	}
+
+	.emp-type-box {
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 10px;
+		background: #fff;
+	}
+
+	.emp-type-row {
+		display: flex;
+		gap: 12px; /* space between Contract & Permanent */
+	}
+
+	.emp-type-inline {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 8px 14px;
+		border: 1px solid #e5e7eb;
+		border-radius: 8px;
+		cursor: pointer;
+		font-size: 13px;
+		transition: 0.2s;
+		background: #f8fafc;
+	}
+
+		.emp-type-inline input:checked + span {
+			font-weight: 700;
+			color: var(--brand-dark);
+		}
+
+
+		.emp-type-inline:hover {
+			background: #f1f5f9;
+		}
+
+		.emp-type-inline input {
+			accent-color: var(--brand);
+		}
+
 </style>
 
-<div class="modal fade"
-     id="empModal"
-     data-bs-backdrop="static"
-     data-bs-keyboard="false">
-    <div class="modal-dialog modal-xl modal-dialog-centered">
-        <div class="modal-content">
+<div class="modal fade" id="empModal" data-bs-backdrop="static">
+	<div class="modal-dialog modal-xl modal-dialog-centered">
+		<div class="modal-content">
 
-            <form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
+			<form asp-action="SaveEmployee" method="post" enctype="multipart/form-data">
 
-                <input type="hidden" name="Emp_Id" id="Emp_Id" />
-                <input type="hidden" name="Emp_Img" id="Emp_Img" />
+				<input type="hidden" name="Emp_Id" id="Emp_Id" />
+				<input type="hidden" name="Emp_Img" id="Emp_Img" />
 
-                <div class="modal-header">
-                    <h5 class="modal-title">Add Employee</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+				<div class="modal-header">
+					<h5 class="modal-title">Add / Edit Employee</h5>
+					<button class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
 
-                <div class="modal-body">
-                    <div class="row">
+				<div class="modal-body">
+					<div class="row">
 
-                        <!-- IMAGE -->
-                        <div class="col-md-4">
-                            <div class="emp-image-card">
-                                <img id="imgPreview"
-                                     src="/assets/img/user-placeholder.png" />
-                                <input type="file"
-                                       class="form-control"
-                                       name="EmpImage"
-                                       onchange="previewImage(this)" />
+						<!-- LEFT -->
+						<div class="col-md-4">
+							<div class="card p-3 h-100 left-card">
 
-                                <div class="mt-3 text-start" style="font-size:13px">
-                                    <div class="d-flex justify-content-between">
-                                        <span class="fw-semibold">Module</span>
-                                        <span>Employee</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span class="fw-semibold">Access</span>
-                                        <span class="badge bg-success">Enabled</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+								<div class="text-center mb-3">
+									<img id="imgPreview"
+										 src="~/assets/img/user-placeholder.png"
+										 class="rounded-circle"
+										 style="width:140px;height:140px;object-fit:cover" />
 
-                        <!-- FORM -->
-                        <div class="col-md-8">
+									<input type="file"
+										   class="form-control form-control-sm mt-2"
+										   name="EmpImage"
+										   onchange="previewImage(this)" />
+								</div>
 
-                            <div class="form-section">
-                                <h6>Basic Information</h6>
-                                <div class="row">
-                                    <div class="col-md-6 mb-2">
-                                        <label>Full Name</label>
-                                        <input class="form-control" name="Name" id="Name" />
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <label>DOB</label>
-                                        <input type="date" class="form-control" name="Dob" id="Dob" />
-                                    </div>
-                                    <div class="col-md-3 mb-2">
-                                        <label>Joining Date</label>
-                                        <input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
-                                    </div>
-                                </div>
-                            </div>
+								<!-- EMP TYPE -->
+								<div class="emp-type-box mb-3">
+									<label class="fw-semibold mb-2 d-block">Employee Type</label>
+									<div class="emp-type-row">
+										<label class="emp-type-inline">
+											<input type="radio" name="EmpType" value="Contract" />
+											<span>Contract</span>
+										</label>
+										<label class="emp-type-inline">
+											<input type="radio" name="EmpType" value="Permanent" />
+											<span>Permanent</span>
+										</label>
+									</div>
+								</div>
 
-                            <div class="form-section">
-                                <h6>Work Details</h6>
-                                <div class="row">
-                                    <div class="col-md-4 mb-2">
-                                        <label>Department</label>
-                                        <select class="form-select" name="DepartmentId" id="DepartmentId"></select>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label>Designation</label>
-                                        <select class="form-select" name="DesignationId" id="DesignationId"></select>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label>Shift</label>
-                                        <select class="form-select" name="ShiftId" id="ShiftId"></select>
-                                    </div>
-                                </div>
-                            </div>
+								<!-- WORKING -->
+								<div class="mb-3">
+									<label class="fw-semibold">Working Details</label>
 
-                            <div class="form-section">
-                                <h6>Contact & Login</h6>
-                                <div class="row">
-                                    <div class="col-md-4 mb-2">
-                                        <label>Email</label>
-                                        <input class="form-control" name="EmailId" id="EmailId" />
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label>Phone</label>
-                                        <input class="form-control" name="PhoneNo" id="PhoneNo" />
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label>Salary</label>
-                                        <input class="form-control" name="Salary" id="Salary" />
-                                    </div>
-                                </div>
+									<label class="small mt-2">Department</label>
+									<select class="form-select form-select-sm" name="DepartmentId" id="DepartmentId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.DepartmentList)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
 
-                                <div class="row">
-                                    <div class="col-md-4 mb-2">
-                                        <label>User Name</label>
-                                        <input class="form-control" name="UserName" id="UserName" />
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label>Password</label>
-                                        <input type="password" class="form-control" name="Password" id="Password" />
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <label>Status</label>
-                                        <select class="form-select" name="Status" id="Status">
-                                            <option>Active</option>
-                                            <option>Inactive</option>
-                                        </select>
-                                    </div>
-                                </div>
+									<label class="small mt-2">Designation</label>
+									<select class="form-select form-select-sm" name="DesignationId" id="DesignationId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.DesignationList)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
 
-                                <label>Address</label>
-                                <textarea class="form-control" rows="2" name="Address" id="Address"></textarea>
-                            </div>
+									<label class="small mt-2">Shift</label>
+									<select class="form-select form-select-sm" name="ShiftId" id="ShiftId">
+										@foreach (var d in (List<SelectListItem>)ViewBag.Shiftlistt)
+										{
+											<option value="@d.Value">@d.Text</option>
+										}
+									</select>
+								</div>
 
-                        </div>
-                    </div>
-                </div>
+								<label>Status</label>
+								<select class="form-select form-select-sm" name="Status" id="Status">
+									<option>Active</option>
+									<option>Inactive</option>
+								</select>
+							</div>
+						</div>
 
-                <div class="modal-footer">
-                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary">Save</button>
-                </div>
+						<!-- RIGHT -->
+						<div class="col-md-8">
 
-            </form>
-        </div>
-    </div>
+							<div class="form-section">
+								<h6>Basic Information</h6>
+								<div class="row">
+									<div class="col-md-6">
+										<label class="required">Full Name</label>
+										<input class="form-control" name="Name" id="Name" />
+									</div>
+									<div class="col-md-3">
+										<label>DOB</label>
+										<input type="date" class="form-control" name="Dob" id="Dob" />
+									</div>
+									<div class="col-md-3">
+										<label>Joining Date</label>
+										<input type="date" class="form-control" name="JoiningDate" id="JoiningDate" />
+									</div>
+								</div>
+							</div>
+
+							<div class="form-section">
+								<h6>Contact & Login</h6>
+								<div class="row">
+									<div class="col-md-6">
+										<label>Email</label>
+										<input class="form-control" name="EmailId" id="EmailId" />
+									</div>
+									<div class="col-md-6">
+										<label>Phone</label>
+										<input class="form-control" name="PhoneNo" id="PhoneNo" />
+									</div>
+									<div class="col-md-6">
+										<label>User Name</label>
+										<input class="form-control" name="UserName" id="UserName" />
+									</div>
+									<div class="col-md-6">
+										<label>Password</label>
+										<input type="password" class="form-control" name="Password" id="Password" />
+									</div>
+								</div>
+							</div>
+
+							<div class="form-section">
+								<h6>Bank & Salary</h6>
+								<div class="row">
+									<div class="col-md-6">
+										<label>Bank Name</label>
+										<input class="form-control" name="BankName" id="BankName" />
+									</div>
+									<div class="col-md-6">
+										<label>A/C Holder</label>
+										<input class="form-control" name="AC_HolderName" id="AC_HolderName" />
+									</div>
+									<div class="col-md-4">
+										<label>IFSC</label>
+										<input class="form-control" name="IFSC_Code" id="IFSC_Code" />
+									</div>
+									<div class="col-md-4">
+										<label>Acc No</label>
+										<input class="form-control" name="Acc_No" id="Acc_No" />
+									</div>
+									<div class="col-md-4">
+										<label>Salary</label>
+										<input class="form-control" name="Salary" id="Salary" />
+									</div>
+								</div>
+							</div>
+
+							<div class="form-section">
+								<h6>Address</h6>
+								<textarea class="form-control" name="Address" id="Address"></textarea>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+					<button class="btn btn-primary">Save</button>
+				</div>
+
+			</form>
+		</div>
+	</div>
 </div>
 
 <script>
-    function previewImage(input) {
-        if (input.files && input.files[0]) {
-            const r = new FileReader();
-            r.onload = e => imgPreview.src = e.target.result;
-            r.readAsDataURL(input.files[0]);
-        }
-    }
+	function previewImage(input) {
+			if (input.files && input.files[0]) {
+				const reader = new FileReader();
+				reader.onload = e => imgPreview.src = e.target.result;
+				reader.readAsDataURL(input.files[0]);
+			}
+		}
 
     const empModalEl = document.getElementById('empModal');
     empModalEl.addEventListener('hidden.bs.modal', () => {

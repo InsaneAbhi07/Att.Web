@@ -328,6 +328,12 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Salary = row["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Salary"]),
                     Status = row["Status"] == DBNull.Value ? "Inactive" : row["Status"].ToString(),
                     Shift = row["Shift"] == DBNull.Value ? "" : row["Shift"].ToString(),
+                    
+                    BankName = row["BankName"] == DBNull.Value ? "" : row["Shift"].ToString(),
+                    Ac_HolderName = row["Ac_HolderName"] == DBNull.Value ? "" : row["Shift"].ToString(),
+                    IFSC_Code = row["IFSC_Code"] == DBNull.Value ? "" : row["Shift"].ToString(),
+                    Acc_No = row["Acc_No"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Acc_No"]),
+                    EmpType = row["EmpType"] == DBNull.Value ? "" : row["EmpType"].ToString(),
 
                     UserName = row["UserName"] == DBNull.Value ? "" : row["UserName"].ToString(),
                     Role = row["Role"] == DBNull.Value ? "" : row["Role"].ToString()
@@ -345,74 +351,112 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         [HttpPost]
         [HttpPost]
+        [HttpPost]
         public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage)
         {
-
-            if (!ModelState.IsValid)
+            try
             {
-                return View("EmployeeList", model);   // return same view to show errors
+                if (string.IsNullOrWhiteSpace(model.Name))
+                {
+                    TempData["Msg"] = "Employee Name is required";
+                    return RedirectToAction("EmployeeList");
+                }
+
+                string imageName = model.Emp_Img ?? "";
+
+                if (EmpImage != null && EmpImage.Length > 0)
+                {
+                    string uploadPath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot/uploads/employee"
+                    );
+
+                    if (!Directory.Exists(uploadPath))
+                        Directory.CreateDirectory(uploadPath);
+
+                    imageName = Guid.NewGuid() + Path.GetExtension(EmpImage.FileName);
+                    string filePath = Path.Combine(uploadPath, imageName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        EmpImage.CopyTo(stream);
+                    }
+                }
+
+                SqlParameter[] prms =
+                {
+            new SqlParameter("@Emp_Id", model.Emp_Id),
+
+            new SqlParameter("@Name", model.Name),
+
+            new SqlParameter("@Dob",
+                string.IsNullOrEmpty(model.DOB)
+                ? (object)DBNull.Value
+                : model.DOB),
+
+            new SqlParameter("@DepartmentId",
+                model.DepartmentId == 0
+                ? (object)DBNull.Value
+                : model.DepartmentId),
+
+            new SqlParameter("@DesignationId",
+                model.DesignationId == 0
+                ? (object)DBNull.Value
+                : model.DesignationId),
+
+            new SqlParameter("@ShiftId",
+                model.ShiftId == 0
+                ? (object)DBNull.Value
+                : model.ShiftId),
+
+            new SqlParameter("@EmailId", model.EmailId ?? ""),
+            new SqlParameter("@PhoneNo", model.PhoneNo ?? ""),
+
+            new SqlParameter("@JoiningDate",
+                string.IsNullOrEmpty(model.JoiningDate)
+                ? (object)DBNull.Value
+                : model.JoiningDate),
+
+            new SqlParameter("@Address", model.Address ?? ""),
+
+            new SqlParameter("@Emp_Img", imageName),
+
+            new SqlParameter("@Salary",
+                model.Salary == 0
+                ? (object)DBNull.Value
+                : model.Salary),
+
+            new SqlParameter("@Status", model.Status ?? "Active"),
+            new SqlParameter("@UserName", model.UserName ?? ""),
+            new SqlParameter("@Password", model.Password ?? ""),
+            new SqlParameter("@Role", model.Role ?? ""),
+
+            // BANK DETAILS
+            new SqlParameter("@BankName", model.BankName ?? ""),
+            new SqlParameter("@Ac_HolderName", model.Ac_HolderName ?? ""),
+            new SqlParameter("@IFSC_Code", model.IFSC_Code ?? ""),
+
+            // EMP TYPE (FIXED)
+            new SqlParameter("@EmpType", model.EmpType ?? ""),
+
+            new SqlParameter("@Acc_No", model.Acc_No == 0 ? (object)DBNull.Value : model.Acc_No),
+
+            new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+            {
+                Direction = ParameterDirection.Output
             }
+        };
+                du.Execute("Sp_Insert_MasterEmployee", prms);
 
-            string imageName = model.Emp_Img ?? "";   // old image safe
-
-            if (EmpImage != null && EmpImage.Length > 0)
-            {
-                string uploadPath = Path.Combine(
-                    Directory.GetCurrentDirectory(),
-                    "wwwroot/uploads/employee"
-                );
-
-                if (!Directory.Exists(uploadPath))
-                    Directory.CreateDirectory(uploadPath);
-
-                imageName = Guid.NewGuid().ToString() + Path.GetExtension(EmpImage.FileName);
-                string filePath = Path.Combine(uploadPath, imageName);
-
-                using var stream = new FileStream(filePath, FileMode.Create);
-                EmpImage.CopyTo(stream);
+                TempData["Msg"] = prms[^1].Value?.ToString() ?? "Saved successfully";
             }
-
-            SqlParameter[] prms =
+            catch (Exception ex)
             {
-        new SqlParameter("@Emp_Id", model.Emp_Id),
-
-        new SqlParameter("@Name", model.Name),
-        new SqlParameter("@Dob", string.IsNullOrEmpty(model.DOB) ? (object)DBNull.Value : model.DOB),
-
-        new SqlParameter("@DepartmentId", model.DepartmentId == 0 ? (object)DBNull.Value : model.DepartmentId),
-        new SqlParameter("@DesignationId", model.DesignationId == 0 ? (object)DBNull.Value : model.DesignationId),
-        new SqlParameter("@ShiftId", model.ShiftId == 0 ? (object)DBNull.Value : model.ShiftId),
-
-        new SqlParameter("@EmailId", model.EmailId ?? ""),
-        new SqlParameter("@PhoneNo", model.PhoneNo ?? ""),
-
-        new SqlParameter("@JoiningDate",
-            string.IsNullOrEmpty(model.JoiningDate) ? (object)DBNull.Value : model.JoiningDate),
-
-        new SqlParameter("@Address", model.Address ?? ""),
-        new SqlParameter("@Emp_Img", imageName),
-
-        new SqlParameter("@Salary",
-            model.Salary == 0 ? (object)DBNull.Value : model.Salary),
-
-        new SqlParameter("@Status", model.Status ?? ""),
-        //new SqlParameter("@Shift", model.Shift ?? ""),
-
-        new SqlParameter("@UserName", model.UserName ?? ""),
-        new SqlParameter("@Password", model.Password ?? ""),
-        new SqlParameter("@Role", model.Role ?? ""),
-
-        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
-        {
-            Direction = ParameterDirection.Output
-        }
-    };
-
-            du.Execute("Sp_Insert_MasterEmployee", prms);
-
-            TempData["Msg"] = prms[^1].Value?.ToString();
+                TempData["Msg"] = "Something went wrong. Please try again.";
+            }
             return RedirectToAction("EmployeeList");
         }
+
 
 
         [HttpPost]
@@ -536,12 +580,21 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
 
         [HttpPost]
+        [HttpPost]
+
+        [HttpPost]
         public IActionResult SaveCompany(CompanyVM model)
         {
+            if (!ModelState.IsValid)
+            {
+                // Dropdown data wapas bharo
+                ViewBag.StateList = GetStatesDDL();   
+                return View("CompanyInfoList", GetCompanyDDL());
+            }
+
             SqlParameter[] prms =
             {
         new SqlParameter("@Id", model.Id),
-
         new SqlParameter("@CCode", model.CCode ?? ""),
         new SqlParameter("@CompanyName", model.CompanyName ?? ""),
         new SqlParameter("@Abbr", model.Abbr ?? ""),
@@ -549,8 +602,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
         new SqlParameter("@Address", model.Address ?? ""),
         new SqlParameter("@Address2", model.Address2 ?? ""),
 
-        new SqlParameter("@StateId", model.StateId > 0 ? model.StateId : (object)DBNull.Value),
-        new SqlParameter("@CityId", model.CityId > 0 ? model.CityId : (object)DBNull.Value),
+        new SqlParameter("@StateId", model.StateId ?? (object)DBNull.Value),
+        new SqlParameter("@CityId", model.CityId ?? (object)DBNull.Value),
 
         new SqlParameter("@Pincode", model.Pincode ?? ""),
         new SqlParameter("@Country", model.Country ?? ""),
@@ -569,14 +622,15 @@ namespace ATPL_Attendance_SW.Web.Controllers
         {
             Direction = ParameterDirection.Output
         }
-        };
+    };
 
             du.Execute("Sp_Insert_CompanyInformation", prms);
 
             TempData["Msg"] = prms[^1].Value?.ToString();
-
             return RedirectToAction("CompanyInfoList");
         }
+
+
 
 
         [HttpGet]
@@ -600,7 +654,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             var data = new
             {
                 Id = r["Id"].ToString(),
-                CCode = r["CCode"].ToString(),
+               ccode = r["CCode"].ToString(),
                 CompanyName = r["CompanyName"].ToString(),
                 Abbr = r["Abbr"].ToString(),
                 Address = r["Address"].ToString(),
