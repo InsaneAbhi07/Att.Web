@@ -3,9 +3,6 @@
     ViewData["Title"] = Model.Emp_Id == 0 ? "Add Employee" : "Edit Employee";
 }
 <link href="~/assets/css/emp.css" rel="stylesheet" />
-<style>
-   
-</style>
 
 <div class="employee-form-container">
     <form asp-action="SaveEmployee"
@@ -16,7 +13,7 @@
 
         <!-- Header -->
         <div class="form-header">
-            <h2>@ViewData["Title"]</h2>
+            <h2 style="font-weight: 700;">@ViewData["Title"]</h2>
             <p>Complete all required fields to @(Model.Emp_Id == 0 ? "add a new" : "update") employee record</p>
         </div>
 
@@ -39,7 +36,7 @@
             </li>
             <li class="nav-item">
                 <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabBank" type="button">
-                    🏦 Bank Details
+                    🏦 Bank & Documents
                 </button>
             </li>
         </ul>
@@ -66,9 +63,8 @@
 
                     <div class="col-lg-9">
                         <div class="section-card">
-                            <div class="section-title">Basic Information</div>
+                            <div class="section-title" style="font-weight: 700;">Basic Information</div>
                             <div class="row">
-
                                 <div class="col-md-3 mb-2">
                                     <label class="form-label">Emp Code *</label>
                                     <input asp-for="Emp_Code" type="text" class="form-control" required />
@@ -94,6 +90,10 @@
                                             <input type="radio" asp-for="EmpType" value="Contract" />
                                             <span>Contract</span>
                                         </label>
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="EmpType" value="Intern" />
+                                            <span>Intern</span>
+                                        </label>
                                     </div>
                                 </div>
 
@@ -107,6 +107,10 @@
                                         <label class="radio-option">
                                             <input type="radio" asp-for="Gender" value="Female" />
                                             <span>Female</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="Gender" value="Other" />
+                                            <span>Other</span>
                                         </label>
                                     </div>
                                 </div>
@@ -122,6 +126,7 @@
                                             <input type="radio" asp-for="MaritalStatus" value="Married" />
                                             <span>Married</span>
                                         </label>
+                                        
                                     </div>
                                 </div>
 
@@ -138,9 +143,20 @@
                                         </label>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons for Tab 1 -->
+                <div class="form-actions">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn-nav" id="btnPrevious1" onclick="previousTab()" disabled>
+                            ← Previous
+                        </button>
+                        <button type="button" class="btn-nav" id="btnNext1" onclick="nextTab()">
+                            Next →
+                        </button>
                     </div>
                 </div>
             </div>
@@ -148,7 +164,7 @@
             <!-- CONTACT & EMPLOYMENT TAB -->
             <div class="tab-pane fade" id="tabContact">
                 <div class="section-card">
-                    <div class="section-title">Contact Information</div>
+                    <div class="section-title" style="font-weight: 700;">Contact Information</div>
                     <div class="row">
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Phone Number *</label>
@@ -173,7 +189,7 @@
                 </div>
 
                 <div class="section-card">
-                    <div class="section-title">Employment Details</div>
+                    <div class="section-title" style="font-weight: 700;">Employment Details</div>
                     <div class="row">
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Department *</label>
@@ -197,9 +213,33 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
+                            <label class="form-label">Work Under</label>
+                            <select asp-for="WorkUnderId" asp-items="ViewBag.DesignationList" class="form-select">
+                                <option value="0">Select Manager</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4 mb-2">
                             <label class="form-label">Joining Date *</label>
                             <input asp-for="JoiningDate" type="date" class="form-control" required />
                         </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Resign Date</label>
+                            <input asp-for="ResignDate" type="date" class="form-control" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons for Tab 2 -->
+                <div class="form-actions">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn-nav" onclick="previousTab()">
+                            ← Previous
+                        </button>
+                        <button type="button" class="btn-nav" onclick="nextTab()">
+                            Next →
+                        </button>
                     </div>
                 </div>
             </div>
@@ -207,7 +247,7 @@
             <!-- SALARY TAB -->
             <div class="tab-pane fade" id="tabSalary">
                 <div class="section-card">
-                    <div class="section-title">Salary Components</div>
+                    <div class="section-title" style="font-weight: 700;">Salary Components</div>
                     <div class="row">
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Basic Salary *</label>
@@ -245,24 +285,41 @@
                         <p class="amount">₹ <span id="grossDisplay">0.00</span></p>
                     </div>
                 </div>
+
+                <!-- Navigation Buttons for Tab 3 -->
+                <div class="form-actions">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn-nav" onclick="previousTab()">
+                            ← Previous
+                        </button>
+                        <button type="button" class="btn-nav" onclick="nextTab()">
+                            Next →
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- BANK TAB -->
+            <!-- BANK & DOCUMENTS TAB -->
             <div class="tab-pane fade" id="tabBank">
                 <div class="section-card">
-                    <div class="section-title">Bank Account Details</div>
+                    <div class="section-title" style="font-weight: 700;">Bank Account Details</div>
                     <div class="row">
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label class="form-label">Bank Name *</label>
                             <input asp-for="BankName" class="form-control" placeholder="e.g., State Bank of India" />
                         </div>
 
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Account Holder Name</label>
+                            <input asp-for="Ac_HolderName" class="form-control" placeholder="Enter account holder name" />
+                        </div>
+
+                        <div class="col-md-3 mb-2">
                             <label class="form-label">Account Number *</label>
                             <input asp-for="Acc_No" class="form-control" placeholder="Enter account number" />
                         </div>
 
-                        <div class="col-md-4 mb-2">
+                        <div class="col-md-3 mb-2">
                             <label class="form-label">IFSC Code *</label>
                             <input asp-for="IFSC_Code" class="form-control" placeholder="e.g., SBIN0001234" style="text-transform: uppercase;" />
                         </div>
@@ -274,24 +331,64 @@
                         </p>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Action Buttons -->
-        <div class="form-actions">
-            <div class="nav-buttons">
-                <button type="button" class="btn-nav" id="btnPrevious" onclick="previousTab()">
-                    ← Previous
-                </button>
-                <button type="button" class="btn-nav" id="btnNext" onclick="nextTab()">
-                    Next →
-                </button>
-            </div>
-            <div class="submit-buttons">
-                <button type="button" class="btn-secondary-custom" onclick="window.history.back()">Cancel</button>
-                <button type="submit" class="btn-primary-custom">
-                    @(Model.Emp_Id == 0 ? "✓ Create" : "✓ Update")
-                </button>
+                <div class="section-card">
+                    <div class="section-title" style="font-weight: 700;">Documents Upload</div>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Resume / CV</label>
+                            <input type="file" name="ResumeDocument" class="form-control" accept=".pdf,.doc,.docx" />
+                            <small class="text-muted">Accepted formats: PDF, DOC, DOCX (Max 5MB)</small>
+                        </div>
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Aadhar Card</label>
+                            <input type="file" name="AadharDocument" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
+                            <small class="text-muted">Accepted formats: PDF, JPG, PNG (Max 2MB)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <div class="section-title" style="font-weight: 700;">User Credentials (Optional)</div>
+                    <div class="row">
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Username</label>
+                            <input asp-for="UserName" class="form-control" placeholder="Enter username" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Password</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" />
+                        </div>
+
+                        <div class="col-md-4 mb-2">
+                            <label class="form-label">Role</label>
+                            <select asp-for="Role" class="form-select">
+                                <option value="">Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Employee">Employee</option>
+                                <option value="HR">HR</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons - Only on Last Tab -->
+                <div class="form-actions">
+                    <div class="nav-buttons">
+                        <button type="button" class="btn-nav" onclick="previousTab()">
+                            ← Previous
+                        </button>
+                    </div>
+                    <div class="submit-buttons">
+                        <button type="button" class="btn-secondary-custom" onclick="window.location.href='@Url.Action("EmployeeList", "Home")'">Cancel</button>
+                        <button type="submit" class="btn-primary-custom">
+                            @(Model.Emp_Id == 0 ? "✓ Create Employee" : "✓ Update Employee")
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </form>
@@ -302,21 +399,12 @@
     const tabs = ['#tabPersonal', '#tabContact', '#tabSalary', '#tabBank'];
     let currentTabIndex = 0;
 
-    function updateNavigationButtons() {
-        const btnPrevious = document.getElementById('btnPrevious');
-        const btnNext = document.getElementById('btnNext');
-
-        btnPrevious.disabled = currentTabIndex === 0;
-        btnNext.disabled = currentTabIndex === tabs.length - 1;
-    }
-
     function nextTab() {
         if (currentTabIndex < tabs.length - 1) {
             currentTabIndex++;
             const nextTabElement = document.querySelector(`[data-bs-target="${tabs[currentTabIndex]}"]`);
             const bootstrapTab = new bootstrap.Tab(nextTabElement);
             bootstrapTab.show();
-            updateNavigationButtons();
         }
     }
 
@@ -326,7 +414,6 @@
             const prevTabElement = document.querySelector(`[data-bs-target="${tabs[currentTabIndex]}"]`);
             const bootstrapTab = new bootstrap.Tab(prevTabElement);
             bootstrapTab.show();
-            updateNavigationButtons();
         }
     }
 
@@ -334,7 +421,6 @@
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab, index) => {
         tab.addEventListener('shown.bs.tab', function() {
             currentTabIndex = index;
-            updateNavigationButtons();
             localStorage.setItem('activeTab', this.getAttribute('data-bs-target'));
         });
     });
@@ -371,7 +457,6 @@
 
     // Initialize on page load
     calculateGross();
-    updateNavigationButtons();
 
     // Form validation enhancement
     document.querySelector('form').addEventListener('submit', function(e) {
@@ -402,7 +487,6 @@
                 const bootstrapTab = new bootstrap.Tab(tab);
                 bootstrapTab.show();
                 currentTabIndex = tabs.indexOf(activeTab);
-                updateNavigationButtons();
             }
         }
     });
