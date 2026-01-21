@@ -84,7 +84,6 @@
                     <th>Type</th>
                     <th>In</th>
                     <th>Out</th>
-                    <th>Carry Forward</th>
                     <th width="120">Action</th>
                 </tr>
             </thead>
@@ -97,7 +96,6 @@
                         <td>@Model[i].ShiftType</td>
                         <td>@Model[i].InTime</td>
                         <td>@Model[i].OutTime</td>
-                        <td>@Model[i].CarryForward</td>
                         <td>
                             <button class="btn btn-sm btn-warning"
                                     onclick="editShift(
@@ -107,9 +105,7 @@
                                     '@Model[i].InTime',
                                     '@Model[i].OutTime',
                                     '@Model[i].BreakOut',
-                                    '@Model[i].BreakIn',
-                                    '@Model[i].CarryForward',
-                                    '@Model[i].Compensationin'
+                                    '@Model[i].BreakIn'
                                     )">
                                 <i class="ti ti-edit"></i>
                             </button>
@@ -119,7 +115,7 @@
                                   style="display:inline">
                                 <input type="hidden" name="id" value="@Model[i].Id" />
                                 <button class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Delete this shift?')">
+                                        onclick="return confirm('Do you really want to delete this shift?')">
                                     <i class="ti ti-trash"></i>
                                 </button>
                             </form>
@@ -189,51 +185,6 @@
 
                     </div>
 
-                    <div class="col-md-12 mt-3">
-                        <label class="form-label fw-semibold">Carry Forward</label>
-
-                        <div class="d-flex align-items-center gap-4 flex-wrap">
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input"
-                                       type="radio"
-                                       name="CarryForward"
-                                       id="CarryForward"
-                                       value="Yes"
-                                       checked
-                                       onclick="toggleComp(false)">
-                                <label class="form-check-label">Yes</label>
-                            </div>
-
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input"
-                                       type="radio"
-                                       name="CarryForward"
-                                       id="CarryForward"
-                                       value="No"
-                                       onclick="toggleComp(true)">
-                                <label class="form-check-label">No</label>
-                            </div>
-
-                            <!-- dropdown inline -->
-                            <div id="compDiv" class="d-none" style="min-width:260px;">
-                                <div class="d-flex align-items-center gap-2">
-                                    <label class="mb-0 fw-semibold" style="min-width:150px;">Compensation In</label>
-                                    <select name="Compensationin"
-                                            id="Compensationin"
-                                            class="form-select"
-                                            style="min-width:180px;">
-                                        <option value="">Select</option>
-                                        <option value="Monthly">Monthly</option>
-                                        <option value="Yearly">Yearly</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
                 </div>
 
 
@@ -277,14 +228,10 @@
             document.getElementById("OutTime").value = "";
             document.getElementById("BreakOut").value = "";
             document.getElementById("BreakIn").value = "";
-            document.getElementById("Compensationin").value = "";
-            document.querySelector('input[name="CarryForward"][value="Yes"]').checked = true;
-            toggleComp(false);
         }
 
 
-               function editShift(id, shift, type, inTime, outTime, breakOut, breakIn, carry, comp) {
-
+        function editShift(id, shift, type, inTime, outTime, breakOut, breakIn) {
             document.getElementById("Id").value = id;
             document.getElementById("Shift").value = shift;
             document.getElementById("ShiftType").value = type;
@@ -293,39 +240,9 @@
             document.getElementById("BreakOut").value = breakOut;
             document.getElementById("BreakIn").value = breakIn;
 
-            // radio set
-            document.querySelector(`input[name="CarryForward"][value="${carry}"]`).checked = true;
-
-            if (carry === "No") {
-                toggleComp(true);
-                document.getElementById("Compensationin").value = comp;
-            } else {
-                toggleComp(false);
-            }
-
-            new bootstrap.Modal(document.getElementById('shiftModal')).show();
+            // 🔥 SHOW MODAL
+            var modal = new bootstrap.Modal(document.getElementById('shiftModal'));
+            modal.show();
         }
-
-
-                function toggleComp(show) {
-            const div = document.getElementById("compDiv");
-            if (show) {
-                div.classList.remove("d-none");
-            } else {
-                div.classList.add("d-none");
-                document.getElementById("Compensationin").value = "";
-            }
-        }
-
-                function beforeSave() {
-            const carry = document.querySelector('input[name="CarryForward"]:checked').value;
-
-            if (carry === "Yes") {
-                document.getElementById("Compensationin").value = "";
-            }
-            return true;
-        }
-
-
     </script>
 }

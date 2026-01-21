@@ -1,6 +1,7 @@
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Reflection.Emit;
 using ATPL_Attendance_SW.Web.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -279,6 +280,43 @@ namespace ATPL_Attendance_SW.Web.Controllers
             }
             return list;
         }
+
+        private List<SelectListItem> GetWorkUnderDDL()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select Emp_Id,Name From Tbl_MasterEmployeeDetails", null);
+            List<SelectListItem> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = row["Emp_Id"].ToString(),
+                    Text = row["Name"].ToString()
+                });
+            }
+            return list;
+        }
+
+        [HttpGet]
+        public JsonResult GetDesignationsByDepartment(int departmentId)
+        {
+            string query = "SELECT Id, Designation FROM Tbl_MasterDesignation WHERE DepartmentId = @DepartmentId";
+            SqlParameter[] prms = { new SqlParameter("@DepartmentId", departmentId) };
+            DataTable dt = du.GetDataTableByQuery(query, prms);
+
+            List<object> list = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new
+                {
+                    value = row["Id"].ToString(),
+                    text = row["Designation"].ToString()
+                });
+            }
+            return Json(list);
+        }
+
+
         private List<SelectListItem> GetSHiftDDL()
         {
             DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterShift", null);
@@ -409,6 +447,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             ViewBag.DepartmentList = GetDepartmentDDL();
             ViewBag.DesignationList = GetDesignationDDL();
             ViewBag.Shiftlistt = GetSHiftDDL();
+            ViewBag.WorkUnderList = GetWorkUnderDDL();
 
             // ADD
             if (id == 0)
@@ -578,24 +617,36 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return RedirectToAction("EmployeeList1");
         }
 
-
         [HttpGet]
-        [HttpGet]
-        public IActionResult CheckUsername(string username, string oldUsername)
+        public IActionResult CheckEmpCode(string empCode, int empId = 0)
         {
-             if (username == oldUsername)
-                return Json(false);
-
             SqlParameter[] prms =
             {
-              new SqlParameter("@UserName", username)
-            };
+        new SqlParameter("@EmpCode", empCode),
+        new SqlParameter("@EmpId", empId)
+    };
 
-            int count = Convert.ToInt32(
-                du.Execute("Sp_CheckUsernameExissts", prms)
-            );
+            DataTable dt = du.GetDataTableByQuery("SELECT 1 FROM Tbl_MasterEmployeeDetails WHERE Emp_Code = " +
+                "@EmpCode AND Emp_Id<>@EmpId", prms );
 
-            return Json(count > 0);
+            return Json(dt.Rows.Count > 0);
+        }
+
+
+        [HttpGet]
+        [HttpGet]
+        public IActionResult CheckUsername(string username, string empId)
+        {
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@username", username),
+        new SqlParameter("@EmpId", empId)
+    };
+
+            DataTable dt = du.GetDataTableByQuery("SELECT 1 FROM Tbl_MasterEmployeeDetails WHERE UserName = " +
+                "@username AND Emp_Id<>@EmpId", prms);
+
+            return Json(dt.Rows.Count > 0);
         }
 
         [HttpPost]
@@ -900,8 +951,6 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     OutTime = row["OutTime"].ToString(),
                     BreakOut = row["BreakOut"].ToString(),
                     BreakIn = row["BreakIn"].ToString(),
-                    CarryForward = row["CarryForward"].ToString(),
-                    Compensationin = row["Compensationin"].ToString()
                 });
             }
 
@@ -933,12 +982,6 @@ namespace ATPL_Attendance_SW.Web.Controllers
         new SqlParameter("@BreakIn",
             string.IsNullOrWhiteSpace(model.BreakIn) ? (object)DBNull.Value : model.BreakIn),
 
-        new SqlParameter("@CarryForward",
-            string.IsNullOrWhiteSpace(model.CarryForward) ? "Yes" : model.CarryForward),
-
-        new SqlParameter("@Compensationin",
-            string.IsNullOrWhiteSpace(model.Compensationin) ? (object)DBNull.Value : model.Compensationin),
-
         new SqlParameter("@msg", SqlDbType.NVarChar, 100)
         {
             Direction = ParameterDirection.Output
@@ -947,7 +990,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             du.Execute("Sp_Save_MasterShift", prms);
 
-            TempData["Msg"] = prms[9].Value?.ToString();
+            TempData["Msg"] = prms[7].Value?.ToString();
 
             return RedirectToAction("ShiftList");
         }
@@ -984,7 +1027,9 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Id = Convert.ToInt32(row["Id"]),
                     LeaveType = row["LeaveType"].ToString(),
                     Penalty = Convert.ToInt32(row["Penalty"]),
-                    Total_Y = Convert.ToInt32(row["Total_Y"])
+                    Total_Y = Convert.ToInt32(row["Total_Y"]),
+                    CarryForward= row["CarryForward"].ToString(),
+                    Compensationin= row["Compensationin"].ToString(),
                 });
             }
             return View(list);
@@ -994,22 +1039,40 @@ namespace ATPL_Attendance_SW.Web.Controllers
         [HttpPost]
         public IActionResult AddLeaveType(LeaveTypeVM model)
         {
-            SqlParameter[] prms = { new SqlParameter("@Id", model.Id),
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Id", model.Id),
 
-                new SqlParameter("@LeaveType",string.IsNullOrWhiteSpace(model.LeaveType)? (object)DBNull.Value: model.LeaveType),
+        new SqlParameter("@LeaveType",
+            string.IsNullOrWhiteSpace(model.LeaveType)
+                ? (object)DBNull.Value
+                : model.LeaveType),
 
-                new SqlParameter("@Penalty", (object?)model.Penalty ?? DBNull.Value),
-                new SqlParameter("@Total_Y", (object?)model.Total_Y ?? DBNull.Value),
+        new SqlParameter("@Penalty", model.Penalty),
+        new SqlParameter("@Total_Y", model.Total_Y),
 
-                new SqlParameter("@msg", SqlDbType.NVarChar, 100)
-                {
-                    Direction = ParameterDirection.Output
-                }
-            };
+        new SqlParameter("@CarryForward",
+            string.IsNullOrWhiteSpace(model.CarryForward)
+                ? (object)DBNull.Value
+                : model.CarryForward),
+
+        new SqlParameter("@Compensationin",
+            string.IsNullOrWhiteSpace(model.Compensationin)
+                ? (object)DBNull.Value
+                : model.Compensationin),
+
+        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+    };
+
             du.Execute("Sp_Insert_Master_LeaveType", prms);
-            TempData["Msg"] = prms[4].Value.ToString();
+
+            TempData["Msg"] = prms[6].Value.ToString();
             return RedirectToAction("LeaveTypeList");
         }
+
 
         // DELETE
         [HttpPost]

@@ -8,13 +8,21 @@
     <form asp-action="SaveEmployee"
           asp-controller="Home"
           method="post"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data"
+          id="employeeForm">
         <input type="hidden" asp-for="Emp_Id" />
 
         <!-- Header -->
         <div class="form-header">
-            <h2 style="font-weight: 700;">@ViewData["Title"]</h2>
-            <p>Complete all required fields to @(Model.Emp_Id == 0 ? "add a new" : "update") employee record</p>
+            <div>
+                <h2 style="font-weight: 700;">@ViewData["Title"]</h2>
+                <p>Complete all required fields to @(Model.Emp_Id == 0 ? "add a new" : "update") employee record</p>
+            </div>
+            <div>
+                <a href="@Url.Action("EmployeeList1", "Home")" class="btn btn-outline-primary" style="margin-right: 10px;">
+                    <i class="fas fa-list me-1"></i> View Employee List
+                </a>
+            </div>
         </div>
 
         <!-- Tabs -->
@@ -57,7 +65,7 @@
                                 </button>
                                 <input type="file" name="EmpImage" accept="image/*" onchange="previewImage(this)" />
                             </div>
-                            <p style="margin-top: 8px; font-size: 10px; color: #6b7280;">Max 2MB, JPG/PNG</p>
+                            <p style="margin-top: 8px; font-size: 10px; color: #6b7280;">Max 2MB, JPG/PNG (Optional)</p>
                         </div>
                     </div>
 
@@ -65,25 +73,39 @@
                         <div class="section-card">
                             <div class="section-title" style="font-weight: 700;">Basic Information</div>
                             <div class="row">
+
                                 <div class="col-md-3 mb-2">
-                                    <label class="form-label">Emp Code *</label>
-                                    <input asp-for="Emp_Code" type="text" class="form-control" required />
+                                    <label class="form-label">Emp Code <span class="text-danger">*</span></label>
+
+                                    <input asp-for="Emp_Code"
+                                           type="text"
+                                           class="form-control"
+                                           id="Emp_Code"
+                                           required
+                                           onblur="checkEmpCode()" />
+
+                                    <small id="empCodeMsg" class="text-danger" style="font-size:11px;"></small>
                                 </div>
+
+
+
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label">Full Name *</label>
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
                                     <input asp-for="Name" class="form-control" placeholder="Enter full name" required />
+                                    <span class="text-danger" style="font-size: 11px;"></span>
                                 </div>
 
                                 <div class="col-md-3 mb-2">
-                                    <label class="form-label">Date of Birth *</label>
+                                    <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
                                     <input asp-for="DOB" type="date" class="form-control" required />
+                                    <span class="text-danger" style="font-size: 11px;"></span>
                                 </div>
 
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label">Employment Type *</label>
+                                    <label class="form-label">Employment Type <span class="text-danger">*</span></label>
                                     <div class="radio-group">
                                         <label class="radio-option">
-                                            <input type="radio" asp-for="EmpType" value="Permanent" />
+                                            <input type="radio" asp-for="EmpType" value="Permanent" required />
                                             <span>Permanent</span>
                                         </label>
                                         <label class="radio-option">
@@ -95,13 +117,14 @@
                                             <span>Intern</span>
                                         </label>
                                     </div>
+                                    <span class="text-danger" style="font-size: 11px;"></span>
                                 </div>
 
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label">Gender *</label>
+                                    <label class="form-label">Gender <span class="text-danger">*</span></label>
                                     <div class="radio-group">
                                         <label class="radio-option">
-                                            <input type="radio" asp-for="Gender" value="Male" />
+                                            <input type="radio" asp-for="Gender" value="Male" required />
                                             <span>Male</span>
                                         </label>
                                         <label class="radio-option">
@@ -113,6 +136,7 @@
                                             <span>Other</span>
                                         </label>
                                     </div>
+                                    <span class="text-danger" style="font-size: 11px;"></span>
                                 </div>
 
                                 <div class="col-md-6 mb-2">
@@ -126,15 +150,14 @@
                                             <input type="radio" asp-for="MaritalStatus" value="Married" />
                                             <span>Married</span>
                                         </label>
-                                        
                                     </div>
                                 </div>
 
                                 <div class="col-md-6 mb-2">
-                                    <label class="form-label">Status *</label>
+                                    <label class="form-label">Status <span class="text-danger">*</span></label>
                                     <div class="radio-group">
                                         <label class="radio-option">
-                                            <input type="radio" asp-for="Status" value="Active" />
+                                            <input type="radio" asp-for="Status" value="Active" required checked />
                                             <span>Active</span>
                                         </label>
                                         <label class="radio-option">
@@ -142,6 +165,7 @@
                                             <span>Inactive</span>
                                         </label>
                                     </div>
+                                    <span class="text-danger" style="font-size: 11px;"></span>
                                 </div>
                             </div>
                         </div>
@@ -167,18 +191,20 @@
                     <div class="section-title" style="font-weight: 700;">Contact Information</div>
                     <div class="row">
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Phone Number *</label>
-                            <input asp-for="PhoneNo" class="form-control" placeholder="+91 XXXXX XXXXX" required />
+                            <label class="form-label">Phone Number <span class="text-danger">*</span></label>
+                            <input asp-for="PhoneNo" class="form-control" placeholder="+91 XXXXX XXXXX" required maxlength="10" pattern="[0-9]{10}" />
+                            <span class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Emergency Contact</label>
-                            <input asp-for="EmergencyContact" class="form-control" placeholder="+91 XXXXX XXXXX" />
+                            <input asp-for="EmergencyContact" class="form-control" placeholder="+91 XXXXX XXXXX" maxlength="10" pattern="[0-9]{10}" />
                         </div>
 
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Email Address *</label>
+                            <label class="form-label">Email Address <span class="text-danger">*</span></label>
                             <input asp-for="EmailId" type="email" class="form-control" placeholder="email@example.com" required />
+                            <span class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-12 mb-2">
@@ -192,36 +218,40 @@
                     <div class="section-title" style="font-weight: 700;">Employment Details</div>
                     <div class="row">
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">Department *</label>
+                            <label class="form-label">Department <span class="text-danger">*</span></label>
                             <select asp-for="DepartmentId" asp-items="ViewBag.DepartmentList" class="form-select" required>
                                 <option value="">Select Department</option>
                             </select>
+                            <span class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">Designation *</label>
+                            <label class="form-label">Designation <span class="text-danger">*</span></label>
                             <select asp-for="DesignationId" asp-items="ViewBag.DesignationList" class="form-select" required>
                                 <option value="">Select Designation</option>
                             </select>
+                            <span class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">Work Shift *</label>
+                            <label class="form-label">Work Shift <span class="text-danger">*</span></label>
                             <select asp-for="ShiftId" asp-items="ViewBag.Shiftlistt" class="form-select" required>
                                 <option value="">Select Shift</option>
                             </select>
+                            <span class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-md-3 mb-2">
                             <label class="form-label">Work Under</label>
-                            <select asp-for="WorkUnderId" asp-items="ViewBag.DesignationList" class="form-select">
+                            <select asp-for="WorkUnderId" asp-items="ViewBag.WorkUnderList" class="form-select">
                                 <option value="0">Select Manager</option>
                             </select>
                         </div>
 
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Joining Date *</label>
+                            <label class="form-label">Joining Date <span class="text-danger">*</span></label>
                             <input asp-for="JoiningDate" type="date" class="form-control" required />
+                            <span class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-md-4 mb-2">
@@ -250,34 +280,36 @@
                     <div class="section-title" style="font-weight: 700;">Salary Components</div>
                     <div class="row">
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Basic Salary *</label>
-                            <input asp-for="BasicSalary" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                            <label class="form-label">Basic Salary <span class="text-danger">*</span></label>
+                            <input asp-for="BasicSalary" type="number" step="0.01" class="form-control salary" placeholder="0.00" required min="0" />
+                            <span class="text-danger" style="font-size: 11px;"></span>
                         </div>
 
                         <div class="col-md-4 mb-2">
                             <label class="form-label">House Rent Allowance (HRA)</label>
-                            <input asp-for="HRA" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                            <input asp-for="HRA" type="number" step="0.01" class="form-control salary" placeholder="0.00" min="0" value="0" />
                         </div>
 
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Dearness Allowance (DA)</label>
-                            <input asp-for="DA" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                            <input asp-for="DA" type="number" step="0.01" class="form-control salary" placeholder="0.00" min="0" value="0" />
                         </div>
 
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Performance Allowance (PA)</label>
-                            <input asp-for="PA" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                            <input asp-for="PA" type="number" step="0.01" class="form-control salary" placeholder="0.00" min="0" value="0" />
                         </div>
 
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Other Allowances</label>
-                            <input asp-for="OtherAllowance" type="number" step="0.01" class="form-control salary" placeholder="0.00" />
+                            <input asp-for="OtherAllowance" type="number" step="0.01" class="form-control salary" placeholder="0.00" min="0" value="0" />
                         </div>
 
                         <div class="col-md-4 mb-2">
                             <label class="form-label">Gross Salary</label>
                             <input asp-for="GrossSalary" type="number" step="0.01" class="form-control" readonly style="font-weight: 700; font-size: 14px; color: #10b981;" />
                         </div>
+
                     </div>
 
                     <div class="salary-summary">
@@ -305,7 +337,7 @@
                     <div class="section-title" style="font-weight: 700;">Bank Account Details</div>
                     <div class="row">
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">Bank Name *</label>
+                            <label class="form-label">Bank Name</label>
                             <input asp-for="BankName" class="form-control" placeholder="e.g., State Bank of India" />
                         </div>
 
@@ -315,25 +347,25 @@
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">Account Number *</label>
+                            <label class="form-label">Account Number</label>
                             <input asp-for="Acc_No" class="form-control" placeholder="Enter account number" />
                         </div>
 
                         <div class="col-md-3 mb-2">
-                            <label class="form-label">IFSC Code *</label>
+                            <label class="form-label">IFSC Code</label>
                             <input asp-for="IFSC_Code" class="form-control" placeholder="e.g., SBIN0001234" style="text-transform: uppercase;" />
                         </div>
                     </div>
 
                     <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 6px; margin-top: 12px;">
                         <p style="margin: 0; color: #92400e; font-size: 11px; font-weight: 500;">
-                            ⚠️ <strong>Important:</strong> Please verify all bank details carefully. Incorrect information may delay salary processing.
+                            ⚠️ <strong>Note:</strong> Bank details are optional but recommended for salary processing.
                         </p>
                     </div>
                 </div>
 
                 <div class="section-card">
-                    <div class="section-title" style="font-weight: 700;">Documents Upload</div>
+                    <div class="section-title" style="font-weight: 700;">Documents Upload (Optional)</div>
                     <div class="row">
                         <div class="col-md-6 mb-2">
                             <label class="form-label">Resume / CV</label>
@@ -352,9 +384,18 @@
                 <div class="section-card">
                     <div class="section-title" style="font-weight: 700;">User Credentials (Optional)</div>
                     <div class="row">
+                        
                         <div class="col-md-4 mb-2">
-                            <label class="form-label">Username</label>
-                            <input asp-for="UserName" class="form-control" placeholder="Enter username" />
+                            <label class="form-label">User Name <span class="text-danger">*</span></label>
+
+                            <input asp-for="UserName"
+                                   type="text"
+                                   class="form-control"
+                                   id="UserName"
+                                   required
+                                   onblur="checkUserName()" />
+
+                            <small id="UserNameMsg" class="text-danger" style="font-size:11px;"></small>
                         </div>
 
                         <div class="col-md-4 mb-2">
@@ -383,9 +424,11 @@
                         </button>
                     </div>
                     <div class="submit-buttons">
-                        <button type="button" class="btn-secondary-custom" onclick="window.location.href='@Url.Action("EmployeeList", "Home")'">Cancel</button>
+                        <a href="@Url.Action("EmployeeList1", "Home")" class="btn-secondary-custom">
+                            <i class="fas fa-times me-1"></i> Cancel
+                        </a>
                         <button type="submit" class="btn-primary-custom">
-                            @(Model.Emp_Id == 0 ? "✓ Create Employee" : "✓ Update Employee")
+                            <i class="fas fa-save me-1"></i> @(Model.Emp_Id == 0 ? "Create Employee" : "Update Employee")
                         </button>
                     </div>
                 </div>
@@ -394,12 +437,26 @@
     </form>
 </div>
 
+<style>
+    .form-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+</style>
+
 <script>
     // Tab navigation
     const tabs = ['#tabPersonal', '#tabContact', '#tabSalary', '#tabBank'];
     let currentTabIndex = 0;
 
     function nextTab() {
+        // Validate current tab before moving to next
+        if (!validateCurrentTab()) {
+            return;
+        }
+
         if (currentTabIndex < tabs.length - 1) {
             currentTabIndex++;
             const nextTabElement = document.querySelector(`[data-bs-target="${tabs[currentTabIndex]}"]`);
@@ -417,9 +474,60 @@
         }
     }
 
+    function validateCurrentTab() {
+        const currentTab = document.querySelector(tabs[currentTabIndex]);
+        const requiredFields = currentTab.querySelectorAll('[required]');
+        let isValid = true;
+        let errorMessages = [];
+
+        requiredFields.forEach(field => {
+            const label = field.closest('.mb-2')?.querySelector('.form-label')?.textContent.replace('*', '').trim();
+
+            if (field.type === 'radio') {
+                const radioGroup = field.name;
+                const isChecked = currentTab.querySelector(`input[name="${radioGroup}"]:checked`);
+                if (!isChecked) {
+                    isValid = false;
+                    errorMessages.push(label || field.name);
+                    // Highlight radio group
+                    const radioContainer = field.closest('.radio-group');
+                    if (radioContainer) {
+                        radioContainer.style.border = '1px solid #ef4444';
+                        radioContainer.style.borderRadius = '6px';
+                        radioContainer.style.padding = '5px';
+                    }
+                } else {
+                    const radioContainer = field.closest('.radio-group');
+                    if (radioContainer) {
+                        radioContainer.style.border = 'none';
+                        radioContainer.style.padding = '0';
+                    }
+                }
+            } else {
+                if (!field.value.trim() || (field.tagName === 'SELECT' && field.value === '')) {
+                    isValid = false;
+                    field.style.borderColor = '#ef4444';
+                    errorMessages.push(label || 'A required field');
+                } else {
+                    field.style.borderColor = '#e5e7eb';
+                }
+            }
+        });
+
+        if (!isValid) {
+            let message = 'Please fill the following required fields:\n\n';
+            errorMessages.forEach(msg => {
+                message += '• ' + msg + '\n';
+            });
+            alert(message);
+        }
+
+        return isValid;
+    }
+
     // Update current tab index when tabs are clicked
     document.querySelectorAll('[data-bs-toggle="tab"]').forEach((tab, index) => {
-        tab.addEventListener('shown.bs.tab', function() {
+        tab.addEventListener('shown.bs.tab', function () {
             currentTabIndex = index;
             localStorage.setItem('activeTab', this.getAttribute('data-bs-target'));
         });
@@ -428,11 +536,20 @@
     // Image preview
     function previewImage(input) {
         if (input.files && input.files[0]) {
+            const file = input.files[0];
+
+            // Validate file size (2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Image size must be less than 2MB');
+                input.value = '';
+                return;
+            }
+
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 document.getElementById('imgPreview').src = e.target.result;
             };
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
         }
     }
 
@@ -458,28 +575,38 @@
     // Initialize on page load
     calculateGross();
 
-    // Form validation enhancement
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const requiredFields = this.querySelectorAll('[required]');
-        let isValid = true;
+    // Form validation on submit
+    document.getElementById('employeeForm').addEventListener('submit', function (e) {
+        e.preventDefault();
 
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                isValid = false;
-                field.style.borderColor = '#ef4444';
-            } else {
-                field.style.borderColor = '#e5e7eb';
+        // Validate all tabs
+        let allValid = true;
+        let invalidTabs = [];
+
+        for (let i = 0; i < tabs.length; i++) {
+            currentTabIndex = i;
+            if (!validateCurrentTab()) {
+                allValid = false;
+                invalidTabs.push(i + 1);
             }
-        });
-
-        if (!isValid) {
-            e.preventDefault();
-            alert('Please fill all required fields marked with *');
         }
+
+        if (!allValid) {
+            alert('Please complete all required fields in Tab(s): ' + invalidTabs.join(', '));
+            // Go to first invalid tab
+            currentTabIndex = invalidTabs[0] - 1;
+            const tab = document.querySelector(`[data-bs-target="${tabs[currentTabIndex]}"]`);
+            const bootstrapTab = new bootstrap.Tab(tab);
+            bootstrapTab.show();
+            return false;
+        }
+
+        // If all valid, submit form
+        this.submit();
     });
 
     // Restore last active tab
-    window.addEventListener('load', function() {
+    window.addEventListener('load', function () {
         const activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
             const tab = document.querySelector(`[data-bs-target="${activeTab}"]`);
@@ -488,6 +615,131 @@
                 bootstrapTab.show();
                 currentTabIndex = tabs.indexOf(activeTab);
             }
+        }
+    });
+
+    // Remove red border on input
+    document.querySelectorAll('input, select, textarea').forEach(field => {
+        field.addEventListener('input', function() {
+            this.style.borderColor = '#e5e7eb';
+        });
+        field.addEventListener('change', function() {
+            this.style.borderColor = '#e5e7eb';
+        });
+    });
+</script>
+<script>
+    // ... existing code ...
+
+    // Department change event - Filter Designations
+    document.querySelector('[name="DepartmentId"]').addEventListener('change', function() {
+        const departmentId = this.value;
+        const designationDropdown = document.querySelector('[name="DesignationId"]');
+
+        // Clear current options
+        designationDropdown.innerHTML = '<option value="">Select Designation</option>';
+
+        if (departmentId) {
+            // Fetch designations for selected department
+            fetch('@Url.Action("GetDesignationsByDepartment", "Home")?departmentId=' + departmentId)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = item.value;
+                        option.text = item.text;
+                        designationDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching designations:', error);
+                    alert('Error loading designations. Please try again.');
+                });
+        }
+    });
+</script>
+<script>
+    let empCodeValid = true;
+
+    function checkEmpCode() {
+
+        const empCode = document.getElementById("Emp_Code").value.trim();
+        const empId = document.getElementById("Emp_Id")?.value || 0;
+        const msg = document.getElementById("empCodeMsg");
+
+        if (empCode.length < 2) {
+            msg.innerText = "";
+            return;
+        }
+
+        fetch(`/Home/CheckEmpCode?empCode=${empCode}&empId=${empId}`)
+            .then(r => r.json())
+            .then(exists => {
+
+                if (exists) {
+                    msg.innerText = "Employee code already exists";
+                    msg.classList.remove("text-success");
+                    msg.classList.add("text-danger");
+                    empCodeValid = false;
+
+                    document.getElementById("Emp_Code").focus();
+                }
+                else {
+                    msg.innerText = "Employee code available";
+                    msg.classList.remove("text-danger");
+                    msg.classList.add("text-success");
+                    empCodeValid = true;
+                }
+            });
+    }
+    document.querySelector("form").addEventListener("submit", function (e) {
+        if (!empCodeValid) {
+            e.preventDefault();
+            document.getElementById("Emp_Code").focus();
+            alert("Please fix Employee Code before saving");
+        }
+    });
+</script>
+
+<script>
+    let UserNameValid = true;
+
+    function checkUserName() {
+
+        const username = document.getElementById("UserName").value.trim();
+        const empId = document.getElementById("Emp_Id")?.value || 0;
+        const msg = document.getElementById("UserNameMsg");
+
+        if (username.length < 2) {
+            msg.innerText = "";
+            return;
+        }
+
+        fetch(`/Home/CheckUsername?username=${username}&empId=${empId}`)
+            .then(r => r.json())
+            .then(exists => {
+
+                if (exists) {
+                    msg.innerText = "User Name code already exists";
+                    msg.classList.remove("text-success");
+                    msg.classList.add("text-danger");
+                    UserNameValid = false;
+
+                    document.getElementById("UserName").focus();
+                }
+                else {
+                    msg.innerText = "User Name available";
+                    msg.classList.remove("text-danger");
+                    msg.classList.add("text-success");
+                    UserNameValid = true;
+                }
+            });
+    }
+    document.querySelector("form").addEventListener("submit", function (e) {
+        if (!UserNameValid) {
+            e.preventDefault();
+            document.getElementById("UserName").focus();
+            alert("Please fix User Name before saving");
         }
     });
 </script>

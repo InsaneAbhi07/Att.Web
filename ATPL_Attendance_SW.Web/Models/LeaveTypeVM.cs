@@ -10,5 +10,7 @@ namespace ATPL_Attendance_SW.Web.Models
         [Required(ErrorMessage = "Please Enter No. of Days as Penalty")]
         public int Penalty { get; set; }
         public int Total_Y { get; set; }
+        public string CarryForward { get; set; }
+        public string? Compensationin { get; set; }
     }
 }
