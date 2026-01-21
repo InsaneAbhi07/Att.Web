@@ -7,6 +7,7 @@ namespace ATPL_Attendance_SW.Web.Models
         // public int Id { get; set; }
         public int Emp_Id { get; set; }
         [Required(ErrorMessage = "This field is required.")]
+        public string Emp_Code { get; set; }
         public string Name { get; set; }
 
         public string? DOB { get; set; }
@@ -31,6 +32,8 @@ namespace ATPL_Attendance_SW.Web.Models
         public string Shift { get; set; }
         public string Designation { get; set; }
 
+        public int WorkUnderId { get; set; }
+
         public string? BankName { get; set; }
         public string? Ac_HolderName { get; set; }
         public string? IFSC_Code { get; set;}
@@ -47,7 +50,10 @@ namespace ATPL_Attendance_SW.Web.Models
         public decimal PA { get; set; }
         public decimal OtherAllowance { get; set; }
         public decimal GrossSalary { get; set; }
+    
+        public string ResumeDoc { get; set; }
 
+        public string Aadhardoc { get; set; }
 
     }
 

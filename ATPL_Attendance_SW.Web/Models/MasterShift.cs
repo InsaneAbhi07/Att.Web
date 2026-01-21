@@ -10,7 +10,6 @@
         public string? BreakOut { get; set; }
         public string? BreakIn { get; set; }
         public string? CarryForward { get; set; }
-        public string? Compensation { get; set; }
         public string? Compensationin { get; set; }
     }
 

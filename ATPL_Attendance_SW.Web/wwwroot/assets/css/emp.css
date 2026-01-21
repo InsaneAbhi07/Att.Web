@@ -36,12 +36,21 @@ body {
     padding: 20px 25px;
     box-shadow: var(--shadow-lg);
     margin-bottom: 0;
+
 }
 
+
+    .form-header p {
+        font-size: 13px;
+        font-weight: 500;
+        color: #6b7280;
+    }
+
     .form-header h2 {
-        font-size: 20px;
-        font-weight: 700;
-        color: var(--gray-800);
+        font-size: 26px;
+        letter-spacing: 0.3px;
+        font-weight: 800;
+        color: #111827;
         margin: 0;
         display: flex;
         align-items: center;
@@ -56,11 +65,7 @@ body {
             border-radius: 3px;
         }
 
-    .form-header p {
-        color: var(--gray-600);
-        margin: 6px 0 0 0;
-        font-size: 12px;
-    }
+    
 
 /* Modern Tabs */
 .modern-tabs {

@@ -9,6 +9,36 @@
         overflow-y: auto;
     }
 
+    .time-sm {
+        width: 100%;
+        max-width: 140px;
+    }
+
+    .radio-inline {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .comp-inline {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .comp-inline select {
+            max-width: 180px;
+        }
+
+    .form-check-input {
+        cursor: pointer;
+    }
+
+    #compDiv select {
+        height: 38px;
+    }
+
+
 </style>
 <link href="~/assets/css/popup.css" rel="stylesheet" />
 <!-- PAGE HEADER -->
@@ -54,6 +84,7 @@
                     <th>Type</th>
                     <th>In</th>
                     <th>Out</th>
+                    <th>Carry Forward</th>
                     <th width="120">Action</th>
                 </tr>
             </thead>
@@ -66,16 +97,20 @@
                         <td>@Model[i].ShiftType</td>
                         <td>@Model[i].InTime</td>
                         <td>@Model[i].OutTime</td>
+                        <td>@Model[i].CarryForward</td>
                         <td>
                             <button class="btn btn-sm btn-warning"
                                     onclick="editShift(
-                                        '@Model[i].Id',
-                                        '@Model[i].Shift',
-                                        '@Model[i].ShiftType',
-                                        '@Model[i].InTime',
-                                        '@Model[i].OutTime',
-                                        '@Model[i].BreakOut',
-                                        '@Model[i].BreakIn')">
+                                    '@Model[i].Id',
+                                    '@Model[i].Shift',
+                                    '@Model[i].ShiftType',
+                                    '@Model[i].InTime',
+                                    '@Model[i].OutTime',
+                                    '@Model[i].BreakOut',
+                                    '@Model[i].BreakIn',
+                                    '@Model[i].CarryForward',
+                                    '@Model[i].Compensationin'
+                                    )">
                                 <i class="ti ti-edit"></i>
                             </button>
 
@@ -130,58 +165,76 @@
                              </select>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">In Time</label>
-                        <input type="time" class="form-control"
-                               name="InTime" id="InTime" />
+                        <input type="time" class="form-control time-sm" name="InTime" id="InTime" />
+
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Out Time</label>
-                        <input type="time" class="form-control"
-                               name="OutTime" id="OutTime" />
+                        <input type="time" class="form-control time-sm" name="OutTime" id="OutTime" />
+
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Break Out</label>
-                        <input type="time" class="form-control"
-                               name="BreakOut" id="BreakOut" />
+                        <input type="time" class="form-control time-sm" name="BreakOut" id="BreakOut" />
+
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label">Break In</label>
-                        <input type="time" class="form-control"
-                               name="BreakIn" id="BreakIn" />
+                        <input type="time" class="form-control time-sm" name="BreakIn" id="BreakIn" />
+
                     </div>
+
+                    <div class="col-md-12 mt-3">
+                        <label class="form-label fw-semibold">Carry Forward</label>
+
+                        <div class="d-flex align-items-center gap-4 flex-wrap">
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="CarryForward"
+                                       id="CarryForward"
+                                       value="Yes"
+                                       checked
+                                       onclick="toggleComp(false)">
+                                <label class="form-check-label">Yes</label>
+                            </div>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input"
+                                       type="radio"
+                                       name="CarryForward"
+                                       id="CarryForward"
+                                       value="No"
+                                       onclick="toggleComp(true)">
+                                <label class="form-check-label">No</label>
+                            </div>
+
+                            <!-- dropdown inline -->
+                            <div id="compDiv" class="d-none" style="min-width:260px;">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="mb-0 fw-semibold" style="min-width:150px;">Compensation In</label>
+                                    <select name="Compensationin"
+                                            id="Compensationin"
+                                            class="form-select"
+                                            style="min-width:180px;">
+                                        <option value="">Select</option>
+                                        <option value="Monthly">Monthly</option>
+                                        <option value="Yearly">Yearly</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
 
                 </div>
-             
-
-                <div class="col-md-12 mt-2">
-    <label class="form-label">Carry Forward</label>
-    <div class="d-flex gap-3">
-        <label>
-            <input type="radio" name="CarryForward" value="Yes" checked
-                   onclick="toggleComp(false)"> Yes
-        </label>
-
-        <label>
-            <input type="radio" name="CarryForward" value="No"
-                   onclick="toggleComp(true)"> No
-        </label>
-    </div>
-</div>
-
-<div class="col-md-6 mt-2 d-none" id="compDiv">
-    <label class="form-label">Compensation Type</label>
-    <select name="CompensationType" id="CompensationType" class="form-control">
-        <option value="">-- Select --</option>
-        <option value="Leave">Leave</option>
-        <option value="OT">Over Time</option>
-        <option value="Amount">Amount</option>
-    </select>
-</div>
-
 
 
                  <div class="modal-footer">
@@ -216,17 +269,22 @@
 				setTimeout(() => popup.remove(), 1200);
 			}
 
-        function clearForm() {
+               function clearForm() {
             document.getElementById("Id").value = "";
             document.getElementById("Shift").value = "";
-            document.getElementById("ShiftType").value = "";
+            document.getElementById("ShiftType").value = "Day";
             document.getElementById("InTime").value = "";
             document.getElementById("OutTime").value = "";
             document.getElementById("BreakOut").value = "";
             document.getElementById("BreakIn").value = "";
+            document.getElementById("Compensationin").value = "";
+            document.querySelector('input[name="CarryForward"][value="Yes"]').checked = true;
+            toggleComp(false);
         }
 
-        function editShift(id, shift, type, inTime, outTime, breakOut, breakIn) {
+
+               function editShift(id, shift, type, inTime, outTime, breakOut, breakIn, carry, comp) {
+
             document.getElementById("Id").value = id;
             document.getElementById("Shift").value = shift;
             document.getElementById("ShiftType").value = type;
@@ -235,9 +293,39 @@
             document.getElementById("BreakOut").value = breakOut;
             document.getElementById("BreakIn").value = breakIn;
 
-            new bootstrap.Modal(
-                document.getElementById('shiftModal')
-            ).show();
+            // radio set
+            document.querySelector(`input[name="CarryForward"][value="${carry}"]`).checked = true;
+
+            if (carry === "No") {
+                toggleComp(true);
+                document.getElementById("Compensationin").value = comp;
+            } else {
+                toggleComp(false);
+            }
+
+            new bootstrap.Modal(document.getElementById('shiftModal')).show();
         }
+
+
+                function toggleComp(show) {
+            const div = document.getElementById("compDiv");
+            if (show) {
+                div.classList.remove("d-none");
+            } else {
+                div.classList.add("d-none");
+                document.getElementById("Compensationin").value = "";
+            }
+        }
+
+                function beforeSave() {
+            const carry = document.querySelector('input[name="CarryForward"]:checked').value;
+
+            if (carry === "Yes") {
+                document.getElementById("Compensationin").value = "";
+            }
+            return true;
+        }
+
+
     </script>
 }

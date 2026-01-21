@@ -124,6 +124,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         public IActionResult DesignationList()
         {
+            ViewBag.DepartmentList = GetDepartmentDDL();
             DataTable dt = du.GetDataTable("Sp_Get_DesignationList", null);
 
             List<DesignationVM> list = new();
@@ -132,7 +133,10 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 list.Add(new DesignationVM
                 {
                     Id = Convert.ToInt32(row["Id"]),
-                    Designation = row["Designation"].ToString()
+                    Designation = row["Designation"].ToString(),
+                    Department = row["Department"].ToString(),
+                                DepartmentId = Convert.ToInt32(row["DepartmentId"])
+
                 });
             }
 
@@ -145,6 +149,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             SqlParameter[] prms =
          {
         new SqlParameter("@Id", model.Id),
+        new SqlParameter("@DepartmentId", model.DepartmentId),
         new SqlParameter("@Designation", model.Designation),
 
         new SqlParameter("@msg", SqlDbType.NVarChar, 100)
@@ -154,7 +159,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
           };
 
             du.Execute("Sp_Insert_MasterDesignation", prms);
-            string message = prms[2].Value.ToString();
+            string message = prms[3].Value.ToString();
             TempData["Msg"] = message;
             return RedirectToAction("DesignationList");
         }
@@ -446,57 +451,70 @@ namespace ATPL_Attendance_SW.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage)
+        [HttpPost]
+        public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage, IFormFile ResumeFile, IFormFile AadharFile)
         {
-            string fileName = model.Emp_Img;
-
-            // IMAGE UPLOAD
-            if (EmpImage != null && EmpImage.Length > 0)
-            {
-                fileName = Guid.NewGuid() + Path.GetExtension(EmpImage.FileName);
-                string path = Path.Combine(Directory.GetCurrentDirectory(),
-                            "wwwroot/uploads/employee", fileName);
-
-                using var stream = new FileStream(path, FileMode.Create);
-                EmpImage.CopyTo(stream);
-            }
-
-            SqlParameter msg = new SqlParameter("@msg", SqlDbType.NVarChar, 100)
-            {
-                Direction = ParameterDirection.Output
-            };
+            // file save logic (same as you already use)
+            string img = model.Emp_Img;
+            string resume = model.ResumeDoc;
+            string aadhar = model.Aadhardoc;
 
             SqlParameter[] prms =
             {
-            new("@Emp_Id", model.Emp_Id),
-            new("@Name", model.Name),
-            new("@Dob", model.DOB),
-            new("@DepartmentId", model.DepartmentId),
-            new("@DesignationId", model.DesignationId),
-            new("@EmailId", model.EmailId),
-            new("@PhoneNo", model.PhoneNo),
-            new("@JoiningDate", model.JoiningDate),
-            new("@Address", model.Address),
-            new("@Emp_Img", fileName),
-            new("@Salary", model.Salary),
-            new("@Status", model.Status),
-            new("@ShiftId", model.ShiftId),
-            new("@UserName", model.UserName),
-            new("@Password", model.Password),
-            new("@Role", model.Role ?? "Employee"),
-            new("@BankName", model.BankName),
-            new("@AC_HolderName", model.Ac_HolderName),
-            new("@Emptype", model.EmpType),
-            new("@IFSC_Code", model.IFSC_Code),
-            new("@Acc_No", model.Acc_No),
-            msg
-        };
+        new SqlParameter("@Emp_Id", model.Emp_Id),
+        new SqlParameter("@Emp_Code", model.Emp_Code),
+        new SqlParameter("@Name", model.Name),
+        new SqlParameter("@DOB", model.DOB ?? (object)DBNull.Value),
+        new SqlParameter("@DepartmentId", model.DepartmentId),
+        new SqlParameter("@DesignationId", model.DesignationId),
+        new SqlParameter("@ShiftId", model.ShiftId),
+        new SqlParameter("@JoiningDate", model.JoiningDate ?? (object)DBNull.Value),
+        new SqlParameter("@ResignDate", model.ResignDate ?? (object)DBNull.Value),
+
+        new SqlParameter("@PhoneNo", model.PhoneNo),
+        new SqlParameter("@EmailId", model.EmailId ?? (object)DBNull.Value),
+        new SqlParameter("@Address", model.Address ?? (object)DBNull.Value),
+
+        new SqlParameter("@Gender", model.Gender ?? (object)DBNull.Value),
+        new SqlParameter("@MaritalStatus", model.MaritalStatus ?? (object)DBNull.Value),
+        new SqlParameter("@EmergencyContact", model.EmergencyContact ?? (object)DBNull.Value),
+
+        new SqlParameter("@EmpType", model.EmpType ?? (object)DBNull.Value),
+        new SqlParameter("@Status", model.Status),
+
+        new SqlParameter("@UserName", model.UserName ?? (object)DBNull.Value),
+        new SqlParameter("@Password", model.Password ?? (object)DBNull.Value),
+        new SqlParameter("@Role", model.Role ?? (object)DBNull.Value),
+
+        new SqlParameter("@BankName", model.BankName ?? (object)DBNull.Value),
+        new SqlParameter("@AC_HolderName", model.Ac_HolderName ?? (object)DBNull.Value),
+        new SqlParameter("@IFSC_Code", model.IFSC_Code ?? (object)DBNull.Value),
+        new SqlParameter("@Acc_No", model.Acc_No ?? (object)DBNull.Value),
+
+        new SqlParameter("@BasicSalary", model.BasicSalary),
+        new SqlParameter("@HRA", model.HRA),
+        new SqlParameter("@DA", model.DA),
+        new SqlParameter("@PA", model.PA),
+        new SqlParameter("@OtherAllowance", model.OtherAllowance),
+        new SqlParameter("@GrossSalary", model.GrossSalary),
+
+        new SqlParameter("@Emp_Img", img ?? (object)DBNull.Value),
+        new SqlParameter("@ResumeDoc", resume ?? (object)DBNull.Value),
+        new SqlParameter("@AadharDoc", aadhar ?? (object)DBNull.Value),
+
+        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+    };
 
             du.Execute("Sp_Insert_MasterEmployee", prms);
 
-            TempData["Msg"] = msg.Value.ToString();
-            return RedirectToAction("EmployeeList");
+            TempData["Msg"] = prms[^1].Value.ToString();
+
+            return RedirectToAction("EmployeeList1");
         }
+
 
 
         //public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage)
@@ -924,7 +942,9 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     InTime = row["InTime"].ToString(),
                     OutTime = row["OutTime"].ToString(),
                     BreakOut = row["BreakOut"].ToString(),
-                    BreakIn = row["BreakIn"].ToString()
+                    BreakIn = row["BreakIn"].ToString(),
+                    CarryForward = row["CarryForward"].ToString(),
+                    Compensationin = row["Compensationin"].ToString()
                 });
             }
 
@@ -934,29 +954,47 @@ namespace ATPL_Attendance_SW.Web.Controllers
         [HttpPost]
         public IActionResult AddShift(MasterShift model)
         {
-            SqlParameter[] prms = { new SqlParameter("@Id", model.Id),
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Id", model.Id),
 
-                new SqlParameter("@Shift",string.IsNullOrWhiteSpace(model.Shift)? (object)DBNull.Value: model.Shift),
+        new SqlParameter("@Shift",
+            string.IsNullOrWhiteSpace(model.Shift) ? (object)DBNull.Value : model.Shift),
 
-                new SqlParameter("@ShiftType",string.IsNullOrWhiteSpace(model.ShiftType)? (object)DBNull.Value:model.ShiftType),
+        new SqlParameter("@ShiftType",
+            string.IsNullOrWhiteSpace(model.ShiftType) ? (object)DBNull.Value : model.ShiftType),
 
-                new SqlParameter("@InTime", string.IsNullOrWhiteSpace(model.InTime)? (object)DBNull.Value: model.InTime),
+        new SqlParameter("@InTime",
+            string.IsNullOrWhiteSpace(model.InTime) ? (object)DBNull.Value : model.InTime),
 
-                new SqlParameter("@OutTime",string.IsNullOrWhiteSpace(model.OutTime)? (object)DBNull.Value: model.OutTime),
+        new SqlParameter("@OutTime",
+            string.IsNullOrWhiteSpace(model.OutTime) ? (object)DBNull.Value : model.OutTime),
 
-                new SqlParameter("@BreakOut",string.IsNullOrWhiteSpace(model.BreakOut)? (object)DBNull.Value: model.BreakOut),
+        new SqlParameter("@BreakOut",
+            string.IsNullOrWhiteSpace(model.BreakOut) ? (object)DBNull.Value : model.BreakOut),
 
-                new SqlParameter("@BreakIn",string.IsNullOrWhiteSpace(model.BreakIn)? (object)DBNull.Value: model.BreakIn),
+        new SqlParameter("@BreakIn",
+            string.IsNullOrWhiteSpace(model.BreakIn) ? (object)DBNull.Value : model.BreakIn),
 
-                new SqlParameter("@msg", SqlDbType.NVarChar, 100)
-                {
-                    Direction = ParameterDirection.Output
-                }
-            };
+        new SqlParameter("@CarryForward",
+            string.IsNullOrWhiteSpace(model.CarryForward) ? "Yes" : model.CarryForward),
+
+        new SqlParameter("@Compensationin",
+            string.IsNullOrWhiteSpace(model.Compensationin) ? (object)DBNull.Value : model.Compensationin),
+
+        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+    };
+
             du.Execute("Sp_Save_MasterShift", prms);
-            TempData["Msg"] = prms[7].Value.ToString();
+
+            TempData["Msg"] = prms[9].Value?.ToString();
+
             return RedirectToAction("ShiftList");
         }
+
 
         [HttpPost]
         public IActionResult DeleteShift(int id)

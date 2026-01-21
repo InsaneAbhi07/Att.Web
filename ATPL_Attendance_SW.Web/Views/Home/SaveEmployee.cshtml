@@ -8,7 +8,10 @@
 </style>
 
 <div class="employee-form-container">
-    <form method="post" enctype="multipart/form-data">
+    <form asp-action="SaveEmployee"
+          asp-controller="Home"
+          method="post"
+          enctype="multipart/form-data">
         <input type="hidden" asp-for="Emp_Id" />
 
         <!-- Header -->
@@ -65,12 +68,17 @@
                         <div class="section-card">
                             <div class="section-title">Basic Information</div>
                             <div class="row">
+
+                                <div class="col-md-3 mb-2">
+                                    <label class="form-label">Emp Code *</label>
+                                    <input asp-for="Emp_Code" type="text" class="form-control" required />
+                                </div>
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label">Full Name *</label>
                                     <input asp-for="Name" class="form-control" placeholder="Enter full name" required />
                                 </div>
 
-                                <div class="col-md-6 mb-2">
+                                <div class="col-md-3 mb-2">
                                     <label class="form-label">Date of Birth *</label>
                                     <input asp-for="DOB" type="date" class="form-control" required />
                                 </div>
@@ -121,11 +129,11 @@
                                     <label class="form-label">Status *</label>
                                     <div class="radio-group">
                                         <label class="radio-option">
-                                            <input type="radio" asp-for="Status" value="Male" />
+                                            <input type="radio" asp-for="Status" value="Active" />
                                             <span>Active</span>
                                         </label>
                                         <label class="radio-option">
-                                            <input type="radio" asp-for="Status" value="Female" />
+                                            <input type="radio" asp-for="Status" value="Inactive" />
                                             <span>Inactive</span>
                                         </label>
                                     </div>
