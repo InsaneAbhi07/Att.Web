@@ -634,7 +634,6 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
 
         [HttpGet]
-        [HttpGet]
         public IActionResult CheckUsername(string username, string empId)
         {
             SqlParameter[] prms =
@@ -821,8 +820,6 @@ namespace ATPL_Attendance_SW.Web.Controllers
         }
 
 
-
-
         [HttpGet]
         public JsonResult GetCompanyByCode(string ccode)
         {
@@ -880,8 +877,6 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             return RedirectToAction("CompanyInfoList");
         }
-
-
 
         public IActionResult ActiveEmployeeDashboard()
         {
@@ -1155,6 +1150,58 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         }
 
+        //BRANCHType
+        public IActionResult AddBranchType(BranchTypeVM model)
+        {
+            SqlParameter[] prms =
+        {
+           new SqlParameter("@Id", model.Id),
+           new SqlParameter("@BranchType", model.BranchType),
+
+           new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+           {
+               Direction = ParameterDirection.Output
+           }
+             };
+
+            du.Execute("Sp_Insert_Master_BranchType", prms);
+            string message = prms[2].Value.ToString();
+            TempData["Msg"] = message;
+            return RedirectToAction("BranchTypeList");
+        }
+
+        
+        public IActionResult BranchTypeList()
+        {
+            DataTable dt = du.GetDataTable("Sp_Get_BranchTypeList", null);
+
+            List<BranchTypeVM> list = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new BranchTypeVM
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    BranchType = row["BranchType"].ToString()
+                });
+            }
+
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteBranchType(int id)
+        {
+            SqlParameter[] prms =
+            {
+       new SqlParameter("@Id", id),
+         new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+   {
+       Direction = ParameterDirection.Output
+   }
+   };
+            du.Execute("Sp_Delete_BranchType", prms);
+            return RedirectToAction("BranchTypeList");
+        }
 
     }
 }

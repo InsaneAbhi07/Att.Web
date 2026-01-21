@@ -3,57 +3,28 @@
 <!DOCTYPPE html>
 <html lang="en">
 <head>
-
-	<!-- Meta Tags -->
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Dashboard |Daily Attendance</title>
 
 	<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
-
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
 
-	<!-- Favicon -->
 	<link rel="icon" href="~/assets/img/favicon.png" type="image/x-icon">
-	<link rel="shortcut icon" href="~/assets/img/favicon.png" type="image/x-icon">
-
-	@* <script src="~/assets/js/theme-script.js"></script> *@
-
-	<!-- Bootstrap CSS -->
 	<link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
-
-	<!-- Feather CSS -->
 	<link rel="stylesheet" href="~/assets/plugins/icons/feather/feather.css">
-
-	<!-- Tabler Icon CSS -->
 	<link rel="stylesheet" href="~/assets/plugins/tabler-icons/tabler-icons.min.css">
-
-	<!-- Select2 CSS -->
 	<link rel="stylesheet" href="~/assets/plugins/select2/css/select2.min.css">
-
-	<!-- Fontawesome CSS -->
 	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
-
-	<!-- Datetimepicker CSS -->
 	<link rel="stylesheet" href="~/assets/css/bootstrap-datetimepicker.min.css">
-
-	<!-- Bootstrap Tagsinput CSS -->
 	<link rel="stylesheet" href="~/assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
-
-	<!-- Summernote CSS -->
 	<link rel="stylesheet" href="~/assets/plugins/summernote/summernote-lite.min.css">
-
-	<!-- Daterangepikcer CSS -->
 	<link rel="stylesheet" href="~/assets/plugins/daterangepicker/daterangepicker.css">
-
-	<!-- Color Picker Css -->
 	<link rel="stylesheet" href="~/assets/plugins/flatpickr/flatpickr.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/%40simonwep/pickr/themes/nano.min.css">
-
-	<!-- Main CSS -->
 	<link rel="stylesheet" href="~/assets/css/style.css">
 	<link href="~/assets/css/sidebar.css" rel="stylesheet" />
 <style>
@@ -234,16 +205,6 @@
 								<a id="toggle_btn" href="javascript:void(0);" class="btn btn-menubar me-1">
 									<i class="ti ti-arrow-bar-to-left"></i>
 								</a>
-								<!-- Search -->
-								<div class="input-group input-group-flat d-inline-flex me-1">
-									@* <span class="input-icon-addon">
-										<i class="ti ti-search"></i>
-									</span> *@
-									@* <input type="text" class="form-control" placeholder="Search in HRMS">
-									<span class="input-group-text">
-										<kbd>CTRL + / </kbd>
-									</span> *@
-								</div>
 							 
 							</div>
 
@@ -317,9 +278,6 @@
 														<i class="ti ti-login me-2"></i> Logout
 													</button>
 												</form>
-												@* <a class="dropdown-item d-inline-flex align-items-center p-0 py-2" href="login.html">
-													<i class="ti ti-login me-2"></i>Logout
-												</a> *@
 											</div>
 										</div>
 									</div>
@@ -328,7 +286,6 @@
 						</div>
 					</div>
 
-					<!-- Mobile Menu -->
 					<div class="dropdown mobile-user-menu">
 						<a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
 						<div class="dropdown-menu dropdown-menu-end">
@@ -337,26 +294,12 @@
 							<a class="dropdown-item" href="login.html">Logout</a>
 						</div>
 					</div>
-					<!-- /Mobile Menu -->
 
 				</div>
 
 			</div>
-			<!-- /Header -->
-			<!-- Sidebar -->
 			<div class="sidebar" id="sidebar">
-				<!-- Logo -->
-			@* 	<div class="sidebar-logo">
-					<a href="index.html" class="logo logo-normal">
-						<img src="assets/img/att.png" alt="Logo">
-					</a>
-					<a href="index.html" class="logo-small">
-						<img src="assets/img/att.png" alt="Logo">
-					</a>
-					<a href="index.html" class="dark-logo">
-						<img src="assets/img/att.png" alt="Logo">
-					</a>
-				</div> *@
+			 
 				<div class="logo-wrapper">
 					<img src="~/assets/img/att1.png" alt="Logo" class="app-logo" />
 				</div>
@@ -385,15 +328,7 @@
 						</div>
 						 
 					</div>
-					<div class="input-group input-group-flat d-inline-flex mb-4">
-						<span class="input-icon-addon">
-							<i class="ti ti-search"></i>
-						</span>
-						<input type="text" class="form-control" placeholder="Search in HRMS">
-						<span class="input-group-text">
-							<kbd>CTRL + / </kbd>
-						</span>
-					</div>
+					
 					<div class="d-flex align-items-center justify-content-between menu-item mb-3">
 						<div class="me-3">
 							<a href="calendar.html" class="btn btn-menubar">
@@ -441,6 +376,7 @@
 									
 											<li class="menu-title"><span>COMPANY</span></li>
 											<li><a asp-controller="Home" asp-action="CompanyInfoList">Company Profile</a></li>
+											<li><a asp-controller="Home" asp-action="BranchTypeList">Add Branch Type</a></li>
 											<li><a asp-controller="Home" asp-action="DepartmentList"> Add Department</a></li>
 											<li><a asp-controller="Home" asp-action="DesignationList">Add Designation</a></li>
 											<li><a asp-controller="Home" asp-action="HolidayList">Working Calendar</a></li>
@@ -448,7 +384,10 @@
 											<li><a asp-controller="Home" asp-action="LeaveTypeList">Leave Type Entry</a></li>
 											<li class="menu-title"><span>EMPLOYEE DETAILS</span></li>
 											<li><a asp-controller="Home" asp-action="EmployeeList1">Add Employee</a></li>
-											<li><a asp-controller="Home" asp-action="EmployeeList">Add Document Of Employee</a></li>
+											<li><a asp-controller="Home" asp-action="EmployeeList1">Add Document Type</a></li>
+											
+											
+											@* <li><a asp-controller="Home" asp-action="EmployeeList">Add Document Of Employee</a></li> *@
 											<li class="menu-title"><span>LOCATION</span></li>
 											<li><a asp-controller="Home" asp-action="MasterStateCityList">Add State/City</a></li>
 									</li>
@@ -540,15 +479,6 @@
 								</ul>
 							</li>
 
-							<!-- LOGOUT -->
-							<li>
-								@* <form asp-controller="Account" asp-action="Logout" method="post">
-									<button type="submit" class="dropdown-item d-inline-flex align-items-center p-0 py-2">
-										<i class="ti ti-logout me-2"></i>
-										Logout
-									</button>
-								</form> *@
-
 								<form asp-controller="Account"
 									  asp-action="Logout"
 									  method="post"
@@ -559,11 +489,7 @@
 									</button>
 								</form>
 
-
-
-
 							</li>
-
 						</ul>
 					</div>
 
@@ -656,7 +582,6 @@
 			$("body").removeClass("sidebar-open");
 		});
 
-		/* ========== FIRST LEVEL MENU (MASTERS) ========== */
 		$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
 			e.preventDefault();
 
@@ -671,7 +596,6 @@
 			parent.children("ul").stop(true, true).slideToggle(250);
 		});
 
-		/* ========== SECOND LEVEL MENU ========== */
 		$("#sidebar-menu .submenu-two > a").on("click", function (e) {
 			e.preventDefault();
 
