@@ -29,6 +29,9 @@ namespace ATPL_Attendance_SW.Web.Models
         public string? IFSCCode { get; set; }
         public string? City { get; set; }
         public string? State { get; set; }
+        public string? UANNo { get; set; }
+        public string? PANNo { get; set; }
+        public string? LicenseNo { get; set; }
 
 
     }

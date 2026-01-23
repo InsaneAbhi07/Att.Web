@@ -1,7 +1,7 @@
-﻿@model List<CompanyVM>
+﻿@model List<MasterBranchVM>
 
 @{
-	ViewData["Title"] = "Master Company";
+	ViewData["Title"] = "Master Branch";
 }
 
 <head>
@@ -135,13 +135,13 @@
 	}
 
 	.btn-save {
-		background: linear-gradient(135deg, orangered);
+		background: linear-gradient(135deg, Gray);
 		color: #ffffff;
 		border: none;
 	}
 
 		.btn-save:hover {
-			background: linear-gradient(135deg, #2563eb, #1e40af);
+			background: linear-gradient(135deg, orange, #1e40af);
 			color: #ffffff;
 		}
 
@@ -166,7 +166,7 @@
 			margin-bottom: 1rem;
 			color: #495057;
 			font-weight: 600;
-			border-bottom: 2px solid #007bff;
+			border-bottom: 2px solid gray;
 			padding-bottom: 0.5rem;
 		}
 
@@ -201,12 +201,12 @@
 
 <!-- ================= HEADER ================= -->
 <div class="d-flex justify-content-between align-items-center page-header mb-3">
-	<h5>Master Company</h5>
+	<h5>Master Branch</h5>
 	<button class="btn btn-primary"
 			data-bs-toggle="modal"
 			data-bs-target="#companyModal"
 			onclick="clearForm()">
-		+ Add New Branch for this Company
+		+ Add New Branch
 	</button>
 </div>
 
@@ -217,7 +217,7 @@
 			<thead>
 				<tr>
 					<th>Code</th>
-					<th>Company</th>
+					<th>Branch Name</th>
 					<th>City</th>
 					<th>Contact</th>
 					<th>GSTIN</th>
@@ -229,30 +229,25 @@
 				@foreach (var c in Model)
 				{
 					<tr>
-						<td>@c.CCode</td>
-						<td>@c.CompanyName</td>
+						<td>@c.BCode</td>
+						<td>@c.BranchName</td>
 						<td>@c.City</td>
 						<td>@c.ContactNo</td>
 						<td>@c.GSTIN</td>
 						<td>
-						@* 	<button class="btn btn-sm btn-warning"
-									onclick="editCompanyByCode('@c.CCode')">
-								Edit
-							</button> *@
+						 
 							<button class="btn btn-sm btn-warning edit-btn"
-									data-ccode="@c.CCode">
+									data-ccode="@c.BCode">
 								Edit
 							</button>
 
-						@* 	<form asp-action="DeleteCompany"
-								  method="post"
-								  style="display:inline"
-								  onsubmit="return confirm('Delete this company?');">
-								<input type="hidden" name="ccode" value="@c.CCode" />
-								<button class="btn btn-sm btn-danger">
-									Delete
+							<form asp-action="DeleteBranch" method="post" style="display:inline">
+								<input type="hidden" name="BCode" value="@c.BCode" />
+								<button class="btn btn-sm btn-danger"
+										onclick="return confirm('Do you really want to delete this Branch?')">
+									<i class="ti ti-trash"></i>
 								</button>
-							</form> *@
+							</form>
 						</td>
 
 
@@ -268,10 +263,10 @@
 	<div class="modal-dialog modal-xl modal-dialog-centered">
 		<div class="modal-content">
 
-			<form asp-action="SaveCompany" method="post" id="companyForm">
+			<form asp-action="SaveBranch" method="post" id="companyForm">
 
 				<div class="modal-header">
-					<h5 class="modal-title">Company Details</h5>
+					<h5 class="modal-title">Add Branch Details</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 
@@ -280,30 +275,29 @@
 
 					<!-- ===== Company Details ===== -->
 					<div class="form-section">
-						<h6>Company Details</h6>
+						<h6>Branch Details</h6>
 
 						<div class="row">
 							<div class="col-md-2 mb-2">
-								<label class="required">Company Code</label>
+								<label class="required">Branch Code</label>
 								<input class="form-control"
-									   id="CCode"
-									   name="CCode"
+									   id="BCode"
+									   name="BCode"
 									   required
 									   maxlength="10"
-									   @* pattern="[A-Za-z0-9]+" *@
 									   title="Only alphanumeric characters allowed" />
 								<div class="invalid-feedback">Company Code is required (max 10 characters, alphanumeric only)</div>
 							</div>
 
-							<div class="col-md-8 mb-2">
-								<label class="required">Company Name</label>
+							<div class="col-md-6 mb-2">
+								<label class="required">Branch Name</label>
 								<input class="form-control"
-									   id="CompanyName"
-									   name="CompanyName"
+									   id="BranchName"
+									   name="BranchName"
 									   required
 									   maxlength="200"
 									   minlength="3" />
-								<div class="invalid-feedback">Company Name is required (3-200 characters)</div>
+								<div class="invalid-feedback">Branch Name is required (3-200 characters)</div>
 							</div>
 
 							<div class="col-md-2 mb-2">
@@ -315,6 +309,19 @@
 									   maxlength="10"
 									   minlength="2" />
 								<div class="invalid-feedback">Abbreviation is required (2-10 characters)</div>
+							</div>
+						
+							<div class="col-md-2 mb-2">
+								<label class="required">Select Branch Type</label>
+								<select class="form-select"
+										name="BTypeId"
+										id="BTypeId">
+									<option value="">-- Select Branch Type --</option>
+									@foreach (var d in (List<SelectListItem>)ViewBag.BranchTpyp)
+									{
+										<option value="@d.Value">@d.Text</option>
+									}
+								</select>
 							</div>
 
 							<div class="col-md-3 mb-2">
@@ -559,7 +566,7 @@
 	<partial name="_ValidationScriptsPartial" />
 }
 
-	<script>
+<script>
 
 				  const popup = document.getElementById("centerPopup");
 	if (popup) {
@@ -585,25 +592,30 @@
 
 	// ===== LOAD COMPANY =====
 
-		function loadCompanyByCode(ccode) {
+	 function loadCompanyByCode(ccode) {
 
-		fetch('/Home/GetCompanyByCode?ccode=' + encodeURIComponent(ccode))
+		fetch('/Home/GetBranchByCode?ccode=' + encodeURIComponent(ccode))
 			.then(r => r.json())
 			.then(d => {
 
 				if (!d) return;
 
 				Id.value = d.id;
-				CCode.value = d.ccode;
-				CompanyName.value = d.companyName;
+				BCode.value = d.bcode;
+				BranchName.value = d.branchName;
 				Abbr.value = d.abbr;
+
+				// ✅ BRANCH TYPE FIX
+				if (d.bTypeId) {
+					document.getElementById("BTypeId").value = d.bTypeId;
+				}
 
 				Country.value = d.country;
 				Address.value = d.address;
 				Address2.value = d.address2;
 				Pincode.value = d.pincode;
 
-				Telepohne.value = d.telepohne;   // ✅ FIXED
+				Telepohne.value = d.telepohne;
 				ContactNo.value = d.contactNo;
 				Email.value = d.email;
 				GSTIN.value = d.gstin;
@@ -616,12 +628,13 @@
 				UANNo.value = d.uanNo;
 				PANNo.value = d.panNo;
 
-				// IMPORTANT
+				// STATE → CITY AFTER
 				loadStates(d.stateId, d.cityId);
 
 				setButtonMode(true);
 			});
 	}
+
 
 
 
@@ -679,6 +692,28 @@
 			});
 	}
 
+	// ===== LOAD Branch =====
+	 function loadBrach(stateId, selectedCityId) {
+
+		const cityDDL = document.getElementById("CityId");
+		cityDDL.innerHTML = '<option value="">-- Select City --</option>';
+
+		if (!stateId) return;
+
+		fetch('/Home/LoadCities?stateId=' + stateId)
+			.then(r => r.json())
+			.then(data => {
+
+				data.forEach(x => {
+					cityDDL.innerHTML +=
+						`<option value="${x.value}">${x.text}</option>`;
+				});
+
+				if (selectedCityId) {
+					cityDDL.value = selectedCityId;
+				}
+			});
+	}
 
 	// ===== BUTTON MODE =====
 	function setButtonMode(isEdit) {

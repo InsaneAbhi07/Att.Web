@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Printing;
@@ -136,7 +137,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Id = Convert.ToInt32(row["Id"]),
                     Designation = row["Designation"].ToString(),
                     Department = row["Department"].ToString(),
-                                DepartmentId = Convert.ToInt32(row["DepartmentId"])
+                    DepartmentId = Convert.ToInt32(row["DepartmentId"])
 
                 });
             }
@@ -372,7 +373,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Salary = row["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Salary"]),
                     Status = row["Status"] == DBNull.Value ? "Inactive" : row["Status"].ToString(),
                     Shift = row["Shift"] == DBNull.Value ? "" : row["Shift"].ToString(),
-                    
+
                     BankName = row["BankName"] == DBNull.Value ? "" : row["Shift"].ToString(),
                     Ac_HolderName = row["Ac_HolderName"] == DBNull.Value ? "" : row["Shift"].ToString(),
                     IFSC_Code = row["IFSC_Code"] == DBNull.Value ? "" : row["Shift"].ToString(),
@@ -404,7 +405,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 {
                     Emp_Id = Convert.ToInt32(row["Emp_Id"]),
                     Name = row["Name"]?.ToString(),
-                    Emp_Code= row["Emp_Code"]?.ToString(),
+                    Emp_Code = row["Emp_Code"]?.ToString(),
                     DepartmentId = row["DepartmentId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DepartmentId"]),
                     DesignationId = row["DesignationId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DesignationId"]),
                     ShiftId = row["ShiftId"] == DBNull.Value ? 0 : Convert.ToInt32(row["ShiftId"]),
@@ -627,7 +628,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
     };
 
             DataTable dt = du.GetDataTableByQuery("SELECT 1 FROM Tbl_MasterEmployeeDetails WHERE Emp_Code = " +
-                "@EmpCode AND Emp_Id<>@EmpId", prms );
+                "@EmpCode AND Emp_Id<>@EmpId", prms);
 
             return Json(dt.Rows.Count > 0);
         }
@@ -701,7 +702,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                  new SqlParameter("@StateId", stateId)
             };
 
-            DataTable dt = du.GetDataTableByQuery("SELECT Id, City FROM Tbl_MasterCity WHERE StateId = @StateId",param);
+            DataTable dt = du.GetDataTableByQuery("SELECT Id, City FROM Tbl_MasterCity WHERE StateId = @StateId", param);
             List<SelectListItem> city = new();
             foreach (DataRow row in dt.Rows)
             {
@@ -714,6 +715,21 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return city;
         }
 
+        private List<SelectListItem> GetBranchTypeDDL()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterBranchType", null);
+            List<SelectListItem> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["BranchType"].ToString()
+                });
+            }
+            return list;
+        }
         public IActionResult LoadCities(long stateId)
         {
             var data = GetCityDDL(stateId);
@@ -758,7 +774,10 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     GSTIN = r["GSTIN"].ToString(),
                     BankName = r["BankName"].ToString(),
                     AccountNo = r["AccountNo"].ToString(),
-                    IFSCCode = r["IFSCCode"].ToString()
+                    IFSCCode = r["IFSCCode"].ToString(),
+                    LicenseNo = r["LicenseNo"].ToString(),
+                    PANNo = r["PANNo"].ToString(),
+                    UANNo = r["UANNo"].ToString()
 
 
                 });
@@ -769,15 +788,12 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
 
         [HttpPost]
-        [HttpPost]
-
-        [HttpPost]
         public IActionResult SaveCompany(CompanyVM model)
         {
             if (!ModelState.IsValid)
             {
                 // Dropdown data wapas bharo
-                ViewBag.StateList = GetStatesDDL();   
+                ViewBag.StateList = GetStatesDDL();
                 return View("CompanyInfoList", GetCompanyDDL());
             }
 
@@ -797,8 +813,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
         new SqlParameter("@Pincode", model.Pincode ?? ""),
         new SqlParameter("@Country", model.Country ?? ""),
 
-        new SqlParameter("@Telepohne", model.Telepohne ?? ""),
-        new SqlParameter("@ContactNo", model.ContactNo ?? ""),
+        new SqlParameter("@Telepohne", model.Telepohne ?? (object)DBNull.Value),
+        new SqlParameter("@ContactNo", model.ContactNo ??(object)DBNull.Value),
         new SqlParameter("@Email", model.Email ?? ""),
         new SqlParameter("@Website", model.Website ?? ""),
         new SqlParameter("@GSTIN", model.GSTIN ?? ""),
@@ -806,6 +822,9 @@ namespace ATPL_Attendance_SW.Web.Controllers
         new SqlParameter("@BankName", model.BankName ?? ""),
         new SqlParameter("@AccountNo", model.AccountNo ?? ""),
         new SqlParameter("@IFSCCode", model.IFSCCode ?? ""),
+        new SqlParameter("@LicenseNo", model.LicenseNo ?? ""),
+        new SqlParameter("@PANNo", model.PANNo ?? ""),
+        new SqlParameter("@UANNo", model.UANNo ?? ""),
 
         new SqlParameter("@msg", SqlDbType.NVarChar, 100)
         {
@@ -841,13 +860,13 @@ namespace ATPL_Attendance_SW.Web.Controllers
             var data = new
             {
                 Id = r["Id"].ToString(),
-               ccode = r["CCode"].ToString(),
+                ccode = r["CCode"].ToString(),
                 CompanyName = r["CompanyName"].ToString(),
                 Abbr = r["Abbr"].ToString(),
                 Address = r["Address"].ToString(),
                 Address2 = r["Address2"].ToString(),
                 CityId = r["CityId"].ToString(),
-                StateId= r["StateId"].ToString(),
+                StateId = r["StateId"].ToString(),
                 Pincode = r["Pincode"].ToString(),
                 Country = r["Country"].ToString(),
                 Telepohne = r["Telepohne"].ToString(),
@@ -857,7 +876,10 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 GSTIN = r["GSTIN"].ToString(),
                 BankName = r["BankName"].ToString(),
                 AccountNo = r["AccountNo"].ToString(),
-                IFSCCode = r["IFSCCode"].ToString()
+                IFSCCode = r["IFSCCode"].ToString(),
+                LicenseNo = r["LicenseNo"].ToString(),
+                PANNo = r["PANNo"].ToString(),
+                UANNo = r["UANNo"].ToString()
             };
 
             return Json(data);
@@ -1023,8 +1045,8 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     LeaveType = row["LeaveType"].ToString(),
                     Penalty = Convert.ToInt32(row["Penalty"]),
                     Total_Y = Convert.ToInt32(row["Total_Y"]),
-                    CarryForward= row["CarryForward"].ToString(),
-                    Compensationin= row["Compensationin"].ToString(),
+                    CarryForward = row["CarryForward"].ToString(),
+                    Compensationin = row["Compensationin"].ToString(),
                 });
             }
             return View(list);
@@ -1087,6 +1109,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
         }
         public IActionResult MasterStateCityList()
         {
+
             DataTable dtState = du.GetDataTable("Sp_Get_MasterState", null);
 
             List<MasterStateVM> states = new();
@@ -1115,7 +1138,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             return View();
         }
-        
+
         [HttpPost]
         public IActionResult SaveState(MasterStateVM model)
         {
@@ -1135,20 +1158,53 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
         public IActionResult SaveCity(MasterCityVM model)
         {
-            SqlParameter[] prms = { new SqlParameter("@Id", model.Id),
-
-                new SqlParameter("@StateId", (object?)model.StateId ?? DBNull.Value),
-                new SqlParameter("@City",string.IsNullOrWhiteSpace(model.City)? (object)DBNull.Value: model.City),
-                new SqlParameter("@msg", SqlDbType.NVarChar, 100)
-                {
-                    Direction = ParameterDirection.Output
-                }
+            SqlParameter[] prms =
+            {
+                new SqlParameter("@Id", model.Id),
+                new SqlParameter("@StateId", model.StateId),
+                new SqlParameter("@City", model.City),
+                new SqlParameter("@msg", SqlDbType.NVarChar,100){Direction=ParameterDirection.Output}
             };
+
             du.Execute("Sp_InsertMasterCity", prms);
             TempData["Msg"] = prms[3].Value.ToString();
             return RedirectToAction("MasterStateCityList");
 
         }
+
+        public IActionResult DeleteState(int id)
+        {
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Id", id),
+        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+    };
+
+            du.Execute("Sp_Delete_State", prms);
+
+            // Capture the output message
+            string message = prms[1].Value?.ToString() ?? "Operation completed";
+            TempData["Msg"] = message;
+
+            return RedirectToAction("MasterStateCityList");
+        }
+
+        public IActionResult DeleteCity(int id)
+        {
+            SqlParameter[] prms =
+{
+        new SqlParameter("@Id", id),
+        new SqlParameter("@msg", SqlDbType.NVarChar,100){Direction=ParameterDirection.Output}
+    };
+
+            du.Execute("Sp_Delete_City", prms);
+            TempData["Msg"] = prms[1].Value.ToString();
+            return RedirectToAction("MasterStateCityList");
+        }
+
 
         //BRANCHType
         public IActionResult AddBranchType(BranchTypeVM model)
@@ -1170,7 +1226,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return RedirectToAction("BranchTypeList");
         }
 
-        
+
         public IActionResult BranchTypeList()
         {
             DataTable dt = du.GetDataTable("Sp_Get_BranchTypeList", null);
@@ -1203,5 +1259,241 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return RedirectToAction("BranchTypeList");
         }
 
+
+        //Document Type
+
+        public IActionResult AddDocumentType(DocumentTypeVM model)
+        {
+            SqlParameter[] prms =
+        {
+           new SqlParameter("@Id", model.Id),
+           new SqlParameter("@DocumentName", model.DocumentName),
+
+           new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+           {
+               Direction = ParameterDirection.Output
+           }
+             };
+
+            du.Execute("Sp_Insert_Master_DocumentType", prms);
+            string message = prms[2].Value.ToString();
+            TempData["Msg"] = message;
+            return RedirectToAction("DocumentTypeeList");
+        }
+
+
+        public IActionResult DocumentTypeeList()
+        {
+            DataTable dt = du.GetDataTable("Sp_Get_DocumentTypeList", null);
+
+            List<DocumentTypeVM> list = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new DocumentTypeVM
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    DocumentName = row["DocumentName"].ToString()
+                });
+            }
+
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteDocumentType(int id)
+        {
+            SqlParameter[] prms =
+            {
+       new SqlParameter("@Id", id),
+         new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+   {
+       Direction = ParameterDirection.Output
+   }
+   };
+            du.Execute("Sp_Delete_DocumentType", prms);
+            return RedirectToAction("DocumentTypeeList");
+        }
+
+        //Master Branch
+
+
+        public IActionResult BranchInfoList()
+        {
+            ViewBag.CCodeList = GetCompanyDDL();
+            ViewBag.StateList = GetStatesDDL();
+            ViewBag.BranchTpyp = GetBranchTypeDDL();
+            ViewBag.CityList = new List<SelectListItem>();
+
+
+            DataTable dt = du.GetDataTable("Sp_Get_BranchList", null);
+            List<MasterBranchVM> list = new();
+
+            foreach (DataRow r in dt.Rows)
+            {
+                list.Add(new MasterBranchVM
+                {
+                    Id = Convert.ToInt64(r["Id"]),
+                    BCode = r["BCode"].ToString(),
+                    BranchName = r["BranchName"].ToString(),
+                    Abbr = r["Abbr"].ToString(),
+                    BranchType= r["BranchType"].ToString(), 
+                    Address = r["Address"].ToString(),
+                    Address2 = r["Address2"].ToString(),
+                    City = r["City"].ToString(),
+                    State = r["State"].ToString(),
+                    Pincode = r["Pincode"].ToString(),
+                    Country = r["Country"].ToString(),
+                    Telepohne = r["Telepohne"].ToString(),
+                    ContactNo = r["ContactNo"].ToString(),
+                    Email = r["Email"].ToString(),
+                    Website = r["Website"].ToString(),
+                    GSTIN = r["GSTIN"].ToString(),
+                    BankName = r["BankName"].ToString(),
+                    AccountNo = r["AccountNo"].ToString(),
+                    IFSCCode = r["IFSCCode"].ToString(),
+                    LicenseNo = r["LicenseNo"].ToString(),
+                    PANNo = r["PANNo"].ToString(),
+                    UANNo = r["UANNo"].ToString()
+                });
+            }
+
+            return View(list);
+        }
+
+        private List<SelectListItem> GetBranchDDL()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterBranch", null);
+            List<SelectListItem> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["BCode"].ToString()
+                });
+            }
+            return list;
+        }
+
+        [HttpPost]
+        public IActionResult SaveBranch(MasterBranchVM model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // Dropdown data wapas bharo
+                ViewBag.StateList = GetStatesDDL();
+                return View("BranchInfoList", GetBranchDDL());
+            }
+
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Id", model.Id),
+        new SqlParameter("@BCode", model.BCode ?? ""),
+        new SqlParameter("@BranchName", model.BranchName ?? ""),
+        new SqlParameter("@Abbr", model.Abbr ?? ""),
+
+        new SqlParameter("@BTypeId", model.BTypeId ?? (object)DBNull.Value),
+        new SqlParameter("@Address", model.Address ?? ""),
+        new SqlParameter("@Address2", model.Address2 ?? ""),
+
+        new SqlParameter("@StateId", model.StateId ?? (object)DBNull.Value),
+        new SqlParameter("@CityId", model.CityId ?? (object)DBNull.Value),
+
+        new SqlParameter("@Pincode", model.Pincode ?? ""),
+        new SqlParameter("@Country", model.Country ?? ""),
+
+        new SqlParameter("@Telepohne", model.Telepohne ?? (object)DBNull.Value),
+        new SqlParameter("@ContactNo", model.ContactNo ??(object)DBNull.Value),
+        new SqlParameter("@Email", model.Email ?? ""),
+        new SqlParameter("@Website", model.Website ?? ""),
+        new SqlParameter("@GSTIN", model.GSTIN ?? ""),
+
+        new SqlParameter("@BankName", model.BankName ?? ""),
+        new SqlParameter("@AccountNo", model.AccountNo ?? ""),
+        new SqlParameter("@IFSCCode", model.IFSCCode ?? ""),
+        new SqlParameter("@LicenseNo", model.LicenseNo ?? ""),
+        new SqlParameter("@PANNo", model.PANNo ?? ""),
+        new SqlParameter("@UANNo", model.UANNo ?? ""),
+
+        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+    };
+
+            du.Execute("Sp_Insert_BranchInformation", prms);
+
+            TempData["Msg"] = prms[^1].Value?.ToString();
+            return RedirectToAction("BranchInfoList");
+        }
+
+
+        [HttpGet]
+        public JsonResult GetBranchByCode(string ccode)
+        {
+            ViewBag.BranchTpyp = GetBranchTypeDDL();
+            ViewBag.StateList = GetStatesDDL();
+            ViewBag.BranchTpyp = GetBranchTypeDDL();
+            ViewBag.CityList = new List<SelectListItem>();
+
+            if (string.IsNullOrEmpty(ccode))
+                return Json(null);
+
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@BCode", ccode)
+    };
+
+            DataTable dt = du.GetDataTable("Sp_Get_BranchByCode", prms);
+
+            if (dt.Rows.Count == 0)
+                return Json(null);
+
+            var r = dt.Rows[0];
+
+            var data = new
+            {
+                Id = r["Id"].ToString(),
+                bcode = r["BCode"].ToString(),
+                BranchName = r["BranchName"].ToString(),
+                Abbr = r["Abbr"].ToString(),
+                Address = r["Address"].ToString(),
+                Address2 = r["Address2"].ToString(),
+                CityId = r["CityId"].ToString(),
+                StateId = r["StateId"].ToString(),
+                BTypeId = r["BTypeId"].ToString(),
+                Pincode = r["Pincode"].ToString(),
+                Country = r["Country"].ToString(),
+                Telepohne = r["Telepohne"].ToString(),
+                ContactNo = r["ContactNo"].ToString(),
+                Email = r["Email"].ToString(),
+                Website = r["Website"].ToString(),
+                GSTIN = r["GSTIN"].ToString(),
+                BankName = r["BankName"].ToString(),
+                AccountNo = r["AccountNo"].ToString(),
+                IFSCCode = r["IFSCCode"].ToString(),
+                LicenseNo = r["LicenseNo"].ToString(),
+                PANNo = r["PANNo"].ToString(),
+                UANNo = r["UANNo"].ToString()
+            };
+
+            return Json(data);
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteBranch(string bcode)
+        {
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@BCode", bcode)
+        };
+
+            du.Execute("Sp_Delete_MasterBranch", prms);
+            TempData["Msg"] = "Record Deleted Successfully";
+
+            return RedirectToAction("BranchInfoList");
+        }
     }
-}
+    }

@@ -1,6 +1,6 @@
-﻿<BranchTypeVM>
+﻿<DocumentTypeVM>
 @{
-	ViewData["Title"] = "Master Branch Type";
+	ViewData["Title"] = "Master Document Type";
 }
 	<head>
 		<link href="~/assets/css/popup.css" rel="stylesheet" />
@@ -19,13 +19,13 @@
 	</style>
 	<!-- PAGE HEADER -->
 	<div class="d-flex justify-content-between align-items-center mb-3">
-		<h4 class="page-title">Master Branch Type</h4>
+		<h4 class="page-title">Master Document Type</h4>
 
 		<button class="btn btn-primary"
 				data-bs-toggle="modal"
 				data-bs-target="#designationModal"
 				onclick="clearForm()">
-			<i class="ti ti-plus"></i> Add Branch Type
+			<i class="ti ti-plus"></i> Add Document Type
 		</button>
 	</div>
 
@@ -43,7 +43,7 @@
 			<input type="text"
 				   id="searchBox"
 				   class="form-control"
-				   placeholder="Search branch type..."
+				   placeholder="Search document type..."
 				   style="width:250px; display:inline-block;">
 		</div>
 	</div>
@@ -56,7 +56,7 @@
 				<thead>
 					<tr>
 						<th>Sr. No.</th>
-						<th>Branch Type</th>
+						<th>Document Name</th>
 						<th width="120">Action</th>
 					</tr>
 				</thead>
@@ -65,15 +65,15 @@
 					{
 						<tr>
 							<td>@(i + 1)</td>
-							<td>@Model[i].BranchType</td>
+							<td>@Model[i].DocumentName</td>
 							<td>
 								<button class="btn btn-sm btn-warning"
 										onclick="editDesignation('@Model[i].Id',
-																		 '@Model[i].BranchType')">
+																			 '@Model[i].DocumentName')">
 									<i class="ti ti-edit"></i>
 								</button>
 
-								<form asp-action="DeleteBranchType" method="post" style="display:inline">
+								<form asp-action="DeleteDocumenttype" method="post" style="display:inline">
 									<input type="hidden" name="id" value="@Model[i].Id" />
 									<button class="btn btn-sm btn-danger"
 											onclick="return confirm('Do you really want to delete this record?')">
@@ -98,9 +98,9 @@
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 
-				<form asp-action="AddBranchType" method="post">
+				<form asp-action="AddDocumentType" method="post">
 					<div class="modal-header">
-						<h5 class="modal-title">Add New Branch Type</h5>
+						<h5 class="modal-title">Add New Document Type</h5>
 						<button type="button"
 								class="btn-close"
 								data-bs-dismiss="modal"></button>
@@ -110,11 +110,11 @@
 						<input type="hidden" id="Id"
 							   name="Id" />
 
-						<label class="form-label required">Branch Type</label>
+						<label class="form-label required">Document Name</label>
 						<input type="text"
 							   class="form-control"
-							   name="BranchType"
-							   id="BranchType"
+							   name="DocumentName"
+							   id="DocumentName"
 							   required />
 					</div>
 
@@ -147,11 +147,11 @@
 }
 
 
-
 	<script src="~/assets/js/global.js"></script>
 @section Scripts {
 		<script>
-				  const popup = document.getElementById("centerPopup");
+
+							  const popup = document.getElementById("centerPopup");
 			if (popup) {
 				setTimeout(() => {
 					popup.style.opacity = "0";
@@ -161,12 +161,12 @@
 
 			function clearForm() {
 				document.getElementById("Id").value = "";
-				document.getElementById("BranchType").value = "";
+				document.getElementById("DocumenName").value = "";
 			}
 
 			function editDesignation(id, name) {
 				document.getElementById("Id").value = id;
-				document.getElementById("BranchType").value = name;
+				document.getElementById("DocumentName").value = name;
 				new bootstrap.Modal(
 					document.getElementById('designationModal')
 				).show();

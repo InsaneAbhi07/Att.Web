@@ -1,80 +1,99 @@
-﻿/* ===== PROFESSIONAL POPUP ===== */
+﻿/* Overlay */
 .popup-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
+    background: rgba(15, 23, 42, 0.55);
+    backdrop-filter: blur(8px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    animation: overlayFadeIn 0.25s ease;
+    animation: fadeIn 0.25s ease;
 }
 
+/* Box */
 .popup-box {
     width: 420px;
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 32px 36px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 38px 36px;
     text-align: center;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 20px 50px rgba(0, 0, 0, 0.2);
-    animation: popupIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 30px 70px rgba(0,0,0,0.25);
+    animation: popupIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
     position: relative;
 }
 
-    /* Clean top accent */
+    /* Top accent */
     .popup-box::before {
         content: "";
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+        height: 5px;
     }
 
-/* Professional emoji */
-.popup-emoji {
-    font-size: 56px;
-    margin-bottom: 20px;
-    animation: emojiPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s backwards;
-    display: inline-block;
-    line-height: 1;
-}
-
-/* Bold heading */
-.popup-box h4 {
-    font-size: 26px;
+/* Icon */
+.popup-icon {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
     font-weight: 700;
-    margin-bottom: 12px;
-    color: #111827;
-    letter-spacing: -0.02em;
-    line-height: 1.2;
+    color: #fff;
+    animation: popIcon 0.45s ease;
 }
 
-/* Clean paragraph */
+/* Success */
+.popup-overlay.success .popup-box::before {
+    background: linear-gradient(90deg,#22c55e,#16a34a);
+}
+
+.popup-icon.success {
+    background: linear-gradient(135deg,#22c55e,#16a34a);
+}
+
+/* Error */
+.popup-overlay.error .popup-box::before {
+    background: linear-gradient(90deg,#ef4444,#b91c1c);
+}
+
+.popup-icon.error {
+    background: linear-gradient(135deg,#ef4444,#b91c1c);
+}
+
+/* Text */
+.popup-box h4 {
+    font-size: 27px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
 .popup-box p {
     font-size: 16px;
-    font-weight: 500;
-    color: #6b7280;
-    margin: 0;
-    line-height: 1.5;
+    color: #475569;
+    line-height: 1.6;
 }
 
 /* Animations */
-@keyframes overlayFadeIn {
+@keyframes fadeIn {
     from {
-        opacity: 0;
+        opacity: 0
     }
 
     to {
-        opacity: 1;
+        opacity: 1
     }
 }
 
 @keyframes popupIn {
     from {
-        transform: translateY(20px) scale(0.95);
+        transform: translateY(35px) scale(0.9);
         opacity: 0;
     }
 
@@ -84,18 +103,16 @@
     }
 }
 
-@keyframes emojiPop {
+@keyframes popIcon {
     0% {
-        transform: scale(0);
-        opacity: 0;
+        transform: scale(0)
     }
 
-    50% {
-        transform: scale(1.1);
+    70% {
+        transform: scale(1.15)
     }
 
     100% {
-        transform: scale(1);
-        opacity: 1;
+        transform: scale(1)
     }
 }

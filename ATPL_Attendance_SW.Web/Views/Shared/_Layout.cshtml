@@ -27,158 +27,8 @@
 	<link rel="stylesheet" href="~/assets/plugins/%40simonwep/pickr/themes/nano.min.css">
 	<link rel="stylesheet" href="~/assets/css/style.css">
 	<link href="~/assets/css/sidebar.css" rel="stylesheet" />
-<style>
-		.sidebar,
-		.sidebar-inner {
-			height: 100vh;
-			overflow-y: auto;
-		}
-
-		.sidebar-menu {
-			padding: 8px 10px;
-		}
-
-			.sidebar-menu ul {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-			}
-
-			.sidebar-menu > ul > li > a {
-				display: flex;
-				align-items: center;
-				gap: 12px;
-				padding: 11px 14px;
-				font-size: 14px;
-				color: #1f2937;
-				border-radius: 6px;
-				transition: all .25s ease;
-			}
-
-				.sidebar-menu > ul > li > a i {
-					font-size: 18px;
-					color: #2563eb;
-					min-width: 22px;
-				}
-
-				.sidebar-menu > ul > li > a:hover {
-					background: #f1f5ff;
-					color: #2563eb;
-				}
-
-			.sidebar-menu > ul > li.submenu.active > a {
-				background: #e0edff;
-				font-weight: 600;
-			}
-
-		.submenu > ul {
-			display: none;
-			padding: 6px 0;
-			margin-top: 6px;
-		}
 
 
-		.submenu.active > ul {
-			display: block;
-		}
-
-		.submenu > ul > li > a,
-		.submenu-two > a {
-			color: #374151 !important;
-
-		}
-
-		.submenu-two > a {
-			display: flex;
-			align-items: center;
-			width: 100%; 
-			box-sizing: border-box;
-			padding: 10px 14px;
-			font-size: 14px !important;
-			font-weight: 700 !important;
-			color: #2563eb !important;
-			background: #e5e7eb;
-			border-radius: 6px;
-			transition: all .2s ease;
-		}
-
-			.submenu-two > a:hover {
-				background: #d1d5db;
-				color: #111827;
-			}
-
-
-		.submenu-two ul li a {
-			width: 100%;
-			display: block;
-			padding: 9px 16px;
-			background: transparent !important;
-			color: #374151 !important;
-			/* color: #2563eb !important; */
-
-			border-radius: 6px;
-			margin: 2px 0;
-			transition: all .25s ease;
-			font-size: 13px !important;
-			font-weight: 500;
-		}
-
-
-		.submenu-two ul li a.active {
-			background: #d1d5db;
-			color: #111827 !important;
-			font-weight: 600;
-		}
-
-		.submenu-two ul {
-			padding-left: 0;
-			font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif
-		}
-
-			.submenu-two ul li a:hover {
-				background: #eef2ff;
-				color: orange!important;
-				padding-left: 16px;
-				font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif
-			}
-
-		.menu-arrow {
-			margin-left: auto;
-			font-size: 12px;
-			color: #6b7280;
-			transition: transform .25s ease;
-		}
-
-		.submenu.active > a .menu-arrow,
-		.submenu-two.active > a .menu-arrow {
-			transform: rotate(90deg);
-		}
-
-		.sidebar-inner::-webkit-scrollbar {
-			width: 6px;
-		}
-
-		.sidebar-inner::-webkit-scrollbar-thumb {
-			background: orange;
-			border-radius: 10px;
-		}
-
-		/* Sidebar toggle */
-		.mini-sidebar .sidebar {
-			width: 70px;
-		}
-
-			.mini-sidebar .sidebar .sidebar-menu span,
-			.mini-sidebar .sidebar .menu-arrow {
-				display: none;
-			}
-
-			.mini-sidebar .sidebar .sidebar-menu i {
-				font-size: 22px;
-				margin: auto;
-			}
-
-</style>
 </head>
 
 <body>
@@ -377,6 +227,7 @@
 											<li class="menu-title"><span>COMPANY</span></li>
 											<li><a asp-controller="Home" asp-action="CompanyInfoList">Company Profile</a></li>
 											<li><a asp-controller="Home" asp-action="BranchTypeList">Add Branch Type</a></li>
+											<li><a asp-controller="Home" asp-action="BranchInfoList">Add Branch</a></li>
 											<li><a asp-controller="Home" asp-action="DepartmentList"> Add Department</a></li>
 											<li><a asp-controller="Home" asp-action="DesignationList">Add Designation</a></li>
 											<li><a asp-controller="Home" asp-action="HolidayList">Working Calendar</a></li>
@@ -384,7 +235,7 @@
 											<li><a asp-controller="Home" asp-action="LeaveTypeList">Leave Type Entry</a></li>
 											<li class="menu-title"><span>EMPLOYEE DETAILS</span></li>
 											<li><a asp-controller="Home" asp-action="EmployeeList1">Add Employee</a></li>
-											<li><a asp-controller="Home" asp-action="EmployeeList1">Add Document Type</a></li>
+											<li><a asp-controller="Home" asp-action="DocumentTypeelist">Add Document Type</a></li>
 											
 											
 											@* <li><a asp-controller="Home" asp-action="EmployeeList">Add Document Of Employee</a></li> *@
@@ -564,52 +415,36 @@
 </html>
 
 <script>
-	$(document).ready(function () {
+	$(function () {
 
-		/* ========== SIDEBAR TOGGLE (MOBILE + DESKTOP) ========== */
-		$("#mobile_btn, #toggle_btn").on("click", function (e) {
-			e.preventDefault();
-
-			if (window.innerWidth <= 768) {
-				$("body").toggleClass("sidebar-open");
-			} else {
-				$("body").toggleClass("mini-sidebar");
-			}
+		// MOBILE SIDEBAR
+		$("#mobile_btn").on("click", function (e) {
+			e.stopPropagation();
+			$("body").toggleClass("sidebar-open");
 		});
 
-		/* ========== OVERLAY CLICK (MOBILE CLOSE) ========== */
+		// DESKTOP MINI SIDEBAR
+		$("#toggle_btn").on("click", function (e) {
+			e.stopPropagation();
+			$("body").toggleClass("mini-sidebar");
+		});
+
+		// OVERLAY CLOSE
 		$("#sidebarOverlay").on("click", function () {
 			$("body").removeClass("sidebar-open");
 		});
 
+		// SUBMENU
 		$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
 			e.preventDefault();
+			e.stopPropagation();
 
 			let parent = $(this).parent();
-
-			$("#sidebar-menu > ul > li.submenu").not(parent)
-				.removeClass("active")
-				.children("ul")
-				.slideUp(250);
-
 			parent.toggleClass("active");
-			parent.children("ul").stop(true, true).slideToggle(250);
-		});
-
-		$("#sidebar-menu .submenu-two > a").on("click", function (e) {
-			e.preventDefault();
-
-			let parent = $(this).parent();
-
-			parent.siblings(".submenu-two")
-				.removeClass("active")
-				.children("ul")
-				.slideUp(200);
-
-			parent.toggleClass("active");
-			parent.children("ul").stop(true, true).slideToggle(200);
+			parent.children("ul").slideToggle(200);
 		});
 
 	});
 </script>
+
 

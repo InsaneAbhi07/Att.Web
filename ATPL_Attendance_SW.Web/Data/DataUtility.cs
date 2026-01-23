@@ -45,7 +45,7 @@ public class DataUtility
         return dt;
     }
 
-    public int Execute(string spName, SqlParameter[] prms)
+    public int Execute(string spName, SqlParameter[] prms)        
     {
         using SqlConnection con = new SqlConnection(_con);
         using SqlCommand cmd = new SqlCommand(spName, con);

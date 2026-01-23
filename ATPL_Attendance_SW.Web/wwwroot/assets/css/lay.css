@@ -1,0 +1,150 @@
+﻿body {
+    overflow-x: hidden;
+    background: #f9fafb;
+}
+
+.page-wrapper {
+    margin-left: 260px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #fff;
+    border-right: 1px solid #e5e7eb;
+    z-index: 1000;
+    transition: .3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-inner {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.logo-wrapper {
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.app-logo {
+    height: 70px;
+}
+
+.sidebar-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu > ul > li > a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    font-weight: 600;
+    color: #1f2937;
+    border-radius: 6px;
+}
+
+    .sidebar-menu > ul > li > a:hover {
+        background: #fff7ed;
+        color: orangered;
+    }
+
+.submenu > ul {
+    display: none;
+    padding-left: 14px;
+}
+
+.submenu.active > ul {
+    display: block;
+}
+
+.submenu ul li a {
+    display: block;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #374151;
+    border-radius: 6px;
+}
+
+    .submenu ul li a:hover {
+        background: #fff7ed;
+        color: orangered;
+    }
+
+.menu-arrow {
+    margin-left: auto;
+    font-size: 11px;
+}
+
+/* ===== MINI SIDEBAR ===== */
+.mini-sidebar .sidebar {
+    width: 70px;
+}
+
+    .mini-sidebar .sidebar span,
+    .mini-sidebar .menu-arrow {
+        display: none;
+    }
+
+.mini-sidebar .page-wrapper {
+    margin-left: 70px;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+    margin-top: auto;
+    background: #fff;
+    padding: 10px 15px;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    font-size: 13px;
+}
+
+/* ===== MOBILE ===== */
+#sidebarOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 999;
+    display: none;
+}
+
+@media (max-width:768px) {
+    .sidebar {
+        left: -260px;
+    }
+
+    body.sidebar-open .sidebar {
+        left: 0;
+    }
+
+    body.sidebar-open #sidebarOverlay {
+        display: block;
+    }
+
+    .page-wrapper {
+        margin-left: 0 !important;
+    }
+}

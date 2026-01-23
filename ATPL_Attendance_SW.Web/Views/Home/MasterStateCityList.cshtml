@@ -4,107 +4,107 @@
     var states = ViewBag.States as List<MasterStateVM>;
     var cities = ViewBag.Cities as List<MasterCityVM>;
 }
-	<link href="~/assets/css/popup.css" rel="stylesheet" />
-    <style>
-        :root {
-            --primary: #2563eb;
-            --success: #16a34a;
-            --border: #e5e7eb;
-            --bg-soft: #f8fafc;
-            --text-dark: #1f2937;
+<link href="~/assets/css/popup.css" rel="stylesheet" />
+<style>
+    :root {
+        --primary: #2563eb;
+        --success: #16a34a;
+        --border: #e5e7eb;
+        --bg-soft: #f8fafc;
+        --text-dark: #1f2937;
+    }
+
+    /* ===== PAGE TITLE ===== */
+    .page-title {
+        font-size: 22px;
+        font-weight: 700;
+        padding: 10px 14px;
+        background: var(--bg-soft);
+        border-left: 5px solid var(--primary);
+        border-radius: 6px;
+        color: var(--text-dark);
+    }
+
+    /* ===== SECTION TITLES ===== */
+    .section-title {
+        font-size: 17px;
+        font-weight: 700;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background: #eef2ff;
+        color: #1e3a8a;
+    }
+
+        .section-title.success {
+            background: #ecfdf5;
+            color: #065f46;
         }
 
-        /* ===== PAGE TITLE ===== */
-        .page-title {
-            font-size: 22px;
-            font-weight: 700;
-            padding: 10px 14px;
+    /* ===== TABLE STYLING ===== */
+    .table {
+        background: #fff;
+        border: 1px solid var(--border);
+    }
+
+        .table thead th {
             background: var(--bg-soft);
-            border-left: 5px solid var(--primary);
-            border-radius: 6px;
+            font-weight: 700;
+            font-size: 14px;
+            border-bottom: 2px solid var(--border);
             color: var(--text-dark);
         }
 
-        /* ===== SECTION TITLES ===== */
-        .section-title {
-            font-size: 17px;
-            font-weight: 700;
-            padding: 8px 12px;
-            border-radius: 6px;
+        .table td,
+        .table th {
+            vertical-align: middle;
+            padding: 8px 10px;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .table tbody tr:hover {
             background: #eef2ff;
-            color: #1e3a8a;
         }
 
-            .section-title.success {
-                background: #ecfdf5;
-                color: #065f46;
-            }
+    /* ===== BUTTONS ===== */
+    .btn {
+        font-weight: 600;
+    }
 
-        /* ===== TABLE STYLING ===== */
-        .table {
-            background: #fff;
-            border: 1px solid var(--border);
-        }
+    .btn-primary {
+        background: var(--primary);
+        border-color: var(--primary);
+    }
 
-            .table thead th {
-                background: var(--bg-soft);
-                font-weight: 700;
-                font-size: 14px;
-                border-bottom: 2px solid var(--border);
-                color: var(--text-dark);
-            }
+    .btn-success {
+        background: var(--success);
+        border-color: var(--success);
+    }
 
-            .table td,
-            .table th {
-                vertical-align: middle;
-                padding: 8px 10px;
-            }
+    /* ===== MODALS ===== */
+    .modal-header {
+        background: var(--bg-soft);
+        border-bottom: 1px solid var(--border);
+    }
 
-            .table tbody tr:nth-child(even) {
-                background: #fafafa;
-            }
+    .modal-title {
+        font-weight: 700;
+        color: var(--text-dark);
+    }
 
-            .table tbody tr:hover {
-                background: #eef2ff;
-            }
-
-        /* ===== BUTTONS ===== */
-        .btn {
-            font-weight: 600;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .btn-success {
-            background: var(--success);
-            border-color: var(--success);
-        }
-
-        /* ===== MODALS ===== */
-        .modal-header {
-            background: var(--bg-soft);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .modal-title {
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .modal-footer {
-            background: #f9fafb;
-            border-top: 1px solid var(--border);
-        }
+    .modal-footer {
+        background: #f9fafb;
+        border-top: 1px solid var(--border);
+    }
 
     .grid-scroll {
         max-height: 350px;
         overflow-y: auto;
     }
 
-    </style>
+</style>
 
 <!-- ================= HEADER ================= -->
 <div class="d-flex justify-content-between mb-3">
@@ -148,45 +148,45 @@
         <div class="table-responsive grid-scroll">
             <table class="table table-hover" id="deptTable">
                 <thead class="table-light">
-                <tr>
-                    <th>SNo</th>
-                    <th>State</th>
-                    <th width="150">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < states.Count; i++)
-                {
                     <tr>
-                        <td>@(i + 1)</td>
-                        <td>@states[i].State</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm edit-state"
-                                    data-id="@states[i].Id"
-                                    data-state="@states[i].State">
-                                Edit
-                            </button>
-
-                            <form asp-action="DeleteState"
-                                  method="post"
-                                  style="display:inline"
-                                  onsubmit="return confirm('Delete this State?');">
-                                <input type="hidden" name="id" value="@states[i].Id" />
-                                <button class="btn btn-danger btn-sm">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
+                        <th>SNo</th>
+                        <th>State</th>
+                        <th width="150">Action</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < states.Count; i++)
+                    {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@states[i].State</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm edit-state"
+                                        data-id="@states[i].Id"
+                                        data-state="@states[i].State">
+                                    Edit
+                                </button>
+
+                                <form asp-action="DeleteState"
+                                      method="post"
+                                      style="display:inline"
+                                      onsubmit="return confirm('Delete this State?');">
+                                    <input type="hidden" name="id" value="@states[i].Id" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
         <div class="d-flex justify-content-end mt-2">
             <ul class="pagination" id="pagination"></ul>
         </div>
-</div>
+    </div>
     <!-- ================= CITY LIST ================= -->
     <div class="col-md-6">
         <div class="d-flex justify-content-between mb-2">
@@ -222,35 +222,48 @@
         <div class="table-responsive grid-scroll">
             <table class="table table-hover" id="cityTable">
                 <thead class="table-light">
-                <tr>
-                    <th>SNo</th>
-                    <th>State</th>
-                    <th>City</th>
-                    <th width="120">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < cities.Count; i++)
-                {
                     <tr>
-                        <td>@(i + 1)</td>
-                        <td>@states.First(x => x.Id == cities[i].StateId).State</td>
-                        <td>@cities[i].City</td>
-                        <td>
-                            <form asp-action="DeleteCity"
-                                  method="post"
-                                  onsubmit="return confirm('Delete this City?');">
-                                <input type="hidden" name="id" value="@cities[i].Id" />
-                                <button class="btn btn-danger btn-sm">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
+                        <th>SNo</th>
+                        <th>State</th>
+                        <th>City</th>
+                        <th width="120">Action</th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < cities.Count; i++)
+                    {
+                        var currentCity = cities[i];
+                        var cityId = currentCity.Id;
+                        var stateId = currentCity.StateId;
+
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td>@states.First(x => x.Id == stateId).State</td>
+                            <td>@currentCity.City</td>
+                            <td>
+                                <button class="btn btn-warning btn-sm edit-city"
+                                        data-id="@cities[i].Id"
+                                        data-city="@cities[i].City"
+                                        data-stateid="@cities[i].StateId">
+                                    Edit
+                                </button>
+
+
+                                <form asp-action="DeleteCity"
+                                      method="post"
+                                      style="display:inline"
+                                      onsubmit="return confirm('Delete this City?');">
+                                    <input type="hidden" name="id" value="@cityId" />
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
         <div class="d-flex justify-content-end mt-2">
             <ul class="pagination" id="cityPagination"></ul>
         </div>
@@ -267,7 +280,7 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title">State</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
@@ -279,10 +292,10 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <button class="btn btn-primary" id="stateSaveBtn">
+                    <button type="submit" class="btn btn-primary" id="stateSaveBtn">
                         Save
                     </button>
                 </div>
@@ -300,12 +313,13 @@
 
                 <div class="modal-header">
                     <h5 class="modal-title">City</h5>
-                    <button class="btn-close" data-bs-dismiss="modal"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
                 <div class="modal-body">
-                    <label>State</label>
-                    <select class="form-select mb-2" name="StateId" id="CityState">
+                    <label>Select State</label>
+                    <select class="form-select mb-2" name="StateId" id="CityState" required>
+                        <option value="">-- Select State --</option>
                         @foreach (var s in states)
                         {
                             <option value="@s.Id">@s.State</option>
@@ -320,10 +334,10 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                         Cancel
                     </button>
-                    <button class="btn btn-success" id="citySaveBtn">
+                    <button type="submit" class="btn btn-success" id="citySaveBtn">
                         Save
                     </button>
                 </div>
@@ -333,111 +347,78 @@
 </div>
 
 <!-- ================= CENTER POPUP ================= -->
-@if (TempData["Msg"] != null)
+ @if (TempData["Msg"] != null)
 {
-    <div class="popup-overlay" id="centerPopup">
-        <div class="popup-box">
-            <h4>Success</h4>
-            <p>@TempData["Msg"]</p>
-        </div>
-    </div>
+	var type = TempData["Type"] ?? "success"; // success / error
+											  	<div class="popup-overlay @type" id="centerPopup">
+											  		<div class="popup-box">
+											  			<div class="popup-icon @type">
+											  				@(type == "success" ? "✓" : "✕")
+											  			</div>
+
+				<h4>@(type == "success" ? "Success" : "Failed")</h4>
+				<p>@TempData["Msg"]</p>
+			</div>
+		</div>
 }
+
+
 <script src="~/assets/js/global.js"></script>
 <script>
+
+          const popup = document.getElementById("centerPopup");
+    if (popup) {
+        setTimeout(() => {
+            popup.style.opacity = "0";
+            setTimeout(() => popup.remove(), 300);
+        }, 1500);
+    }
     document.addEventListener("DOMContentLoaded", function () {
 
-        // auto close popup after 1.2 sec
-        const popup = document.getElementById("centerPopup");
-        if (popup) {
-            setTimeout(() => popup.remove(), 1200);
-        }
+        const stateModal = new bootstrap.Modal(document.getElementById('stateModal'));
+        const cityModal  = new bootstrap.Modal(document.getElementById('cityModal'));
 
+        /* ================= STATE EDIT ================= */
         document.querySelectorAll(".edit-state").forEach(btn => {
             btn.addEventListener("click", function () {
-                StateId.value = this.dataset.id;
-                StateName.value = this.dataset.state;
-                stateSaveBtn.innerText = "Update";
-                new bootstrap.Modal(stateModal).show();
+
+                document.getElementById("StateId").value   = this.dataset.id;
+                document.getElementById("StateName").value = this.dataset.state;
+
+                document.getElementById("stateSaveBtn").innerText = "Update";
+                stateModal.show();
             });
         });
+
+        /* ================= CITY EDIT ================= */
+        document.querySelectorAll(".edit-city").forEach(btn => {
+            btn.addEventListener("click", function () {
+
+                document.getElementById("CityId").value    = this.dataset.id;
+                document.getElementById("CityName").value  = this.dataset.city;
+                document.getElementById("CityState").value = this.dataset.stateid;
+
+                document.getElementById("citySaveBtn").innerText = "Update";
+                cityModal.show();
+            });
+        });
+
     });
 
+
+    /* ================= CLEAR FORMS ================= */
     function clearState() {
-        StateId.value = "";
-        StateName.value = "";
-        stateSaveBtn.innerText = "Save";
+        document.getElementById("StateId").value = "";
+        document.getElementById("StateName").value = "";
+        document.getElementById("stateSaveBtn").innerText = "Save";
     }
 
     function clearCity() {
-        CityId.value = "";
-        CityName.value = "";
-        citySaveBtn.innerText = "Save";
+        document.getElementById("CityId").value = "";
+        document.getElementById("CityName").value = "";
+        document.getElementById("CityState").value = "";
+        document.getElementById("citySaveBtn").innerText = "Save";
     }
 </script>
-<script>
-    function setupTable(searchId, sizeId, tableId, pagerId) {
 
-        let currentPage = 1;
 
-        const searchBox = document.getElementById(searchId);
-        const pageSize = document.getElementById(sizeId);
-        const table = document.getElementById(tableId);
-        const pagination = document.getElementById(pagerId);
-        const tbody = table.querySelector("tbody");
-        const rows = Array.from(tbody.querySelectorAll("tr"));
-
-        function render() {
-            let search = searchBox.value.toLowerCase();
-            let limit = parseInt(pageSize.value);
-
-            let filtered = rows.filter(r =>
-                r.innerText.toLowerCase().includes(search)
-            );
-
-            let totalPages = Math.ceil(filtered.length / limit);
-            if (currentPage > totalPages) currentPage = 1;
-
-            rows.forEach(r => r.style.display = "none");
-
-            let start = (currentPage - 1) * limit;
-            let end = start + limit;
-
-            filtered.slice(start, end).forEach(r => {
-                r.style.display = "";
-            });
-
-            pagination.innerHTML = "";
-
-            for (let i = 1; i <= totalPages; i++) {
-                let li = document.createElement("li");
-                li.className = "page-item " + (i === currentPage ? "active" : "");
-
-                let a = document.createElement("a");
-                a.className = "page-link";
-                a.href = "#";
-                a.innerText = i;
-                a.onclick = e => {
-                    e.preventDefault();
-                    currentPage = i;
-                    render();
-                };
-
-                li.appendChild(a);
-                pagination.appendChild(li);
-            }
-        }
-
-        searchBox.addEventListener("keyup", () => { currentPage = 1; render(); });
-        pageSize.addEventListener("change", () => { currentPage = 1; render(); });
-
-        render();
-    }
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-
-        setupTable("searchBox", "pageSize", "deptTable", "pagination");
-        setupTable("citySearchBox", "cityPageSize", "cityTable", "cityPagination");
-
-    });
-</script>

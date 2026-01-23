@@ -160,23 +160,31 @@
 	<!-- ================= CENTER POPUP ================= -->
 @if (TempData["Msg"] != null)
 {
-		<div class="popup-overlay" id="centerPopup">
-			<div class="popup-box">
-				<h4>Success</h4>
-				<p>@TempData["Msg"]</p>
-			</div>
-		</div>
+    var type = TempData["Type"] ?? "success"; // success / error
+                                              <div class="popup-overlay @type" id="centerPopup">
+                                                  <div class="popup-box">
+                                                      <div class="popup-icon @type">
+                                                          @(type == "success" ? "✓" : "✕")
+                                                      </div>
+
+            <h4>@(type == "success" ? "Success" : "Failed")</h4>
+            <p>@TempData["Msg"]</p>
+        </div>
+    </div>
 }
 
 <script src="~/assets/js/global.js"></script>
 <script>
 
+              const popup = document.getElementById("centerPopup");
+    if (popup) {
+        setTimeout(() => {
+            popup.style.opacity = "0";
+            setTimeout(() => popup.remove(), 300);
+        }, 1500);
+    }
 
-
-                     const popup = document.getElementById("centerPopup");
-                if (popup) {
-                    setTimeout(() => popup.remove(), 1200);
-                }
+              
     document.addEventListener("DOMContentLoaded", function () {
 
         document.querySelectorAll(".edit-btn").forEach(btn => {

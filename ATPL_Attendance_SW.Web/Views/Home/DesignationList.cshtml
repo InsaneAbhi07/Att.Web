@@ -136,15 +136,22 @@
 
 <script src="~/assets/js/global.js"></script>
 
+ 
 @if (TempData["Msg"] != null)
 {
-    <div class="popup-overlay" id="centerPopup">
-        <div class="popup-box">
-            <h4>Success</h4>
+    var type = TempData["Type"] ?? "success"; // success / error
+                                              <div class="popup-overlay @type" id="centerPopup">
+                                                  <div class="popup-box">
+                                                      <div class="popup-icon @type">
+                                                          @(type == "success" ? "✓" : "✕")
+                                                      </div>
+
+            <h4>@(type == "success" ? "Success" : "Failed")</h4>
             <p>@TempData["Msg"]</p>
         </div>
     </div>
 }
+
 
 @section Scripts {
     <script>
@@ -173,4 +180,14 @@
         }
 
     </script>
+    <script>
+        const popup = document.getElementById("centerPopup");
+        if (popup) {
+            setTimeout(() => {
+                popup.style.opacity = "0";
+                setTimeout(() => popup.remove(), 300);
+            }, 1500);
+        }
+    </script>
+
 }
