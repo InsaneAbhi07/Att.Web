@@ -27,8 +27,7 @@
 	<link rel="stylesheet" href="~/assets/plugins/%40simonwep/pickr/themes/nano.min.css">
 	<link rel="stylesheet" href="~/assets/css/style.css">
 	<link href="~/assets/css/sidebar.css" rel="stylesheet" />
-
-
+ 
 </head>
 
 <body>
@@ -224,7 +223,7 @@
 
 								<ul>
 									
-											<li class="menu-title"><span>COMPANY</span></li>
+											<li class="menu-title" style="font-size:12px"><span>COMPANY</span></li>
 											<li><a asp-controller="Home" asp-action="CompanyInfoList">Company Profile</a></li>
 											<li><a asp-controller="Home" asp-action="BranchTypeList">Add Branch Type</a></li>
 											<li><a asp-controller="Home" asp-action="BranchInfoList">Add Branch</a></li>
@@ -233,16 +232,13 @@
 											<li><a asp-controller="Home" asp-action="HolidayList">Working Calendar</a></li>
 											<li><a asp-controller="Home" asp-action="ShiftList">Add Shift</a></li>
 											<li><a asp-controller="Home" asp-action="LeaveTypeList">Leave Type Entry</a></li>
-											<li class="menu-title"><span>EMPLOYEE DETAILS</span></li>
+											<li class="menu-title" style="font-size:12px"><span>EMPLOYEE DETAILS</span></li>
 											<li><a asp-controller="Home" asp-action="EmployeeList1">Add Employee</a></li>
 											<li><a asp-controller="Home" asp-action="DocumentTypeelist">Add Document Type</a></li>
-											
-											
 											@* <li><a asp-controller="Home" asp-action="EmployeeList">Add Document Of Employee</a></li> *@
-											<li class="menu-title"><span>LOCATION</span></li>
+									<li class="menu-title" style="font-size:12px"><span>LOCATION</span></li>
 											<li><a asp-controller="Home" asp-action="MasterStateCityList">Add State/City</a></li>
 									</li>
-									<hr>
 								</ul>
 							</li>
 							<!-- ATTENDANCE -->
@@ -415,36 +411,52 @@
 </html>
 
 <script>
-	$(function () {
+	$(document).ready(function () {
 
-		// MOBILE SIDEBAR
-		$("#mobile_btn").on("click", function (e) {
-			e.stopPropagation();
-			$("body").toggleClass("sidebar-open");
+		/* ========== SIDEBAR TOGGLE (MOBILE + DESKTOP) ========== */
+		$("#mobile_btn, #toggle_btn").on("click", function (e) {
+			e.preventDefault();
+
+			if (window.innerWidth <= 768) {
+				$("body").toggleClass("sidebar-open");
+			} else {
+				$("body").toggleClass("mini-sidebar");
+			}
 		});
 
-		// DESKTOP MINI SIDEBAR
-		$("#toggle_btn").on("click", function (e) {
-			e.stopPropagation();
-			$("body").toggleClass("mini-sidebar");
-		});
-
-		// OVERLAY CLOSE
+		/* ========== OVERLAY CLICK (MOBILE CLOSE) ========== */
 		$("#sidebarOverlay").on("click", function () {
 			$("body").removeClass("sidebar-open");
 		});
 
-		// SUBMENU
 		$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
 			e.preventDefault();
-			e.stopPropagation();
 
 			let parent = $(this).parent();
+
+			$("#sidebar-menu > ul > li.submenu").not(parent)
+				.removeClass("active")
+				.children("ul")
+				.slideUp(250);
+
 			parent.toggleClass("active");
-			parent.children("ul").slideToggle(200);
+			parent.children("ul").stop(true, true).slideToggle(250);
+		});
+
+		$("#sidebar-menu .submenu-two > a").on("click", function (e) {
+			e.preventDefault();
+
+			let parent = $(this).parent();
+
+			parent.siblings(".submenu-two")
+				.removeClass("active")
+				.children("ul")
+				.slideUp(200);
+
+			parent.toggleClass("active");
+			parent.children("ul").stop(true, true).slideToggle(200);
 		});
 
 	});
 </script>
-
 
