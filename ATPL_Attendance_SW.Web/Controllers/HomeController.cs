@@ -650,17 +650,17 @@ namespace ATPL_Attendance_SW.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult DeleteEmployee(long empId)
+        public IActionResult DeleteEmployee(string empCode)
         {
             SqlParameter[] prms =
             {
-        new SqlParameter("@Emp_Id", empId)
+        new SqlParameter("@Emp_Id", empCode)
     };
 
             du.Execute("Sp_Delete_MasterEmployee", prms);
             TempData["Msg"] = "Employee Deleted";
 
-            return RedirectToAction("EmployeeList");
+            return RedirectToAction("EmployeeList1");
         }
 
 

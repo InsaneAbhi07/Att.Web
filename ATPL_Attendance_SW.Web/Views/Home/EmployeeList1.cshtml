@@ -347,9 +347,14 @@
                                         <a href="@Url.Action("SaveEmployee", "Home", new { id = emp.Emp_Id })" class="btn-action btn-edit" title="Edit">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button class="btn-action btn-delete" onclick="deleteEmployee(@emp.Emp_Id)" title="Delete">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form asp-action="DeleteEmployee" method="post" style="display:inline">
+                                            <input type="hidden" name="empCode" value="@emp.Emp_Code" />
+                                            <button class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Do you really want to delete this record?')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+
                                     </div>
                                 </td>
                             </tr>
@@ -484,26 +489,6 @@
                 $('#recordInfo').text('No entries found');
             } else {
                 $('#recordInfo').text(`Showing ${total} ${total === 1 ? 'entry' : 'entries'}`);
-            }
-        }
-
-        function deleteEmployee(id) {
-            if (confirm('Are you sure you want to delete this employee? This action cannot be undone.')) {
-                $.ajax({
-                    url: '@Url.Action("DeleteEmployee", "Home")/' + id,
-                    type: 'POST',
-                    success: function (response) {
-                        if (response.success) {
-                            alert('Employee deleted successfully!');
-                            location.reload();
-                        } else {
-                            alert('Error: ' + (response.message || 'Unable to delete employee'));
-                        }
-                    },
-                    error: function () {
-                        alert('Error deleting employee');
-                    }
-                });
             }
         }
     </script>

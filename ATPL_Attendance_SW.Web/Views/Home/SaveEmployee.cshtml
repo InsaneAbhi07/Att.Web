@@ -576,34 +576,39 @@
     calculateGross();
 
     // Form validation on submit
-    document.getElementById('employeeForm').addEventListener('submit', function (e) {
-        e.preventDefault();
+       document.getElementById('employeeForm').addEventListener('submit', function (e) {
 
-        // Validate all tabs
+        if (!empCodeValid) {
+            e.preventDefault();
+            alert("Please fix Employee Code before saving");
+            return;
+        }
+
+        if (!UserNameValid) {
+            e.preventDefault();
+            alert("Please fix User Name before saving");
+            return;
+        }
+
         let allValid = true;
-        let invalidTabs = [];
 
         for (let i = 0; i < tabs.length; i++) {
             currentTabIndex = i;
             if (!validateCurrentTab()) {
                 allValid = false;
-                invalidTabs.push(i + 1);
+                break;
             }
         }
 
         if (!allValid) {
-            alert('Please complete all required fields in Tab(s): ' + invalidTabs.join(', '));
-            // Go to first invalid tab
-            currentTabIndex = invalidTabs[0] - 1;
-            const tab = document.querySelector(`[data-bs-target="${tabs[currentTabIndex]}"]`);
-            const bootstrapTab = new bootstrap.Tab(tab);
-            bootstrapTab.show();
-            return false;
+            e.preventDefault();
+            alert("Please fill all required fields");
+            return;
         }
 
-        // If all valid, submit form
-        this.submit();
+        // ✅ DO NOTHING → form will submit automatically
     });
+
 
     // Restore last active tab
     window.addEventListener('load', function () {
@@ -692,13 +697,7 @@
                 }
             });
     }
-    document.querySelector("form").addEventListener("submit", function (e) {
-        if (!empCodeValid) {
-            e.preventDefault();
-            document.getElementById("Emp_Code").focus();
-            alert("Please fix Employee Code before saving");
-        }
-    });
+ 
 </script>
 
 <script>
@@ -735,11 +734,40 @@
                 }
             });
     }
-    document.querySelector("form").addEventListener("submit", function (e) {
+
+        document.getElementById('employeeForm').addEventListener('submit', function (e) {
+
+        if (!empCodeValid) {
+            e.preventDefault();
+            alert("Please fix Employee Code before saving");
+            return;
+        }
+
         if (!UserNameValid) {
             e.preventDefault();
-            document.getElementById("UserName").focus();
             alert("Please fix User Name before saving");
+            return;
         }
+
+        // validate tabs
+        let allValid = true;
+        let invalidTabs = [];
+
+        for (let i = 0; i < tabs.length; i++) {
+            currentTabIndex = i;
+            if (!validateCurrentTab()) {
+                allValid = false;
+                invalidTabs.push(i + 1);
+            }
+        }
+
+        if (!allValid) {
+            e.preventDefault();
+            alert('Please complete required fields in Tab(s): ' + invalidTabs.join(', '));
+            return;
+        }
+
+        // ✅ allow submit (NO preventDefault here)
     });
+
 </script>
