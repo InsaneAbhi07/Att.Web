@@ -310,12 +310,13 @@
                 <thead>
                     <tr>
                         <th>Photo</th>
+                        <th>Branch</th>
                         <th>Emp Code</th>
                         <th>Name</th>
                         <th>Department</th>
                         <th>Designation</th>
                         <th>Phone</th>
-                        <th>Email</th>
+                        
                         <th>Emp.Type</th>
                         <th>Actions</th>
                     </tr>
@@ -328,6 +329,7 @@
                             var photoUrl = string.IsNullOrEmpty(emp.Emp_Img) ? "/assets/img/user-placeholder.png" : $"/uploads/employee/{emp.Emp_Img}";
 
                             <tr class="employee-row"
+
                                 data-name="@emp.Name?.ToLower()"
                                 data-code="@emp.Emp_Code?.ToLower()"
                                 data-phone="@emp.PhoneNo"
@@ -335,12 +337,12 @@
                                 data-department="@emp.Department"
                                 data-status="@emp.Status">
                                 <td><img src="@photoUrl" class="emp-photo" alt="Photo" onerror="this.src='/assets/img/user-placeholder.png'"></td>
+                                <td>@emp.BranchName</td>
                                 <td><strong>@emp.Emp_Code</strong></td>
                                 <td>@emp.Name</td>
                                 <td>@emp.Department</td>
                                 <td>@emp.Designation</td>
                                 <td>@emp.PhoneNo</td>
-                                <td>@emp.EmailId</td>
                                 <td>@emp.EmployeeType</td>
                                 <td>
                                     <div class="action-btns">

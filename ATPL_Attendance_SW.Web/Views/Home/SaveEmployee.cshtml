@@ -155,10 +155,10 @@
                                             <input type="radio" asp-for="Gender" value="Female" />
                                             <span>Female</span>
                                         </label>
-                                        <label class="radio-option">
+                                    @*     <label class="radio-option">
                                             <input type="radio" asp-for="Gender" value="Transgender" required />
                                             <span>Transgender</span>
-                                        </label>
+                                        </label> *@
                                         <label class="radio-option">
                                             <input type="radio" asp-for="Gender" value="Other" />
                                             <span>Other</span>
@@ -181,6 +181,14 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-6 mb-6">
+                                    <label class="form-label">Select Branch<span class="text-danger">*</span></label>
+                                    <select asp-for="BranchId" asp-items="ViewBag.BranchList" class="form-select" required>
+                                        <option value="">Select Branch</option>
+                                    </select>
+                                    <span class="text-danger" style="font-size: 11px;"></span>
+                                </div>
+
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label">Status <span class="text-danger">*</span></label>
                                     <div class="radio-group">
@@ -193,6 +201,9 @@
                                             <span>Inactive</span>
                                         </label>
                                     </div>
+
+                                   
+
                                     <span class="text-danger" style="font-size: 11px;"></span>
                                 </div>
                             </div>

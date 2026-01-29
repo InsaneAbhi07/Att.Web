@@ -13,6 +13,7 @@ namespace ATPL_Attendance_SW.Web.Models
         public string? DOB { get; set; }
         public int DepartmentId { get; set; }
         public int DesignationId { get; set; }
+        public int BranchId { get; set; }
         public string EmailId { get; set; }
         [Required(ErrorMessage = "This field is required.")]
         public string PhoneNo { get; set; }
@@ -53,8 +54,8 @@ namespace ATPL_Attendance_SW.Web.Models
         public decimal GrossSalary { get; set; }
     
         public string ResumeDoc { get; set; }
-
         public string Aadhardoc { get; set; }
+        public string BranchName { get; set; }
 
     }
 

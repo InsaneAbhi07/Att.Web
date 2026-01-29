@@ -282,6 +282,22 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return list;
         }
 
+        private List<SelectListItem> GetBranchDDL1()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select * From Tbl_MasterBranch", null);
+            List<SelectListItem> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["BranchName"].ToString()
+                });
+            }
+            return list;
+        }
+
         private List<SelectListItem> GetWorkUnderDDL()
         {
             DataTable dt = du.GetDataTableByQuery("Select Emp_Id,Name From Tbl_MasterEmployeeDetails", null);
@@ -373,6 +389,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
                     DepartmentId = row["DepartmentId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DepartmentId"]),
                     DesignationId = row["DesignationId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DesignationId"]),
+                    BranchId = row["BranchId"] == DBNull.Value ? 0 : Convert.ToInt32(row["BranchId"]),
                     ShiftId = row["ShiftId"] == DBNull.Value ? 0 : Convert.ToInt32(row["ShiftId"]),
 
                     EmailId = row["EmailId"] == DBNull.Value ? "" : row["EmailId"].ToString(),
@@ -385,6 +402,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Emp_Img = row["Emp_Img"] == DBNull.Value ? "" : row["Emp_Img"].ToString(),
                     Designation = row["Designation"] == DBNull.Value ? "" : row["Designation"].ToString(),
                     Department = row["Department"] == DBNull.Value ? "" : row["Department"].ToString(),
+                    BranchName = row["BranchName"] == DBNull.Value ? "" : row["BranchName"].ToString(),
 
                     Salary = row["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Salary"]),
                     Status = row["Status"] == DBNull.Value ? "Inactive" : row["Status"].ToString(),
@@ -408,11 +426,12 @@ namespace ATPL_Attendance_SW.Web.Controllers
             ViewBag.DepartmentList = GetDepartmentDDL();
             ViewBag.DesignationList = GetDesignationDDL();
             ViewBag.Shiftlistt = GetSHiftDDL();
+            ViewBag.BranchList = GetBranchDDL1();
 
             return View(list);
         }
 
-        public IActionResult EmployeeList1()
+         public IActionResult EmployeeList1()
         {
             DataTable dt = du.GetDataTable("Sp_Get_EmployeeList", null);
             List<EmployeeVM> list = new();
@@ -426,6 +445,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Emp_Code = row["Emp_Code"]?.ToString(),
                     DepartmentId = row["DepartmentId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DepartmentId"]),
                     DesignationId = row["DesignationId"] == DBNull.Value ? 0 : Convert.ToInt32(row["DesignationId"]),
+                    BranchId = row["BranchId"] == DBNull.Value ? 0 : Convert.ToInt32(row["BranchId"]),
                     ShiftId = row["ShiftId"] == DBNull.Value ? 0 : Convert.ToInt32(row["ShiftId"]),
 
                     EmailId = row["EmailId"]?.ToString() ?? "",
@@ -439,6 +459,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Designation = row["Designation"]?.ToString() ?? "",
                     Department = row["Department"]?.ToString() ?? "",
                     EmployeeType = row["EmployeeType"]?.ToString() ?? "",
+                    BranchName = row["BranchName"]?.ToString() ?? "",
 
                     Salary = row["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Salary"]),
                     Status = row["Status"]?.ToString() ?? "Inactive",
@@ -458,6 +479,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             ViewBag.DesignationList = GetDesignationDDL();
             ViewBag.Shiftlistt = GetSHiftDDL();
             ViewBag.EmployeeType = GetEmployeeTypeDDL();
+            ViewBag.BranchList = GetBranchDDL1();
 
             return View(list);
         }
@@ -469,7 +491,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             ViewBag.Shiftlistt = GetSHiftDDL();
             ViewBag.WorkUnderList = GetWorkUnderDDL();
             ViewBag.EmployeeType = GetEmployeeTypeDDL();
-
+            ViewBag.BranchList = GetBranchDDL1();
             // ADD
             if (id == 0)
                 return View(new EmployeeVM());
@@ -491,6 +513,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 JoiningDate = r["JoiningDate"]?.ToString(),
                 DepartmentId = Convert.ToInt32(r["DepartmentId"]),
                 DesignationId = Convert.ToInt32(r["DesignationId"]),
+                BranchId = Convert.ToInt32(r["BranchId"]),
                 ShiftId = Convert.ToInt32(r["ShiftId"]),
                 EmailId = r["EmailId"]?.ToString(),
                 PhoneNo = r["PhoneNo"]?.ToString(),
@@ -523,7 +546,6 @@ namespace ATPL_Attendance_SW.Web.Controllers
             };
             return View(model);
         }
-        [HttpPost]
         [HttpPost]
         public IActionResult SaveEmployee(EmployeeVM model, IFormFile EmpImage, IFormFile ResumeDocument, IFormFile AadharDocument)
         {
@@ -599,6 +621,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
         new SqlParameter("@DOB", model.DOB ?? (object)DBNull.Value),
         new SqlParameter("@DepartmentId", model.DepartmentId),
         new SqlParameter("@DesignationId", model.DesignationId),
+        new SqlParameter("@BranchId", model.BranchId),
         new SqlParameter("@ShiftId", model.ShiftId),
         new SqlParameter("@JoiningDate", model.JoiningDate ?? (object)DBNull.Value),
         new SqlParameter("@ResignDate", model.ResignDate ?? (object)DBNull.Value),

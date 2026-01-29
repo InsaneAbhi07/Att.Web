@@ -216,11 +216,12 @@
 		<table class="table table-hover">
 			<thead>
 				<tr>
-					<th>Code</th>
+					<th>Branch Code</th>
 					<th>Branch Name</th>
+					<th>Branch Type</th>
 					<th>City</th>
 					<th>Contact</th>
-					<th>GSTIN</th>
+					<th>Telephone NO</th>
 					<th width="120">Action</th>
 
 				</tr>
@@ -231,9 +232,10 @@
 					<tr>
 						<td>@c.BCode</td>
 						<td>@c.BranchName</td>
+						<td>@c.BranchType</td>
 						<td>@c.City</td>
 						<td>@c.ContactNo</td>
-						<td>@c.GSTIN</td>
+						<td>@c.Telepohne</td>
 						<td>
 						 
 							<button class="btn btn-sm btn-warning edit-btn"
@@ -323,50 +325,6 @@
 									}
 								</select>
 							</div>
-
-							<div class="col-md-3 mb-2">
-								<label>GSTIN</label>
-								<input class="form-control"
-									   id="GSTIN"
-									   name="GSTIN"
-									   maxlength="15"
-									   @* pattern="[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}" *@
-									   title="Enter valid GSTIN (15 characters)" />
-								<div class="invalid-feedback">Enter valid GSTIN format (e.g., 22AAAAA0000A1Z5)</div>
-							</div>
-
-							<div class="col-md-3 mb-2">
-								<label>UAN No.</label>
-								<input class="form-control"
-									   id="UANNo"
-									   name="UANNo"
-									   maxlength="12"
-									   pattern="[0-9]{12}"
-									   title="UAN should be 12 digits" />
-								<div class="invalid-feedback">UAN should be 12 digits</div>
-							</div>
-
-							<div class="col-md-3 mb-2">
-								<label>PAN No.</label>
-								<input class="form-control"
-									   id="PANNo"
-									   name="PANNo"
-									   maxlength="10"
-									   @* pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}" *@
-									   style="text-transform: uppercase;"
-									   title="Enter valid PAN (e.g., ABCDE1234F)" />
-								<div class="invalid-feedback">Enter valid PAN format (e.g., ABCDE1234F)</div>
-							</div>
-
-							<div class="col-md-3 mb-2">
-								<label>License No.</label>
-								<input class="form-control"
-									   id="LicenseNo"
-									   name="LicenseNo"
-									   maxlength="50" />
-								<div class="invalid-feedback">License No. max 50 characters</div>
-							</div>
-
 						</div>
 					</div>
 
@@ -492,45 +450,6 @@
 
 						</div>
 					</div>
-
-					<!-- ===== Bank Details ===== -->
-					<div class="form-section">
-						<h6>Bank Details</h6>
-
-						<div class="row">
-							<div class="col-md-4 mb-2">
-								<label>Bank Name</label>
-								<input class="form-control"
-									   id="BankName"
-									   name="BankName"
-									   maxlength="100" />
-								<div class="invalid-feedback">Bank Name max 100 characters</div>
-							</div>
-
-							<div class="col-md-4 mb-2">
-								<label>Account No</label>
-								<input class="form-control"
-									   id="AccountNo"
-									   name="AccountNo"
-									   maxlength="20"
-									   pattern="[0-9]+"
-									   title="Enter valid account number (digits only)" />
-								<div class="invalid-feedback">Enter valid account number (max 20 digits)</div>
-							</div>
-
-							<div class="col-md-4 mb-2">
-								<label>IFSC Code</label>
-								<input class="form-control"
-									   id="IFSCCode"
-									   name="IFSCCode"
-									   maxlength="11"
-									   @* pattern="[A-Z]{4}0[A-Z0-9]{6}" *@
-									   style="text-transform: uppercase;"
-									   title="Enter valid IFSC Code (e.g., SBIN0001234)" />
-								<div class="invalid-feedback">Enter valid IFSC Code (11 characters, e.g., SBIN0001234)</div>
-							</div>
-						</div>
-					</div>
 				</div>
 
 				<div class="modal-footer">
@@ -604,8 +523,7 @@
 				BCode.value = d.bcode;
 				BranchName.value = d.branchName;
 				Abbr.value = d.abbr;
-
-				// ✅ BRANCH TYPE FIX
+				
 				if (d.bTypeId) {
 					document.getElementById("BTypeId").value = d.bTypeId;
 				}
@@ -618,15 +536,7 @@
 				Telepohne.value = d.telepohne;
 				ContactNo.value = d.contactNo;
 				Email.value = d.email;
-				GSTIN.value = d.gstin;
 				Website.value = d.website;
-
-				BankName.value = d.bankName;
-				AccountNo.value = d.accountNo;
-				IFSCCode.value = d.ifscCode;
-				LicenseNo.value = d.licenseNo;
-				UANNo.value = d.uanNo;
-				PANNo.value = d.panNo;
 
 				// STATE → CITY AFTER
 				loadStates(d.stateId, d.cityId);
