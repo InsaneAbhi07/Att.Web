@@ -1,0 +1,45 @@
+﻿@model System.Data.DataTable
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between">
+        <h5>Attendance Policies</h5>
+        <a href="/Home/Builder" class="btn btn-primary btn-sm">
+            + New Policy
+        </a>
+    </div>
+
+    <table class="table table-sm">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th width="160">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (System.Data.DataRow r in Model.Rows)
+            {
+                <tr>
+                    <td>@r["PolicyName"]</td>
+                    <td>
+                        <span class="badge @(Convert.ToBoolean(r["IsActive"]) ? "bg-success" : "bg-secondary")">
+                            @(Convert.ToBoolean(r["IsActive"]) ? "Active" : "Draft")
+                        </span>
+                    </td>
+                    <td>@r["CreatedOn"]</td>
+                    <td>
+                        <a class="btn btn-sm btn-warning"
+                           href="/Home/EditPolicy/@r["PolicyId"]">Edit</a>
+
+                        <a class="btn btn-sm btn-info"
+                           href="/Home/Builder?clone=@r["PolicyId"]">Clone</a>
+
+                        <a class="btn btn-sm btn-success"
+                           href="/Home/ActivatePolicy/@r["PolicyId"]">Activate</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

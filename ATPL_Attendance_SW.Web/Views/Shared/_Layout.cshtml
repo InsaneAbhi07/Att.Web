@@ -5,40 +5,36 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Dashboard |Daily Attendance</title>
-
+	<title>Dashboard</title>
 	<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&family=Ubuntu+Sans:ital,wght@0,100..800;1,100..800&family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap" rel="stylesheet">
-
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 	<link rel="icon" href="~/assets/img/favicon.png" type="image/x-icon">
 	<link rel="stylesheet" href="~/assets/css/bootstrap.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/icons/feather/feather.css">
 	<link rel="stylesheet" href="~/assets/plugins/tabler-icons/tabler-icons.min.css">
-	<link rel="stylesheet" href="~/assets/plugins/select2/css/select2.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/fontawesome.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/fontawesome/css/all.min.css">
 	<link rel="stylesheet" href="~/assets/css/bootstrap-datetimepicker.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css">
-	<link rel="stylesheet" href="~/assets/plugins/summernote/summernote-lite.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/daterangepicker/daterangepicker.css">
 	<link rel="stylesheet" href="~/assets/plugins/flatpickr/flatpickr.min.css">
 	<link rel="stylesheet" href="~/assets/plugins/%40simonwep/pickr/themes/nano.min.css">
 	<link rel="stylesheet" href="~/assets/css/style.css">
-	<link href="~/assets/css/sidebar.css" rel="stylesheet" />
- 
+	 <link href="~/assets/css/sidebar.css" rel="stylesheet" />
+ <style>
+		body {
+			font-family: 'Inter', sans-serif;
+		}
+ </style>
 </head>
-
 <body>
+	<div id="sidebarOverlay"></div>
 	<header>
 		<div class="main-wrapper">
-
-			<!-- Header -->
 			<div class="header">
 				<div class="main-header">
-
-				 
 					<a id="mobile_btn" class="mobile_btn" href="#sidebar">
 						<span class="bar-icon">
 							<span></span>
@@ -46,7 +42,6 @@
 							<span></span>
 						</span>
 					</a>
-
 					<div class="header-user">
 						<div class="nav user-menu nav-list">
 
@@ -54,10 +49,7 @@
 								<a id="toggle_btn" href="javascript:void(0);" class="btn btn-menubar me-1">
 									<i class="ti ti-arrow-bar-to-left"></i>
 								</a>
-							 
 							</div>
-
-							<!-- Horizontal Single -->
 							<div class="sidebar sidebar-horizontal" id="horizontal-single">
 								<div class="sidebar-menu">
 									<div class="main-menu">
@@ -74,48 +66,23 @@
 									</div>
 								</div>
 							</div>
-							<!-- /Horizontal Single -->
-
 							<div class="d-flex align-items-center">
-								<div class="me-1">
-									<a href="#" class="btn btn-menubar btnFullscreen">
-										<i class="ti ti-maximize"></i>
-									</a>
-								</div>
-							 
+								@{
+									var userImage = User.FindFirst("UserImage")?.Value;
+									var imagePath = string.IsNullOrWhiteSpace(userImage)
+									? Url.Content("~/assets/img/profiles.JPG")
+									: Url.Content("~/uploads/employee/" + userImage);
+								}
 								<div class="dropdown profile-dropdown">
 									<a href="javascript:void(0);" class="dropdown-toggle d-flex align-items-center" data-bs-toggle="dropdown">
 										<span class="avatar avatar-sm online">
-											@{
-												var userImage = User.FindFirst("UserImage")?.Value;
-												var imagePath = string.IsNullOrWhiteSpace(userImage)
-												? Url.Content("~/assets/img/profiles.JPG")
-												: Url.Content("~/uploads/employee/" + userImage);
-											}
+											<img src="@imagePath" class="rounded-circle" width="35" height="35" />
 										</span>
+										<span class="ms-2">@User.Identity?.Name</span>
 									</a>
 									<div class="dropdown-menu shadow-none">
-										<div class="card mb-0">
-											<div class="card-header">
-												<div class="d-flex align-items-center">
-													<span class="avatar avatar-lg me-2 avatar-rounded">
-														@{
-															var userImage1 = User.FindFirst("UserImage")?.Value;
-															var imagePath1 = string.IsNullOrWhiteSpace(userImage1)
-															? Url.Content("~/assets/img/profiles.JPG")
-															: Url.Content("~/uploads/employee/" + userImage1);
-														}
-													</span>
-													<div>
-														<h5 class="mb-0">Abhishek Singh</h5>
-														<p class="fs-12 fw-medium mb-0"></p>
-													</div>
-												</div>
-											</div>
 											<div class="card-body">
-												<a asp-action="MyProfile" asp-controller="Account">
-													<i class="ti ti-user"></i> My Profile
-												</a>
+												<a asp-action="MyProfile" asp-controller="Account"> <i class="ti ti-user"></i> My Profile </a>
 											</div>
 											<div class="card-footer">
 												<form asp-controller="Account"
@@ -127,57 +94,32 @@
 														<i class="ti ti-login me-2"></i> Logout
 													</button>
 												</form>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-
+											</div> </div> </div> </div> </div> </div> </div>
 					<div class="dropdown mobile-user-menu">
 						<a href="javascript:void(0);" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa fa-ellipsis-v"></i></a>
 						<div class="dropdown-menu dropdown-menu-end">
-							<a class="dropdown-item" href="profile.html">My Profile</a>
-							<a class="dropdown-item" href="profile-settings.html">Settings</a>
-							<a class="dropdown-item" href="login.html">Logout</a>
-						</div>
-					</div>
+							<a asp-action="MyProfile" asp-controller="Account">
+								<i class="ti ti-user"></i> My Profile</a>
+							<form asp-controller="Account"
+								  asp-action="Logout"
+								  method="post"
+								  style="display:inline">
+								<button type="submit" class="dropdown-item">
+									<i class="ti ti-login me-2"></i> Logout
+								</button>
+							</form>
+						</div> </div> </div> </div>
 
-				</div>
-
-			</div>
 			<div class="sidebar" id="sidebar">
-			 
 				<div class="logo-wrapper">
 					<img src="~/assets/img/att1.png" alt="Logo" class="app-logo" />
 				</div>
-				<!-- /Logo -->
-				<div class="modern-profile p-3 pb-0">
-					<div class="text-center rounded bg-light p-3 mb-4 user-profile">
-						<div class="avatar avatar-lg online mb-3">
-							<img src="assets/img/profiles/avatar-02.jpg" alt="Img" class="img-fluid rounded-circle">
-						</div>
-						<h6 class="fs-12 fw-normal mb-1">Abhi</h6>
-						<p class="fs-10">System Admin</p>
-					</div>
-					<div class="sidebar-nav mb-3">
-						<ul class="nav nav-tabs nav-tabs-solid nav-tabs-rounded nav-justified bg-transparent" role="tablist">
-							<li class="nav-item"><a class="nav-link active border-0" href="#">Menu</a></li>
-							<li class="nav-item"><a class="nav-link border-0" href="chat.html">Chats</a></li>
-							<li class="nav-item"><a class="nav-link border-0" href="email.html">Inbox</a></li>
-						</ul>
-					</div>
-				</div>
-			
 				<div class="sidebar-header p-3 pb-0 pt-2">
 					<div class="text-center rounded bg-light p-2 mb-4 sidebar-profile d-flex align-items-center">
 						<div class="avatar avatar-md onlin">
 							<img src="assets/img/att.jpg" alt="Img" class="img-fluid rounded-circle">
 						</div>
-						 
 					</div>
-					
 					<div class="d-flex align-items-center justify-content-between menu-item mb-3">
 						<div class="me-3">
 							<a href="calendar.html" class="btn btn-menubar">
@@ -194,269 +136,165 @@
 							<a href="activity.html" class="btn btn-menubar position-relative me-1">
 								<i class="ti ti-bell"></i>
 								<span class="notification-status-dot"></span>
-							</a>
-						</div>
-					</div>
-				</div>
+							</a> 
+							</div> </div> </div>
 				<div class="sidebar-inner slimscroll" style="margin-top:-50px">
 					<div id="sidebar-menu" class="sidebar-menu">
 						<ul>
-
-							<!-- MAIN -->
-							@* <li class="menu-title"><span>MAIN MENU</span></li> *@
-
 							<li>
 								<a href="/Home/Index">
 									<i class="ti ti-smart-home"></i>
 									<span>DASHBOARD</span>
 								</a>
 							</li>
-
-							<!-- MASTER -->
-									 <!-- MASTERS MENU -->
 							<li class="submenu">
 								<a href="javascript:void(0);">
 									<i class="ti ti-file-time"></i>
-									<span>MASTERS</span>
+									<span>COMPANY SETUP</span>
 									<span class="menu-arrow"></span>
 								</a>
-
 								<ul>
-									
-											<li class="menu-title" style="font-size:12px"><span>COMPANY</span></li>
-											<li><a asp-controller="Home" asp-action="CompanyInfoList">Company Profile</a></li>
-											<li><a asp-controller="Home" asp-action="BranchTypeList">Add Branch Type</a></li>
-											<li><a asp-controller="Home" asp-action="BranchInfoList">Add Branch</a></li>
-											<li><a asp-controller="Home" asp-action="DepartmentList"> Add Department</a></li>
-											<li><a asp-controller="Home" asp-action="DesignationList">Add Designation</a></li>
-											<li><a asp-controller="Home" asp-action="HolidayList">Working Calendar</a></li>
-											<li><a asp-controller="Home" asp-action="ShiftList">Add Shift</a></li>
-											<li><a asp-controller="Home" asp-action="LeaveTypeList">Leave Type Entry</a></li>
-											<li class="menu-title" style="font-size:12px"><span>EMPLOYEE DETAILS</span></li>
-											<li><a asp-controller="Home" asp-action="EmployeeList1">Add Employee</a></li>
-											<li><a asp-controller="Home" asp-action="DocumentTypeelist">Add Document Type</a></li>
-											@* <li><a asp-controller="Home" asp-action="EmployeeList">Add Document Of Employee</a></li> *@
-									<li class="menu-title" style="font-size:12px"><span>LOCATION</span></li>
-											<li><a asp-controller="Home" asp-action="MasterStateCityList">Add State/City</a></li>
-									</li>
+									@* <li class="menu-title" style="font-size:12px"><span>COMPANY DETAILS</span></li> *@
+									<li><a asp-controller="Home" asp-action="CompanyInfoList">Company Profile</a></li>
+									@* <li class="menu-title" style="font-size:12px"><span>BRANCH DETAILS</span></li> *@
+									<li><a asp-controller="Home" asp-action="BranchInfoList">Branch Setup</a></li>
+									<li><a asp-controller="Home" asp-action="BranchTypeList">Branch Type</a></li>
+									<li><a asp-controller="Home" asp-action="DepartmentList"> Add Department</a></li>
+								<li><a asp-controller="Home" asp-action="ShiftList">Working Shift Setup</a></li>
+								<li><a asp-controller="Home" asp-action="WorkingCalenderList">Working Calender</a></li>
+
+								<li><a href="attendance-employee.html">Master Session</a></li>
+
 								</ul>
 							</li>
-							<!-- ATTENDANCE -->
+					
+						<li class="submenu">
+							<a href="javascript:void(0);">
+								<i class="ti ti-file-time"></i>
+								<span>EMPLOYEE SETUP</span>
+								<span class="menu-arrow"></span>
+							</a>
+							<ul>
+								<li><a asp-controller="Home" asp-action="EmployeeList1">Add Employee</a></li>
+								<li><a asp-controller="Home" asp-action="EmployeeTypeList">Employee Type</a></li>
+								<li><a asp-controller="Home" asp-action="DesignationList">Add Designation</a></li>
+								<li><a asp-controller="Home" asp-action="DocumentTypeelist">Document Type</a></li>
+								<li><a asp-controller="Home" asp-action="DocumentTypeelist">Add Document</a></li>
+							
+								<li><a href="attendance-employee.html">Generate ID Cards</a></li>
+							</ul> </li>
 							<li class="submenu">
-								<a href="javascript:void(0);">
-									<i class="ti ti-file-time"></i>
-									<span>ATTENDANCE</span>
-									<span class="menu-arrow"></span>
-								</a>
-								<ul>
-									<li><a href="timesheets.html">Manual Attendance Entry</a></li>
-									<li><a href="schedule-timing.html">Attendance</a></li>
-									<li><a href="overtime.html">Overtime</a></li>
-								</ul>
+								<a href="javascript:void(0);"> <i class="ti ti-file-time"></i> <span>ATTENDANCE</span> 
+									<span class="menu-arrow"></span> </a>
+								<ul> <li><a href="timesheets.html">Manual Attendance Entry</a></li> </ul>
 							</li>
-
-							<!-- PAyroll--></>
 							<li class="submenu">
 								<a href="javascript:void(0);">
 									<i class="ti ti-file-time"></i>
 									<span>PAYROLL</span>
 									<span class="menu-arrow"></span>
-								</a>
-								<ul>
-									<li><a href="attendance-employee.html">Attendance Payroll Mapping</a></li>
-									<li> <a href="timesheets.html"> Wage Calculation Preview </a> </li>
-									<li> <a href="schedule-timing.html"> Payroll Export </a> </li>
-									<li> <a href="leaves.html"> Payroll Lock </a> </li>
-								</ul>
+								</a><ul> <li><a href="attendance-employee.html">Attendance Payroll Mapping</a></li> </ul>
 							</li>
-
-
-							<!--ID CARD GEN-->
+						 
 							<li class="submenu">
 								<a href="javascript:void(0);">
-									<i class="ti ti-file-time"></i>
-									<span>ID CARDS</span>
-									<span class="menu-arrow"></span>
-								</a>
-								<ul>
-									<li><a href="attendance-employee.html">Generate Id Cards</a></li>
-									<li> <a href="timesheets.html"> Id Cards List </a> </li>
-								</ul>
-							</li>
-
-
-
-							<!-- REPORTS -->
-							<li class="submenu">
-								<a href="javascript:void(0);">
-									<i class="ti ti-file-time"></i>
-									<span>REPORTS</span>
-									<span class="menu-arrow"></span>
+									<i class="ti ti-file-time"></i> <span>REPORTS</span> <span class="menu-arrow"></span>
 								</a>
 								<ul>
 									<li><a href="attendance-employee.html">Holidays List</a></li>
-									<li><a asp-controller="Report" asp-action="HolidayReport">Holidays List</a></li>
-
-									<li><a href="timesheets.html">Department List</a></li>
-									<li><a href="schedule-timing.html">Employee List</a></li>
-									<li><a href="leaves.html">All Employee Monthly</a></li>
-									<li><a href="leaves-employee.html">Single Employee</a></li>
 									<li><a href="leave-settings.html">Total Absentee</a></li>
 								</ul>
 							</li>
 
-							<!-- DAILY BACKUP -->
-							<li>
-								<a href="#">
-									<i class="ti ti-calendar-event"></i>
-									<span>DAILY BACK- UP</span>
-								</a>
-							</li>
 
-							<!-- UTILITY -->
-							<li class="submenu">
-								<a href="javascript:void(0);">
-									<i class="ti ti-calendar-event"></i>
-									<span>UTILITY</span>
-									<span class="menu-arrow"></span>
-								</a>
-								<ul>
-									<li><a href="#">Option 1</a></li>
-									<li><a href="#">Option 2</a></li>
-								</ul>
-							</li>
+						<li class="submenu">
+							<a href="javascript:void(0);">
+								<i class="ti ti-file-time"></i> <span>OT & LATE SETUP</span> <span class="menu-arrow"></span>
+							</a>
+							<ul>
+								<li><a asp-controller="Home" asp-action="Builder">OT & Late Rules</a></li>
+								<li><a asp-controller="Home" asp-action="AttendancePolicyList">OT & Late Rules List</a></li>
+							</ul>
+						</li>
 
-								<form asp-controller="Account"
-									  asp-action="Logout"
-									  method="post"
-									  style="display:inline">
+						 
 
-									<button type="submit" class="dropdown-item">
-										<i class="ti ti-login me-2"></i> Logout
-									</button>
+
+						<li class="submenu">
+							<a href="javascript:void(0);">
+								<i class="ti ti-file-time"></i> <span>MASTERS</span>
+								<span class="menu-arrow"></span>
+							</a>
+							<ul>
+								<li><a asp-controller="Home" asp-action="HolidayList">Holiday List</a></li>
+								<li><a asp-controller="Home" asp-action="LeaveTypeList">Leave Type Entry</a></li>
+								<li class="menu-title" style="font-size:12px"><span>LOCATION</span></li>
+								<li><a asp-controller="Home" asp-action="MasterStateCityList">Add State/City</a></li>
+							</ul>
+						</li>
+
+								<form asp-controller="Account" asp-action="Logout" method="post" style="display:inline">
+									<button type="submit" class="dropdown-item"> <i class="ti ti-login me-2"></i> Logout </button>
 								</form>
-
-							</li>
 						</ul>
-					</div>
-
-			</div>
+					</div></div>
 			<div class="two-col-sidebar" id="two-col-sidebar">
 				<div class="sidebar sidebar-twocol">
 					<div class="twocol-mini">
-						<a href="index.html" class="logo-small">
-							<img src="assets/img/pro-1.jpg" alt="Logo">
-						</a>
-					 
-					</div>
-					</div> 
-				</div>
-			</div>
-		</div>
+						<a href="index.html" class="logo-small"> <img src="assets/img/pro-1.jpg" alt="Logo"> </a>
+					</div>  </div>  </div> </div>
 	</header>
-
 	<div class="page-wrapper">
 		<div class="content container-fluid">
 			@RenderBody()
 		</div>
-
 		<footer class="footer border-top text-muted">
-			<div class="container-fluid d-flex justify-content-between">
-				<span>2014 - 2025 © ATPL.</span>
+			<div class="container-fluid d-flex justify-content-between"> <span>2026 - 2027 © ATPL.</span>
 				<span>Designed & Developed By <span class="text-primary">ATPL@INDIA</span></span>
 			</div>
 		</footer>
 	</div>
-
-
-	 
 	<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 	<script src="~/assets/js/jquery-3.7.1.min.js"></script>
 	<script src="~/assets/js/bootstrap.bundle.min.js"></script>
-
 	<script src="~/assets/js/feather.min.js"></script>
-
 	<script src="~/assets/js/jquery.slimscroll.min.js"></script>
-
 	<script src="~/assets/plugins/apexchart/apexcharts.min.js"></script>
 	<script src="~/assets/plugins/apexchart/chart-data.js"></script>
-
 	<script src="~/assets/plugins/chartjs/chart.min.js"></script>
 	<script src="~/assets/plugins/chartjs/chart-data.js"></script>
-
 	<script src="~/assets/js/moment.min.js"></script>
 	<script src="~/assets/js/bootstrap-datetimepicker.min.js"></script>
-
 	<script src="~/assets/plugins/daterangepicker/daterangepicker.js"></script>
-
-	<script src="~/assets/plugins/summernote/summernote-lite.min.js"></script>
-
 	<script src="~/assets/plugins/bootstrap-tagsinput/bootstrap-tagsinput.js"></script>
-
-	<script src="~/assets/plugins/select2/js/select2.min.js"></script>
-
 	<script src="~/assets/plugins/%40simonwep/pickr/pickr.es5.min.js"></script>
-
 	<script src="~/assets/js/todo.js"></script>
 	<script src="~/assets/js/theme-colorpicker.js"></script>
-	@* <script src="~/assets/js/script.js"></script> *@
 	<script defer="" src="../../../beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015" integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ==" data-cf-beacon='{"version":"2024.11.0","token":"d05194593ce14c8fa5c20a9737ff5d07","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 	@await RenderSectionAsync("Scripts", required: false)
-
-
-
-
 </body>
-
 </html>
-
 <script>
-	$(document).ready(function () {
+	 	$(document).ready(function () {
 
-		/* ========== SIDEBAR TOGGLE (MOBILE + DESKTOP) ========== */
-		$("#mobile_btn, #toggle_btn").on("click", function (e) {
-			e.preventDefault();
-
-			if (window.innerWidth <= 768) {
+			$("#mobile_btn").on("click", function () {
 				$("body").toggleClass("sidebar-open");
-			} else {
+			});
+
+			$("#toggle_btn").on("click", function () {
 				$("body").toggleClass("mini-sidebar");
-			}
+			});
+
+			$("#sidebarOverlay").on("click", function () {
+				$("body").removeClass("sidebar-open");
+			});
+
+			$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
+				e.preventDefault();
+				let parent = $(this).parent();
+				parent.toggleClass("active");
+				parent.children("ul").slideToggle(250);
+			});
 		});
-
-		/* ========== OVERLAY CLICK (MOBILE CLOSE) ========== */
-		$("#sidebarOverlay").on("click", function () {
-			$("body").removeClass("sidebar-open");
-		});
-
-		$("#sidebar-menu > ul > li.submenu > a").on("click", function (e) {
-			e.preventDefault();
-
-			let parent = $(this).parent();
-
-			$("#sidebar-menu > ul > li.submenu").not(parent)
-				.removeClass("active")
-				.children("ul")
-				.slideUp(250);
-
-			parent.toggleClass("active");
-			parent.children("ul").stop(true, true).slideToggle(250);
-		});
-
-		$("#sidebar-menu .submenu-two > a").on("click", function (e) {
-			e.preventDefault();
-
-			let parent = $(this).parent();
-
-			parent.siblings(".submenu-two")
-				.removeClass("active")
-				.children("ul")
-				.slideUp(200);
-
-			parent.toggleClass("active");
-			parent.children("ul").stop(true, true).slideToggle(200);
-		});
-
-	});
 </script>
 

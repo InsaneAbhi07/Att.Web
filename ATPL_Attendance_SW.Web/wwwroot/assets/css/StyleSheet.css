@@ -170,3 +170,204 @@ label.required::after {
     .emp-type-inline input {
         accent-color: var(--brand);
     }
+/* ================= SIDEBAR THEME ================= */
+.sidebar {
+    --sb-brand: orangered; /* ROUTE COLOR */
+    --sb-light: #fff2e8; /* light orange bg */
+    --sb-hover: #fff6f0;
+}
+
+/* ================= SIDEBAR BASE ================= */
+.sidebar {
+    width: 260px;
+    background: #ffffff;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    border-right: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    transition: .3s ease;
+}
+
+.sidebar-inner {
+    height: 100%;
+    overflow-y: auto;
+}
+
+    /* scrollbar */
+    .sidebar-inner::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .sidebar-inner::-webkit-scrollbar-thumb {
+        background: var(--sb-brand);
+        border-radius: 10px;
+    }
+
+/* ================= LOGO ================= */
+.logo-wrapper {
+    position: sticky;
+    top: 0;
+    background: #ffffff;
+    text-align: center;
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    z-index: 10;
+}
+
+.app-logo {
+    height: 70px;
+    margin: auto;
+    display: block;
+}
+
+/* ================= MENU ================= */
+.sidebar-menu {
+    flex: 1;
+    padding: 8px 10px;
+}
+
+    .sidebar-menu ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar-menu > ul > li {
+        margin-bottom: 3px;
+    }
+
+        .sidebar-menu > ul > li > a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6b7280;
+            border-radius: 6px;
+            transition: all .25s ease;
+        }
+
+            /* icon color */
+            .sidebar-menu > ul > li > a i {
+                font-size: 18px;
+                min-width: 22px;
+                color: var(--sb-brand);
+            }
+
+            /* hover */
+            .sidebar-menu > ul > li > a:hover {
+                background: var(--sb-hover);
+                color: var(--sb-brand);
+            }
+
+        .sidebar-menu > ul > li.active > a {
+            background: #eef2ff;
+            color: var(--brand-dark);
+        }
+
+/* ================= SUBMENU ================= */
+.submenu > ul {
+    display: none;
+}
+
+.submenu.active > ul {
+    display: block;
+}
+
+/* submenu title */
+.submenu-two > a {
+    background: #ffffff !important;
+    color: #111827 !important;
+}
+
+/* submenu list */
+.submenu-two ul {
+    background: #ffffff !important;
+}
+
+    .submenu-two ul li a {
+        color: #111827 !important;
+    }
+
+        /* hover route */
+        .submenu-two ul li a:hover {
+            background: transparent !important;
+            color: var(--sb-brand) !important;
+        }
+
+        /* active route */
+        .submenu-two ul li a.active {
+            background: transparent !important;
+            color: var(--sb-brand) !important;
+        }
+
+        /* dot default */
+        .submenu-two ul li a::before {
+            background: #9ca3af !important;
+        }
+
+        /* dot active */
+        .submenu-two ul li a:hover::before,
+        .submenu-two ul li a.active::before {
+            background: var(--sb-brand) !important;
+        }
+
+/* ================= ARROW ================= */
+.menu-arrow {
+    margin-left: auto;
+    font-size: 12px;
+    color: #6b7280;
+    transition: transform .25s ease;
+}
+
+.submenu.active > a .menu-arrow {
+    transform: rotate(90deg);
+}
+
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+    #sidebar {
+        z-index: 1200 !important;
+    }
+
+
+    body.sidebar-open #sidebar {
+        left: 0;
+    }
+
+    #sidebarOverlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        display: none;
+        z-index: 1100 !important;
+    }
+
+    body.sidebar-open #sidebarOverlay {
+        display: block;
+    }
+
+    body.sidebar-open {
+        overflow: hidden;
+    }
+}
+
+
+
+.page-wrapper {
+    margin-left: 260px;
+    transition: .3s;
+}
+
+@media (max-width: 768px) {
+    .page-wrapper {
+        margin-left: 0;
+    }
+}

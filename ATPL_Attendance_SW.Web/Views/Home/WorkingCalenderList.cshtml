@@ -1,0 +1,212 @@
+﻿@model List<WorkingCalendarVM>
+
+@{
+    ViewData["Title"] = "Working Calendar";
+}
+
+<div class="dashboard-header-card mb-3">
+    <h2 class="mb-0">Working Calendar</h2>
+</div>
+
+<div class="card mb-3 p-3">
+    <div class="row align-items-center">
+
+        <div class="col-md-6">
+            <h5 class="mb-1">Weekly Off Configuration</h5>
+            <small class="text-muted">Select weekly off days for this calendar</small>
+        </div>
+
+        <div class="col-md-6 text-end">
+            <button class="btn btn-primary"
+                    data-bs-toggle="modal"
+                    data-bs-target="#weeklyOffModal">
+                Mark Day as Weekly Off
+            </button>
+
+ 
+        </div>
+
+    </div>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3">
+        <select name="month" class="form-select">
+            @for (int m = 1; m <= 12; m++)
+            {
+                <option value="@m" selected="@(ViewBag.Month == m)">
+                    @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(m)
+                </option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <select name="year" class="form-select">
+            @for (int y = DateTime.Now.Year - 1; y <= DateTime.Now.Year + 1; y++)
+            {
+                <option value="@y" selected="@(ViewBag.Year == y)">@y</option>
+            }
+        </select>
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-primary w-100">Load</button>
+    </div>
+ 
+
+
+
+</form>
+
+<div class="card">
+    <div class="card-body p-0">
+
+        <table class="table table-bordered mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th width="120">Date</th>
+                    <th width="120">Day</th>
+                    <th>Status</th>
+                    <th width="80">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.WorkDate.ToString("dd-MM-yyyy")</td>
+                        <td>@item.WorkDate.DayOfWeek</td>
+
+                        <td>
+                            <span class="badge
+                                    @(item.Status == "Holiday" ? "bg-danger" :
+                                                                    item.Status == "WeeklyOff" ? "bg-warning" :
+                                                                    "bg-success")">
+                            @item.Status
+                        </span>
+                    </td>
+
+                        <td>
+                            <button class="btn btn-sm btn-warning edit-btn"
+                                    data-date="@item.WorkDate.ToString("yyyy-MM-dd")"
+                                    data-status="@item.Status"
+                                    data-remarks="@item.Remarks">
+                                <i class="ti ti-edit"></i>
+                            </button>
+
+                            <form asp-action="DeleteWorkingCalender" method="post" class="d-inline">
+                                <input type="hidden" name="date" value="@item.WorkDate.ToString("yyyy-MM-dd")" />
+                                <button class="btn btn-sm btn-danger"
+                                        onclick="return confirm('Reset this date?')">
+                                    <i class="ti ti-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                                }
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal fade" id="editModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="SaveWorkingCalender" method="post">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Day</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <input type="hidden" name="WorkDate" id="WorkDate" />
+
+                    <div class="mb-3">
+                        <label>Status</label>
+                        <select name="Status" id="Status" class="form-select">
+                            <option>Working</option>
+                            <option>Holiday</option>
+                            <option>WeeklyOff</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Remarks</label>
+                        <textarea name="Remarks" id="Remarks" class="form-control"></textarea>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Save</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="weeklyOffModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <form asp-action="SaveWeeklyOff" method="post">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Weekly Off Configuration</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    @foreach (DayOfWeek day in Enum.GetValues(typeof(DayOfWeek)))
+                    {
+                        <div class="form-check mb-1">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="OffDays"
+                                   value="@((int)day)"
+                                   id="day_@day" />
+                            <label class="form-check-label" for="day_@day">
+                                @day
+                            </label>
+                        </div>
+                    }
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary">Save Weekly Off</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        document.querySelectorAll(".edit-btn").forEach(btn => {
+            btn.addEventListener("click", function () {
+
+                WorkDate.value = this.dataset.date;
+                Status.value = this.dataset.status;
+                Remarks.value = this.dataset.remarks;
+
+                new bootstrap.Modal(document.getElementById("editModal")).show();
+            });
+        });
+    </script>
+}

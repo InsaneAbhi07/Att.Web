@@ -1,0 +1,300 @@
+﻿@model PolicyFullVM
+ 
+@Html.AntiForgeryToken()
+
+<style>
+    :root {
+        --brand: #f97316;
+        --soft: #fff7ed;
+        --border: #e5e7eb;
+        --text: #1f2937;
+    }
+
+    .policy-wrapper {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+    }
+
+    .header-card {
+        background: var(--soft);
+        border-left: 4px solid var(--brand);
+        padding: 10px 12px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+    }
+
+        .header-card h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+    .rule-card {
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        margin-bottom: 12px;
+    }
+
+    .rule-header {
+        background: var(--soft);
+        padding: 8px 10px;
+        font-size: 13px;
+        font-weight: 700;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .rule-body {
+        padding: 10px;
+    }
+
+    label {
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    input.form-control,
+    select.form-select {
+        font-size: 12px;
+        height: 32px;
+    }
+
+    .form-check {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 6px;
+        padding-left: 0;
+    }
+
+    .form-check-input {
+        margin: 0;
+        position: static;
+    }
+
+    .nav-tabs .nav-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text);
+    }
+
+        .nav-tabs .nav-link.active {
+            color: var(--brand);
+            border-bottom: 2px solid var(--brand);
+            background: transparent;
+        }
+
+    .save-btn {
+        background: var(--brand);
+        color: #fff;
+        font-size: 12px;
+        padding: 6px 16px;
+        border-radius: 4px;
+        border: none;
+    }
+
+        .save-btn:hover {
+            background: #ea580c;
+        }
+
+    .success-msg {
+        font-size: 12px;
+        color: #15803d;
+        font-weight: 600;
+    }
+</style>
+
+<div class="policy-wrapper">
+
+ 
+    <!-- HEADER -->
+    <div class="header-card">
+        <div class="row g-2 align-items-center">
+            @* <input type="hidden" id="PolicyId" name="PolicyId" value="@Model.PolicyId" /> *@
+            <input type="hidden" asp-for="PolicyId" />
+
+            <div class="col-md-6"><h4>Attendance Policy Builder</h4></div>
+            <div class="col-md-2"><select class="form-select"><option>Company Policy</option></select></div>
+            @* <div class="col-md-3"><input type="date" class="form-control"></div> *@
+            <div class="col-md-2">
+                <input type="date" id="PolicyDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")"></div>
+
+            <div class="col-md-2"><select class="form-select"><option>All Employees</option></select></div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <ul class="nav nav-tabs mb-3">
+        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#late">Late Rules</a></li>
+        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#ot">Overtime Rules</a></li>
+    </ul>
+
+    @{
+        var selected = new List<string>();
+        if (ViewBag.SelectedDepartments != null)
+        {
+            foreach (System.Data.DataRow r in ((System.Data.DataTable)ViewBag.SelectedDepartments).Rows)
+            {
+                selected.Add(r["DepartmentId"].ToString());
+            }
+        }
+    }
+
+    <div class="tab-content">
+
+        <!-- ================= LATE ================= -->
+        <div id="late" class="tab-pane fade show active row">
+            <div class="col-md-6">
+
+                <div class="rule-card">
+                    <div class="rule-header">Grace Time Rule</div>
+                    <div class="rule-body">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <label>Grace Minutes</label>
+                                <input id="GraceMinutes" value="@Model.GraceMinutes" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label>Late within grace</label>
+                                <select id="GraceAction" class="form-select">
+                                    <option value="Ignore" selected="@(Model.GraceAction == "Ignore")">Ignore</option>
+                                    <option value="LateMark" selected="@(Model.GraceAction == "LateMark")">LateMark</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <div class="rule-header">Monthly Penalty</div>
+                    <div class="rule-body">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="apply" value="all"
+                                   @(Model.ApplyTo == "all" ? "checked" : "") onclick="toggleDept(false)">
+                            <label>All Employees</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="apply" value="department"
+                                   @(Model.ApplyTo == "department" ? "checked" : "") onclick="toggleDept(true)">
+                            <label>Department Wise</label>
+                        </div>
+
+                        <div id="deptBox" class="ms-3 mt-2" style="display:none">
+                            @foreach (System.Data.DataRow d in ((System.Data.DataTable)ViewBag.Departments).Rows)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input dept" type="checkbox"
+                                           value="@d["Id"]"
+                                           @(selected.Contains(d["Id"].ToString()) ? "checked" : "")>
+                                    <label>@d["Department"]</label>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="row g-2 mt-3">
+                            <div class="col-6">
+                                <label>Allowed Late</label>
+                                <input id="AllowedLate" value="@Model.AllowedLate" class="form-control">
+                            </div>
+                            <div class="col-6">
+                                <label>Deduction / Late (Day)</label>
+                                <input id="Deduction" value="@Model.Deduction" class="form-control">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ================= OT ================= -->
+        <div id="ot" class="tab-pane fade row">
+            <div class="col-md-6">
+
+                <div class="rule-card">
+                    <div class="rule-header">Minimum OT Rule</div>
+                    <div class="rule-body">
+                        <label>OT counts after (minutes)</label>
+                        <input id="MinOT" value="@Model.MinOTMinutes" class="form-control">
+                    </div>
+                </div>
+
+                <div class="rule-card">
+                    <div class="rule-header">OT Calculation</div>
+                    <div class="rule-body">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="otcalc" value="Shift"
+                                   @(Model.CalcType == "Shift" ? "checked" : "")>
+                            <label>Shift Based OT</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="otcalc" value="Total"
+                                   @(Model.CalcType == "Total" ? "checked" : "")>
+                            <label>Total Hours Based OT</label>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SAVE -->
+        <div class="text-end mt-3">
+            <button class="save-btn" onclick="saveAllPolicy()">💾 @(Model.PolicyId > 0 ? "Update Policy" : "Save Policy")</button>
+        </div>
+
+        <div id="saveMsg" class="success-msg mt-2" style="display:none">
+            ✓ Policy saved successfully
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function token() {
+        return $('input[name="__RequestVerificationToken"]').val();
+    }
+
+    function toggleDept(show) {
+        $('#deptBox').toggle(show);
+    }
+
+    $(document).ready(function () {
+        if ($('input[name=apply]:checked').val() === 'department') {
+            $('#deptBox').show();
+        }
+    });
+
+    function saveAllPolicy() {
+
+        let deptIds = [];
+        $('.dept:checked').each(function () {
+            deptIds.push($(this).val());
+        });
+
+        let model = {
+            __RequestVerificationToken: token(),
+            PolicyId: $('#PolicyId').val(),
+            GraceMinutes: $('#GraceMinutes').val(),
+            GraceAction: $('#GraceAction').val(),
+            AllowedLate: $('#AllowedLate').val(),
+            Deduction: $('#Deduction').val(),
+            ApplyTo: $('input[name=apply]:checked').val(),
+            DepartmentIds: deptIds.join(','),
+            MinOTMinutes: $('#MinOT').val(),
+            CalcType: $('input[name=otcalc]:checked').val(),
+            RoundTo: 0.5
+        };
+
+        $.post('/Home/SaveFullPolicy', model, function () {
+            $('#saveMsg').fadeIn().delay(1500).fadeOut();
+        });
+    }
+</script>

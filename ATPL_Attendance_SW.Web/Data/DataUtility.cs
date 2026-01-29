@@ -45,6 +45,23 @@ public class DataUtility
         return dt;
     }
 
+    public object GetScalar(string query, params SqlParameter[] prms)
+    {
+        using SqlConnection con = new SqlConnection(_con);
+        using SqlCommand cmd = new SqlCommand(query, con);
+
+        cmd.CommandType = CommandType.Text;
+
+        if (prms != null && prms.Length > 0)
+        {
+            cmd.Parameters.AddRange(prms);
+        }
+
+        con.Open();
+        return cmd.ExecuteScalar();
+    }
+
+
     public int Execute(string spName, SqlParameter[] prms)        
     {
         using SqlConnection con = new SqlConnection(_con);

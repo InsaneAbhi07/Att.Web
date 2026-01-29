@@ -316,7 +316,7 @@
                         <th>Designation</th>
                         <th>Phone</th>
                         <th>Email</th>
-                        <th>Type</th>
+                        <th>Emp.Type</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -341,7 +341,7 @@
                                 <td>@emp.Designation</td>
                                 <td>@emp.PhoneNo</td>
                                 <td>@emp.EmailId</td>
-                                <td>@emp.EmpType</td>
+                                <td>@emp.EmployeeType</td>
                                 <td>
                                     <div class="action-btns">
                                         <a href="@Url.Action("SaveEmployee", "Home", new { id = emp.Emp_Id })" class="btn-action btn-edit" title="Edit">

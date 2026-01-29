@@ -101,7 +101,31 @@
                                     <span class="text-danger" style="font-size: 11px;"></span>
                                 </div>
 
+
                                 <div class="col-md-6 mb-2">
+                                    <label class="form-label">Employment Type <span class="text-danger">*</span></label>
+
+                                    <div class="radio-group">
+                                        @foreach (var item in ViewBag.EmployeeType as List<SelectListItem>)
+                                        {
+                                            <label class="radio-option">
+                                                <input type="radio"
+                                                       name="EmpTypeId"
+                                                       value="@item.Value"
+                                                       @(Model != null && Model.EmpTypeId.ToString() == item.Value ? "checked" : "")
+                                                       required />
+                                                <span>@item.Text</span>
+                                            </label>
+                                        }
+                                    </div>
+
+                                    <span class="text-danger" style="font-size: 11px;"></span>
+                                </div>
+
+
+
+
+                        @*         <div class="col-md-6 mb-2">
                                     <label class="form-label">Employment Type <span class="text-danger">*</span></label>
                                     <div class="radio-group">
                                         <label class="radio-option">
@@ -118,7 +142,7 @@
                                         </label>
                                     </div>
                                     <span class="text-danger" style="font-size: 11px;"></span>
-                                </div>
+                                </div> *@
 
                                 <div class="col-md-6 mb-2">
                                     <label class="form-label">Gender <span class="text-danger">*</span></label>
@@ -130,6 +154,10 @@
                                         <label class="radio-option">
                                             <input type="radio" asp-for="Gender" value="Female" />
                                             <span>Female</span>
+                                        </label>
+                                        <label class="radio-option">
+                                            <input type="radio" asp-for="Gender" value="Transgender" required />
+                                            <span>Transgender</span>
                                         </label>
                                         <label class="radio-option">
                                             <input type="radio" asp-for="Gender" value="Other" />
@@ -576,38 +604,7 @@
     calculateGross();
 
     // Form validation on submit
-       document.getElementById('employeeForm').addEventListener('submit', function (e) {
-
-        if (!empCodeValid) {
-            e.preventDefault();
-            alert("Please fix Employee Code before saving");
-            return;
-        }
-
-        if (!UserNameValid) {
-            e.preventDefault();
-            alert("Please fix User Name before saving");
-            return;
-        }
-
-        let allValid = true;
-
-        for (let i = 0; i < tabs.length; i++) {
-            currentTabIndex = i;
-            if (!validateCurrentTab()) {
-                allValid = false;
-                break;
-            }
-        }
-
-        if (!allValid) {
-            e.preventDefault();
-            alert("Please fill all required fields");
-            return;
-        }
-
-        // ✅ DO NOTHING → form will submit automatically
-    });
+ 
 
 
     // Restore last active tab
@@ -766,8 +763,6 @@
             alert('Please complete required fields in Tab(s): ' + invalidTabs.join(', '));
             return;
         }
-
-        // ✅ allow submit (NO preventDefault here)
     });
 
 </script>

@@ -31,13 +31,14 @@ namespace ATPL_Attendance_SW.Web.Models
         public string Department { get; set; }
         public string Shift { get; set; }
         public string Designation { get; set; }
+        public string EmployeeType { get; set; }
 
         public int WorkUnderId { get; set; }
 
         public string? BankName { get; set; }
         public string? Ac_HolderName { get; set; }
         public string? IFSC_Code { get; set;}
-        public string? EmpType { get; set; }
+        public int EmpTypeId { get; set; }
         public decimal? Acc_No { get; set; }
 
         public string Gender { get; set; }

@@ -196,7 +196,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 {
                     Id = Convert.ToInt32(row["Id"]),
                     Holiday = row["Holiday"].ToString(),
-                    Date = row["Date"].ToString(),
+                    Date = Convert.ToDateTime(row["Date"].ToString()),
                     Description = row["Description"].ToString(),
                     Active = row["Active"].ToString() == "1"
                 });
@@ -298,6 +298,22 @@ namespace ATPL_Attendance_SW.Web.Controllers
             return list;
         }
 
+        private List<SelectListItem> GetEmployeeTypeDDL()
+        {
+            DataTable dt = du.GetDataTableByQuery("Select Id,EmployeeType From Tbl_MasterEmployeeType", null);
+            List<SelectListItem> list = new();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new SelectListItem
+                {
+                    Value = row["Id"].ToString(),
+                    Text = row["EmployeeType"].ToString()
+                });
+            }
+            return list;
+        }
+
         [HttpGet]
         public JsonResult GetDesignationsByDepartment(int departmentId)
         {
@@ -378,7 +394,9 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Ac_HolderName = row["Ac_HolderName"] == DBNull.Value ? "" : row["Shift"].ToString(),
                     IFSC_Code = row["IFSC_Code"] == DBNull.Value ? "" : row["Shift"].ToString(),
                     Acc_No = row["Acc_No"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Acc_No"]),
-                    EmpType = row["EmpType"] == DBNull.Value ? "" : row["EmpType"].ToString(),
+                    EmpTypeId = row["EmpTypeId"] == DBNull.Value ? 0 : Convert.ToInt32(row["EmpTypeId"]),
+                    EmployeeType = row["EmployeeType"] == DBNull.Value ? "" : row["EmployeeType"].ToString(),
+
 
                     UserName = row["UserName"] == DBNull.Value ? "" : row["UserName"].ToString(),
                     Role = row["Role"] == DBNull.Value ? "" : row["Role"].ToString()
@@ -420,6 +438,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Emp_Img = row["Emp_Img"]?.ToString() ?? "",
                     Designation = row["Designation"]?.ToString() ?? "",
                     Department = row["Department"]?.ToString() ?? "",
+                    EmployeeType = row["EmployeeType"]?.ToString() ?? "",
 
                     Salary = row["Salary"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Salary"]),
                     Status = row["Status"]?.ToString() ?? "Inactive",
@@ -429,8 +448,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     Ac_HolderName = row["AC_HolderName"]?.ToString() ?? "",
                     IFSC_Code = row["IFSC_Code"]?.ToString() ?? "",
                     Acc_No = row["Acc_No"] == DBNull.Value ? 0 : Convert.ToDecimal(row["Acc_No"]),
-
-                    EmpType = row["EmpType"]?.ToString() ?? "",
+                    EmpTypeId = row["EmpTypeId"] == DBNull.Value ? 0 : Convert.ToInt32(row["EmpTypeId"]),
                     UserName = row["UserName"]?.ToString() ?? "",
                     Role = row["Role"]?.ToString() ?? ""
                 });
@@ -439,6 +457,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             ViewBag.DepartmentList = GetDepartmentDDL();
             ViewBag.DesignationList = GetDesignationDDL();
             ViewBag.Shiftlistt = GetSHiftDDL();
+            ViewBag.EmployeeType = GetEmployeeTypeDDL();
 
             return View(list);
         }
@@ -449,6 +468,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
             ViewBag.DesignationList = GetDesignationDDL();
             ViewBag.Shiftlistt = GetSHiftDDL();
             ViewBag.WorkUnderList = GetWorkUnderDDL();
+            ViewBag.EmployeeType = GetEmployeeTypeDDL();
 
             // ADD
             if (id == 0)
@@ -484,7 +504,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                 Ac_HolderName = r["AC_HolderName"]?.ToString(),
                 IFSC_Code = r["IFSC_Code"]?.ToString(),
                 Acc_No = r["Acc_No"] == DBNull.Value ? 0 : Convert.ToDecimal(r["Acc_No"]),
-                EmpType = r["EmpType"]?.ToString(),
+                EmpTypeId = Convert.ToInt32(r["EmpTypeId"]),
 
 
                 Gender = r["Gender"]?.ToString(),
@@ -588,7 +608,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
         new SqlParameter("@Gender", model.Gender ?? (object)DBNull.Value),
         new SqlParameter("@MaritalStatus", model.MaritalStatus ?? (object)DBNull.Value),
         new SqlParameter("@EmergencyContact", model.EmergencyContact ?? (object)DBNull.Value),
-        new SqlParameter("@EmpType", model.EmpType ?? (object)DBNull.Value),
+        new SqlParameter("@EmpTypeId", model.EmpTypeId),
         new SqlParameter("@Status", model.Status),
         new SqlParameter("@UserName", model.UserName ?? (object)DBNull.Value),
         new SqlParameter("@Password", model.Password ?? (object)DBNull.Value),
@@ -1336,7 +1356,7 @@ namespace ATPL_Attendance_SW.Web.Controllers
                     BCode = r["BCode"].ToString(),
                     BranchName = r["BranchName"].ToString(),
                     Abbr = r["Abbr"].ToString(),
-                    BranchType= r["BranchType"].ToString(), 
+                    BranchType = r["BranchType"].ToString(),
                     Address = r["Address"].ToString(),
                     Address2 = r["Address2"].ToString(),
                     City = r["City"].ToString(),
@@ -1495,5 +1515,361 @@ namespace ATPL_Attendance_SW.Web.Controllers
 
             return RedirectToAction("BranchInfoList");
         }
+
+
+        private List<DateTime> GetAllDates(int month, int year)
+        {
+            var dates = new List<DateTime>();
+
+            int daysInMonth = DateTime.DaysInMonth(year, month);
+            for (int day = 1; day <= daysInMonth; day++)
+            {
+                dates.Add(new DateTime(year, month, day));
+            }
+
+            return dates;
+        }
+
+
+        private List<HolidayVM> GetHolidays(int month, int year)
+        {
+            SqlParameter[] prms =
+            {
+        new SqlParameter("@Month", month),
+        new SqlParameter("@Year", year)
+    };
+
+            DataTable dt = du.GetDataTable("Sp_GetHolidaysByMonth", prms);
+
+            List<HolidayVM> list = new List<HolidayVM>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new HolidayVM
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    Holiday = row["Holiday"].ToString(),
+                    Date = Convert.ToDateTime(row["Date"])
+                });
+            }
+
+            return list;
+        }
+        private List<int> GetWeeklyOffDays()
+        {
+            DataTable dt = du.GetDataTableByQuery("SELECT OffDay FROM Tbl_WeeklyOff", null);
+
+            List<int> list = new List<int>();
+            foreach (DataRow r in dt.Rows)
+                list.Add(Convert.ToInt32(r["OffDay"]));
+
+            return list;
+        }
+
+
+        public IActionResult WorkingCalenderList(int month = 0, int year = 0)
+        {
+            if (month == 0) month = DateTime.Now.Month;
+            if (year == 0) year = DateTime.Now.Year;
+
+            var dates = GetAllDates(month, year);
+            var holidays = GetHolidays(month, year);
+            var saved = GetSavedCalendar(month, year);
+
+
+            var weeklyOff = GetWeeklyOffDays();
+
+            var model = dates.Select(d =>
+            {
+                var existing = saved.FirstOrDefault(x => x.WorkDate.Date == d.Date);
+
+                if (existing != null) return existing;
+
+                return new WorkingCalendarVM
+                {
+                    WorkDate = d,
+
+                    Status = holidays.Any(h => h.Date.Date == d.Date)
+            ? "Holiday"
+            : weeklyOff.Contains((int)d.DayOfWeek)
+                ? "WeeklyOff"
+                : "Working"
+                };
+            }).ToList();
+
+            ViewBag.Month = month;
+            ViewBag.Year = year;
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult SaveWorkingCalender(WorkingCalendarVM model)
+        {
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@WorkDate", model.WorkDate),
+            new SqlParameter("@Status", model.Status),
+            new SqlParameter("@HolidayId", model.HolidayId ?? (object)DBNull.Value),
+            new SqlParameter("@Remarks", model.Remarks ?? "")
+        };
+
+            du.Execute("Sp_Save_WorkingCalendar", prms);
+
+            TempData["Msg"] = "Saved successfully";
+            return RedirectToAction("WorkingCalenderList");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteWorkingCalender(DateTime date)
+        {
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@WorkDate", date)
+        };
+
+            du.Execute("Sp_Delete_WorkingCalendar", prms);
+
+            TempData["Msg"] = "Reset to Working Day";
+            return RedirectToAction("WorkingCalenderList");
+        }
+
+        private List<WorkingCalendarVM> GetSavedCalendar(int month, int year)
+        {
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@Month", month),
+            new SqlParameter("@Year", year)
+        };
+
+            DataTable dt = du.GetDataTable("Sp_Get_WorkingCalendar", prms);
+
+            List<WorkingCalendarVM> list = new List<WorkingCalendarVM>();
+            foreach (DataRow r in dt.Rows)
+            {
+                list.Add(new WorkingCalendarVM
+                {
+                    Id = Convert.ToInt32(r["Id"]),
+                    WorkDate = Convert.ToDateTime(r["WorkDate"]),
+                    Status = r["Status"].ToString(),
+                    HolidayId = r["HolidayId"] == DBNull.Value ? null : Convert.ToInt32(r["HolidayId"]),
+                    Remarks = r["Remarks"].ToString()
+                });
+            }
+            return list;
+        }
+        public IActionResult LoadCalendar(int month, int year)
+        {
+            var dates = GetAllDates(month, year);
+            var holidays = GetHolidays(month, year);
+
+            var model = dates.Select(d => new WorkingCalendarVM
+            {
+                WorkDate = d,
+                Status = holidays.Any(h => h.Date.Date == d.Date) ? "Holiday" : d.DayOfWeek == DayOfWeek.Sunday
+                                ? "WeeklyOff" : "Working",
+                HolidayName = holidays.FirstOrDefault(h => h.Date.Date == d.Date)?.Holiday
+            }).ToList();
+            return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult SaveWeeklyOff(List<int> OffDays)
+        {
+            du.ExecuteScalar("TRUNCATE TABLE Tbl_WeeklyOff");
+
+            foreach (var d in OffDays)
+            {
+                du.ExecuteScalar("INSERT INTO Tbl_WeeklyOff(OffDay) VALUES (" + d + ")");
+            }
+
+            TempData["Msg"] = "Weekly off saved successfully";
+            return RedirectToAction("WorkingCalenderList");
+        }
+
+        //EMPLOYEE TYPE
+        public IActionResult AddEmployeeType(EmployeeTypeVM model)
+        {
+            SqlParameter[] prms =
+        {
+        new SqlParameter("@Id", model.Id),
+        new SqlParameter("@EmployeeType", model.EmployeeType),
+
+        new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+          };
+
+            du.Execute("Sp_Insert_MasterEmployeeType", prms);
+            string message = prms[2].Value.ToString();
+            TempData["Msg"] = message;
+            return RedirectToAction("EmployeeTypeList");
+        }
+        public IActionResult EmployeeTypeList()
+        {
+            DataTable dt = du.GetDataTable("Sp_Get_EmployeeTypeList", null);
+
+            List<EmployeeTypeVM> list = new();
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new EmployeeTypeVM
+                {
+                    Id = Convert.ToInt32(row["Id"]),
+                    EmployeeType = row["EmployeeType"].ToString()
+                });
+            }
+
+            return View(list);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteEmployeeType(int id)
+        {
+            SqlParameter[] prms =
+            {
+            new SqlParameter("@Id", id),
+              new SqlParameter("@msg", SqlDbType.NVarChar, 100)
+        {
+            Direction = ParameterDirection.Output
+        }
+        };
+            du.Execute("Sp_Delete_EmployeeType", prms);
+            return RedirectToAction("EmployeeTypeList");
+        }
+
+
+        ///LATE OT RALEs
+
+        public IActionResult AttendancePolicyList()
+        {
+            var dt = du.GetDataTableByQuery(
+                "SELECT PolicyId,PolicyName,IsActive,CreatedOn FROM Tbl_AttendancePolicy",
+                null);
+
+            return View(dt);
+        }
+
+
+        public IActionResult Builder(int policyId)
+        {
+            ViewBag.Departments = du.GetDataTableByQuery(
+                "SELECT Id,Department FROM Tbl_MasterDepartment", null);
+
+            ViewBag.Employees = du.GetDataTableByQuery(
+                "SELECT Emp_Id,Name FROM Tbl_MasterEmployeeDetails", null);
+
+            PolicyFullVM vm = new PolicyFullVM();
+            vm.PolicyId = policyId;
+
+            return View(vm);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SaveFullPolicy(PolicyFullVM vm)
+        {
+                    SqlParameter[] pMaster =
+           {
+                new SqlParameter("@PolicyName","Company Policy"),
+                new SqlParameter("@EffectiveFrom",DateTime.Today),
+                new SqlParameter("@AppliesTo",vm.ApplyTo),
+                new SqlParameter("@PolicyId",SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                }
+            };
+
+            du.Execute("Sp_Insert_AttendancePolicy", pMaster);
+
+            int policyId = Convert.ToInt32(pMaster[3].Value);
+
+            // LATE
+            SqlParameter[] p =
+             {
+                new SqlParameter("@PolicyId", vm.PolicyId),
+                new SqlParameter("@GraceMinutes", vm.GraceMinutes),
+                new SqlParameter("@GraceAction", vm.GraceAction)
+                };
+            du.Execute("Sp_Insert_PolicyLateRule", p);
+
+            // PENALTY
+            SqlParameter[] p1 =
+              {
+
+                new SqlParameter("@PolicyId", vm.PolicyId),
+                new SqlParameter("@AllowedLate", vm.AllowedLate),
+                new SqlParameter("@PenaltyType", vm.ApplyTo),
+                new SqlParameter("@Deduction", vm.Deduction)
+                };
+            du.Execute("Sp_Insert_PolicyLatePenalty", p1);
+
+            // DEPARTMENT MAP
+            if (vm.ApplyTo == "department wise" && !string.IsNullOrEmpty(vm.DepartmentIds))
+            {
+                SqlParameter[] p4 =
+                   {
+                    new SqlParameter("@PolicyId", vm.PolicyId),
+                    new SqlParameter("@DepartmentIds", vm.DepartmentIds)
+                   };
+                du.Execute("Sp_Insert_PolicyDepartmentMap", p4);
+            }
+
+            // OT
+            SqlParameter[] p5 =
+                  {
+                new SqlParameter("@PolicyId", vm.PolicyId),
+                new SqlParameter("@MinOT", vm.MinOTMinutes),
+                new SqlParameter("@CalcType", vm.CalcType),
+                new SqlParameter("@RoundTo", vm.RoundTo)
+                };
+            du.Execute("Sp_Insert_PolicyOTRule", p5);
+            return Ok("Saved");
+        }
+
+        public IActionResult EditPolicy(int id)
+        {
+            var dt = du.GetScalar(
+                "SELECT * FROM Tbl_AttendancePolicy WHERE PolicyId=@id", new SqlParameter("@id", id));
+
+            //if (dt.Rows.Count == 0) return NotFound();
+
+            PolicyFullVM vm = new PolicyFullVM
+            {
+                PolicyId = id,
+
+                GraceMinutes = Convert.ToInt32(
+                    du.GetScalar("SELECT GraceMinutes FROM Tbl_PolicyLateRule WHERE PolicyId=@id",
+                        new SqlParameter("@id", id)) ?? 0),
+
+                GraceAction = du.GetScalar("SELECT GraceAction FROM Tbl_PolicyLateRule WHERE PolicyId=@id",
+                    new SqlParameter("@id", id))?.ToString(),
+
+                AllowedLate = Convert.ToInt32(
+                    du.GetScalar("SELECT AllowedLate FROM Tbl_PolicyLatePenalty WHERE PolicyId=@id",
+                        new SqlParameter("@id", id)) ?? 0),
+
+                Deduction = Convert.ToDecimal(
+                    du.GetScalar("SELECT Deduction FROM Tbl_PolicyLatePenalty WHERE PolicyId=@id",
+                        new SqlParameter("@id", id)) ?? 0),
+
+                MinOTMinutes = Convert.ToInt32(
+                    du.GetScalar("SELECT MinOTMinutes FROM Tbl_PolicyOTRule WHERE PolicyId=@id",
+                        new SqlParameter("@id", id)) ?? 0),
+
+                CalcType = du.GetScalar(
+                    "SELECT CalcType FROM Tbl_PolicyOTRule WHERE PolicyId=@id",
+                    new SqlParameter("@id", id))?.ToString()
+            };
+
+            ViewBag.Departments = du.GetDataTableByQuery(
+                "SELECT Id,Department FROM Tbl_MasterDepartment", null);
+
+            ViewBag.SelectedDepartments = du.GetScalar(
+                "SELECT DepartmentId FROM Tbl_PolicyDepartmentMap WHERE PolicyId=@id",
+                new SqlParameter("@id", id));
+
+            return View("Builder", vm);
+        }
     }
-    }
+}
