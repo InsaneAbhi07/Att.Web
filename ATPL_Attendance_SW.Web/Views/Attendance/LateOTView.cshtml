@@ -1,0 +1,341 @@
+﻿@using System.Data
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Rule Master</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --brand: #f97316;
+            --card: #ffffff;
+            --border: #fed7aa;
+            --text: #374151;
+            --bg: #fff7ed;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .tab-btn {
+            padding: 10px 22px;
+            border-radius: 25px;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: white;
+            font-weight: 600;
+        }
+
+            .tab-btn.active {
+                background: var(--brand);
+                color: white;
+                box-shadow: 0 6px 12px rgba(249,115,22,.3);
+            }
+
+        .card {
+            border-radius: 18px;
+            background: var(--card);
+            box-shadow: 0 10px 20px rgba(0,0,0,.05);
+            border: 1px solid var(--border);
+        }
+
+        input, select {
+            border-radius: 12px !important;
+        }
+
+        .btn-brand {
+            background: var(--brand);
+            color: white;
+            border-radius: 20px;
+            padding: 6px 22px;
+        }
+
+        .toast-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #16a34a;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            animation: fade 3s forwards;
+            z-index: 999;
+        }
+ 
+    </style>
+</head>
+<body>
+
+    <div class="container mt-4">
+
+        <!-- TABS -->
+        <div class="d-flex gap-3 mb-3">
+            <div class="tab-btn active" onclick="showTab('late')">Late Rule</div>
+            <div class="tab-btn" onclick="showTab('ot')">OT Rule</div>
+            <div class="tab-btn" onclick="showTab('apply')">Rule Apply</div>
+        </div>
+
+        <!-- ================= LATE RULE ================= -->
+        <div id="late">
+            <div class="card p-4">
+                <h5 class="text-warning mb-3">Late Rule Master</h5>
+
+                <form method="post" asp-action="SaveLateRule">
+                    <input type="hidden" name="LateRuleId" />
+
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label>Rule Name</label>
+                            <input name="RuleName" class="form-control" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Penalty After (min)</label>
+                            <input name="PenaltyAfterMinutes" class="form-control" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Penalty Type</label>
+                            <select name="PenaltyType" class="form-control">
+                                <option value="1">None</option>
+                                <option value="2">Half Day</option>
+                                <option value="3">Absent</option>
+                                <option value="4">Amount</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Max / Month</label>
+                            <input name="MaxAllowedInMonth" class="form-control" />
+                        </div>
+                    </div>
+
+                    <button class="btn btn-brand mt-3">Save</button>
+                </form>
+
+                <table class="table table-sm mt-4">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Rule</th>
+                            <th>Penalty After</th>
+                            <th>Penalty Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (DataRow r in ViewBag.LateRules.Rows)
+                        {
+                            <tr>
+                                <td>@r["RuleName"]</td>
+                                <td>@r["PenaltyAfterMinutes"]</td>
+                                <td>@r["PenaltyType"]</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= OT RULE ================= -->
+        <div id="ot" class="d-none">
+            <div class="card p-4">
+                <h5 class="text-warning mb-3">OT Rule Master</h5>
+
+                <form method="post" asp-action="SaveOTRule">
+                    <input type="hidden" name="OTRuleId" />
+
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label>Rule Name</label>
+                            <input name="RuleName" class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>OT After (min)</label>
+                            <input name="OTAfterMinutes" class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Min OT</label>
+                            <input name="MinOTMinutes" class="form-control" />
+                        </div>
+
+                        <div class="col-md-2">
+                            <label>Max OT / Day</label>
+                            <input name="MaxOTPerDay" class="form-control" />
+                        </div>
+
+                        <div class="col-md-1">
+                            <label><input type="checkbox" name="IsHolidayAllowed" value="true" /> Holiday</label>
+                        </div>
+                        <div class="col-md-1">
+                            <label><input type="checkbox" name="IsWeekOffAllowed" value="true" /> WeekOff</label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-brand mt-3">Save</button>
+                </form>
+
+                <table class="table table-sm mt-4">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Rule</th>
+                            <th>OT After</th>
+                            <th>Min OT</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (DataRow r in ViewBag.OTRules.Rows)
+                        {
+                            <tr>
+                                <td>@r["RuleName"]</td>
+                                <td>@r["OTAfterMinutes"]</td>
+                                <td>@r["MinOTMinutes"]</td>
+                                <td>
+                                    <button class="btn btn-sm btn-warning">Edit</button>
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================= APPLY RULE ================= -->
+        <div id="apply" class="d-none">
+            <div class="card p-4">
+                <h5 class="text-warning mb-3">Rule Apply</h5>
+
+                <form method="post" asp-action="SaveRuleApply">
+                    <div class="row g-2">
+
+                        <div class="col-md-3">
+                            <label>Rule Type</label>
+                            <select name="RuleType" id="ruleType" class="form-control" onchange="loadRules()">
+                                <option value="LATE">Late</option>
+                                <option value="OT">OT</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Rule</label>
+                            <select name="RuleId" id="ruleId" class="form-control"></select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Apply On</label>
+                            <select name="ApplyOnType" id="applyOnType" class="form-control" onchange="toggleDeptBox()">
+                                <option value="1">All Employees</option>
+                                <option value="2">Department</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-3 d-none" id="deptBox">
+                            <label>Departments</label>
+                            <div class="border rounded p-2" style="max-height:150px;overflow:auto">
+                                @foreach (DataRow r in ViewBag.Departments.Rows)
+                                {
+                                    <div>
+                                        <input type="checkbox" name="DepartmentIds" value="@r["Id"]" /> @r["Department"]
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label>Shift</label>
+                            <select name="ShiftId" class="form-control">
+                                <option value="">All Shift</option>
+                                @foreach (DataRow r in ViewBag.Shifts.Rows)
+                                {
+                                    <option value="@r["Id"]">@r["Shift"]</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-brand mt-3">Apply Rule</button>
+                </form>
+
+                <table class="table table-sm mt-4">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Rule</th>
+                            <th>Department</th>
+                            <th>Shift</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (DataRow r in ViewBag.RuleApplyList.Rows)
+                        {
+                            <tr>
+                                <td>@r["RuleId"]</td>
+                                <td>@r["Department"]</td>
+                                <td>@r["Shift"]</td>
+                                <td>
+                                    <button class="btn btn-sm btn-danger">Delete</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    @if (TempData["Msg"] != null)
+    {
+        <div class="toast-box">@TempData["Msg"]</div>
+    }
+
+    <script>
+        function showTab(id){
+            document.getElementById("late").classList.add("d-none");
+            document.getElementById("ot").classList.add("d-none");
+            document.getElementById("apply").classList.add("d-none");
+            document.getElementById(id).classList.remove("d-none");
+
+            document.querySelectorAll(".tab-btn").forEach(x => x.classList.remove("active"));
+            event.target.classList.add("active");
+        }
+
+        function toggleDeptBox(){
+            let v = document.getElementById("applyOnType").value;
+            document.getElementById("deptBox").classList.toggle("d-none", v != "2");
+        }
+
+        function loadRules(){
+            let ddl = document.getElementById("ruleId");
+            ddl.innerHTML = "";
+            if(ruleType.value === "LATE"){
+                @foreach (DataRow r in ViewBag.LateRules.Rows)
+                {
+                        <text>ddl.add(new Option("@r["RuleName"]","@r["LateRuleId"]"));</text>
+                }
+            } else {
+                @foreach (DataRow r in ViewBag.OTRules.Rows)
+                {
+                        <text>ddl.add(new Option("@r["RuleName"]","@r["OTRuleId"]"));</text>
+                }
+            }
+        }
+        loadRules();
+    </script>
+
+</body>
+</html>

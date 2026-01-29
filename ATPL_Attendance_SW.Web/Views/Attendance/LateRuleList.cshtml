@@ -1,0 +1,69 @@
+﻿@using System.Data
+@model DataTable
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            Late Rule Master
+        </div>
+
+        <div class="card-body">
+            <form method="post" asp-action="SaveLateRule">
+                <input type="hidden" name="LateRuleId" value="0" />
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <label>Rule Name</label>
+                        <input name="RuleName" class="form-control" required />
+                    </div>
+                    <div class="col-md-2">
+                        <label>Late After</label>
+                        <input name="LateAfterMinutes" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>Penalty After</label>
+                        <input name="PenaltyAfterMinutes" class="form-control" />
+                    </div>
+                    <div class="col-md-2">
+                        <label>Penalty Type</label>
+                        <select name="PenaltyType" class="form-control">
+                            <option value="1">None</option>
+                            <option value="2">Half Day</option>
+                            <option value="3">Absent</option>
+                            <option value="4">Amount</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label>Max / Month</label>
+                        <input name="MaxAllowedInMonth" class="form-control" />
+                    </div>
+                </div>
+
+                <button class="btn btn-success mt-3">Save Rule</button>
+            </form>
+
+            <hr />
+
+            <table class="table table-bordered table-sm">
+                <thead class="table-secondary">
+                    <tr>
+                        <th>Rule</th>
+                        <th>Late After</th>
+                        <th>Penalty</th>
+                        <th>Max/Month</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (DataRow r in Model.Rows)
+                    {
+                        <tr>
+                            <td>@r["RuleName"]</td>
+                            <td>@r["LateAfterMinutes"]</td>
+                            <td>@r["PenaltyType"]</td>
+                            <td>@r["MaxAllowedInMonth"]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

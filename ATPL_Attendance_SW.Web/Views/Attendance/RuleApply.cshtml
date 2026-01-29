@@ -1,0 +1,61 @@
+﻿@using System.Data
+<div class="card shadow mt-4">
+    <div class="card-header bg-dark text-white">Rule Apply</div>
+    <div class="card-body">
+        <form method="post" asp-action="RuleApply">
+
+            <div class="row">
+                <div class="col-md-3">
+                    <label>Rule Type</label>
+                    <select name="RuleType" class="form-control">
+                        <option value="LATE">Late</option>
+                        <option value="OT">OT</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Rule</label>
+                    <select name="RuleId" class="form-control">
+                        @foreach (DataRow r in ViewBag.LateRules.Rows)
+                        {
+                            <option value="@r["LateRuleId"]">@r["RuleName"]</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Apply On</label>
+                    <select name="ApplyOnType" class="form-control">
+                        <option value="1">All Employees</option>
+                        <option value="2">Department</option>
+                        <option value="3">Employee</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label>Department</label>
+                    <select name="ApplyOnId" class="form-control">
+                        <option value="">-- Select --</option>
+                        @foreach (DataRow r in ViewBag.Departments.Rows)
+                        {
+                            <option value="@r["Id"]">@r["Department"]</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3 mt-2">
+                    <label>Shift</label>
+                    <select name="ShiftId" class="form-control">
+                        <option value="">All Shift</option>
+                        @foreach (DataRow r in ViewBag.Shifts.Rows)
+                        {
+                            <option value="@r["Id"]">@r["Shift"]</option>
+                        }
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-primary mt-3">Apply Rule</button>
+        </form>
+    </div>
+</div>

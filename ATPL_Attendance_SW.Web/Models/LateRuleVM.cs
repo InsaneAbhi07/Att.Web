@@ -2,8 +2,12 @@
 {
     public class LateRuleVM
     {
-        public int PolicyId { get; set; }
-        public int GraceMinutes { get; set; }
-        public string GraceAction { get; set; }
+        public int LateRuleId { get; set; }
+        public string RuleName { get; set; }
+        public int LateAfterMinutes { get; set; }
+        public int PenaltyAfterMinutes { get; set; }
+        public int PenaltyType { get; set; }
+        public decimal PenaltyValue { get; set; }
+        public int MaxAllowedInMonth { get; set; }
     }
 }

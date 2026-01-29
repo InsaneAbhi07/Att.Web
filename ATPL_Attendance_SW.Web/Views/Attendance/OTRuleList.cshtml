@@ -1,0 +1,37 @@
+﻿<div class="card shadow mt-4">
+    <div class="card-header bg-success text-white">OT Rule Master</div>
+    <div class="card-body">
+        <form method="post" asp-action="SaveOTRule">
+            <input type="hidden" name="OTRuleId" value="0" />
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label>Rule Name</label>
+                    <input name="RuleName" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>OT After (min)</label>
+                    <input name="OTAfterMinutes" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Min OT (min)</label>
+                    <input name="MinOTMinutes" class="form-control" />
+                </div>
+                <div class="col-md-2">
+                    <label>Max OT / Day</label>
+                    <input name="MaxOTPerDay" class="form-control" />
+                </div>
+                <div class="col-md-1">
+                    <label>Holiday</label>
+                    <input type="checkbox" name="IsHolidayAllowed" />
+                </div>
+                <div class="col-md-1">
+                    <label>WeekOff</label>
+                    <input type="checkbox" name="IsWeekOffAllowed" />
+                </div>
+            </div>
+
+            <button class="btn btn-success mt-3">Save OT Rule</button>
+        </form>
+    </div>
+</div>
